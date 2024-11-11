@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
-import dev.shadowsoffire.apothic_enchanting.util.LegacyRecipeProvider;
+import dev.shadowsoffire.placebo.datagen.LegacyRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
