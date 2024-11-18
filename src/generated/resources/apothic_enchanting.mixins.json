@@ -21,7 +21,6 @@
         "TridentItemMixin"
     ],
     "client": [
-        "client.AbstractContainerScreenMixin",
         "client.AnvilScreenMixin",
         "client.EnchantmentScreenMixin"
     ],

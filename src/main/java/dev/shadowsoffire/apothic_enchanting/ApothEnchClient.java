@@ -6,13 +6,13 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import dev.shadowsoffire.apothic_enchanting.Ench.Particles;
-import dev.shadowsoffire.apothic_enchanting.client.DrawsOnLeft;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryScreen;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentScreen;
 import dev.shadowsoffire.apothic_enchanting.util.FakeLevelReader;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
+import dev.shadowsoffire.placebo.util.DrawsOnLeft;
 import dev.shadowsoffire.placebo.util.EnchantmentUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
