@@ -1,3 +1,6 @@
+## 1.2.4
+* Fixed Icy Thorns applying for much longer than intended.
+
 ## 1.2.3
 * Added back the enchanted book tooltips present in Apotheosis, these got lost in the split-off somehow.
   * This includes adding a description even if Enchantment Descriptions isn't installed, and showing various metadata information.
