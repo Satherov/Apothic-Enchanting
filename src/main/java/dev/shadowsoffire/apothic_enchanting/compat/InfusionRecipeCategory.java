@@ -75,11 +75,14 @@ public class InfusionRecipeCategory implements IRecipeCategory<InfusionRecipe> {
     }
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setRecipe(IRecipeLayoutBuilder builder, InfusionRecipe recipe, IFocusGroup focuses) {
         IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, 6, 6);
         IRecipeSlotBuilder output = builder.addSlot(RecipeIngredientRole.OUTPUT, 37, 6);
-        Extension<?> ext = EXTENSIONS.get(recipe.getClass());
-        if (ext != null) ext.setRecipe(builder, input, output, recipe, focuses);
+        Extension ext = EXTENSIONS.get(recipe.getClass());
+        if (ext != null) {
+            ext.setRecipe(builder, input, output, recipe, focuses);
+        }
         else {
             input.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getInput().getItems()));
             output.addIngredient(VanillaTypes.ITEM_STACK, recipe.getOutput());
@@ -198,7 +201,7 @@ public class InfusionRecipeCategory implements IRecipeCategory<InfusionRecipe> {
     }
 
     public static interface Extension<T extends InfusionRecipe> {
-        public void setRecipe(IRecipeLayoutBuilder builder, IRecipeSlotBuilder input, IRecipeSlotBuilder output, InfusionRecipe recipe, IFocusGroup focuses);
+        public void setRecipe(IRecipeLayoutBuilder builder, IRecipeSlotBuilder input, IRecipeSlotBuilder output, T recipe, IFocusGroup focuses);
     }
 
 }
