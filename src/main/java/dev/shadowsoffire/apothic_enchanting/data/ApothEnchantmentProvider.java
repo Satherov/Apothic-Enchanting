@@ -293,7 +293,10 @@ public class ApothEnchantmentProvider {
                     EnchantmentEffectComponents.POST_ATTACK,
                     EnchantmentTarget.VICTIM,
                     EnchantmentTarget.ATTACKER,
-                    new ApplyMobEffect(HolderSet.direct(MobEffects.MOVEMENT_SLOWDOWN), LevelBasedValue.perLevel(100), LevelBasedValue.perLevel(200), LevelBasedValue.perLevel(1), LevelBasedValue.perLevel(2)),
+                    new ApplyMobEffect(
+                        HolderSet.direct(MobEffects.MOVEMENT_SLOWDOWN),
+                        LevelBasedValue.constant(200), LevelBasedValue.constant(400),
+                        LevelBasedValue.constant(0), new LevelBasedValue.Clamped(LevelBasedValue.perLevel(2), 1, 4)),
                     LootItemRandomChanceCondition.randomChance(EnchantmentLevelProvider.forEnchantmentLevel(LevelBasedValue.perLevel(0.5F)))));
 
         register(context, Ench.Enchantments.INFUSION,

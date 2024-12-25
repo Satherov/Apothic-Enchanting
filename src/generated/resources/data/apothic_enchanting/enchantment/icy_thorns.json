@@ -10,25 +10,18 @@
         "effect": {
           "type": "minecraft:apply_mob_effect",
           "max_amplifier": {
-            "type": "minecraft:linear",
-            "base": 2.0,
-            "per_level_above_first": 2.0
+            "type": "minecraft:clamped",
+            "max": 4.0,
+            "min": 1.0,
+            "value": {
+              "type": "minecraft:linear",
+              "base": 2.0,
+              "per_level_above_first": 2.0
+            }
           },
-          "max_duration": {
-            "type": "minecraft:linear",
-            "base": 200.0,
-            "per_level_above_first": 200.0
-          },
-          "min_amplifier": {
-            "type": "minecraft:linear",
-            "base": 1.0,
-            "per_level_above_first": 1.0
-          },
-          "min_duration": {
-            "type": "minecraft:linear",
-            "base": 100.0,
-            "per_level_above_first": 100.0
-          },
+          "max_duration": 400.0,
+          "min_amplifier": 0.0,
+          "min_duration": 200.0,
           "to_apply": "minecraft:slowness"
         },
         "enchanted": "victim",
