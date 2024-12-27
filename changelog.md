@@ -1,3 +1,8 @@
+## 1.2.5
+* Crescendo of Bolts now works with Ars' Spell Crossbow.
+* MelnCat: The Seashelf of Aquatic Filtration can now accept most books for decorative purposes.
+  * Only Enchanted Books with a single enchantment will provide functional bonuses.
+
 ## 1.2.4
 * Fixed Icy Thorns applying for much longer than intended.
 
