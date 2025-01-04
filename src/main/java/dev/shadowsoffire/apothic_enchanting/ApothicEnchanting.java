@@ -153,6 +153,11 @@ public class ApothicEnchanting {
         ApothEnchConfig.load(new Configuration(ApothicAttributes.getConfigFile(MODID)));
     }
 
+    /**
+     * Retrieves the {@link EnchantmentInfo} for a given enchantment.
+     * 
+     * @throws UnsupportedOperationException if the enchantment config has not been loaded.
+     */
     public static EnchantmentInfo getEnchInfo(Holder<Enchantment> ench) {
         if (ENCHANTMENT_INFO.isEmpty()) {
             throw new UnsupportedOperationException("Cannot access enchantment information before it has been loaded!");

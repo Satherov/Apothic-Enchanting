@@ -19,6 +19,8 @@ public class EnchHooks {
     /**
      * Replaces the call to {@link Enchantment#getMaxLevel()} in various classes.
      * Injected by coremods/ench/ench_info_redirector.js
+     * 
+     * @throws UnsupportedOperationException if the enchantment config file has not been loaded.
      */
     public static int getMaxLevel(Enchantment ench) {
         Holder<Enchantment> holder = MiscUtil.findHolder(Registries.ENCHANTMENT, ench);
@@ -31,6 +33,8 @@ public class EnchHooks {
     /**
      * Replaces the call to {@link Enchantment#getMaxLevel()} in loot-only classes.
      * Injected by coremods/ench/ench_info_loot_redirector.js
+     * 
+     * @throws UnsupportedOperationException if the enchantment config file has not been loaded.
      */
     public static int getMaxLootLevel(Enchantment ench) {
         Holder<Enchantment> holder = MiscUtil.findHolder(Registries.ENCHANTMENT, ench);
