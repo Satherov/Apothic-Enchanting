@@ -26,6 +26,7 @@ function initializeCoreMod() {
                 'type': 'CLASS',
                 'names': function(listofclasses) {
                     return [
+                        'mezz.jei.library.plugins.vanilla.anvil.AnvilRecipeMaker$EnchantmentData',
                         'org.violetmoon.quark.content.tools.module.AncientTomesModule',
                         'org.violetmoon.quark.content.tools.item.AncientTomeItem',
                         'net.minecraft.server.commands.EnchantCommand',
