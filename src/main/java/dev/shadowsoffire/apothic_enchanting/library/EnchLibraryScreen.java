@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.placebo.payloads.ButtonClickPayload;
+import dev.shadowsoffire.placebo.util.DrawsOnLeft;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -43,7 +45,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContainer> {
+public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContainer> implements DrawsOnLeft {
 
     public static final ResourceLocation TEXTURES = ApothicEnchanting.loc("textures/gui/library.png");
     public static final int MAX_ENTRIES = 5;
@@ -100,7 +102,7 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
 
             MutableComponent name = libSlot.ench.value().description().copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFF80)).withUnderlined(true));
             if (ApothicAttributes.getTooltipFlag().isAdvanced()) {
-                name = name.append(Component.literal(" [" + libSlot.ench.getKey().location() + "]").withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withUnderlined(false)));
+                name = name.append(Component.literal(" [" + libSlot.ench.getKey().location() + "]").withStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY).withUnderlined(false)));
             }
             list.add(name);
 
@@ -109,12 +111,12 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
             if (I18n.exists(descKey) || ApothicAttributes.getTooltipFlag().isAdvanced()) {
                 Component txt = Component.translatable(descKey).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true));
                 list.addAll(this.font.getSplitter().splitLines(txt, this.getGuiLeft() - 16, txt.getStyle()));
-                list.add(Component.literal(""));
+                list.add(CommonComponents.SPACE);
             }
 
             list.add(Component.translatable("tooltip.enchlib.max_lvl", Component.translatable("enchantment.level." + libSlot.maxLvl)).withStyle(ChatFormatting.GRAY));
             list.add(Component.translatable("tooltip.enchlib.points", format(libSlot.points), format(this.menu.getPointCap())).withStyle(ChatFormatting.GRAY));
-            list.add(Component.literal(""));
+            list.add(CommonComponents.SPACE);
             ItemStack outSlot = this.menu.ioInv.getItem(1);
             int current = EnchantmentHelper.getEnchantmentsForCrafting(outSlot).getLevel(libSlot.ench);
             boolean shift = Screen.hasShiftDown();
@@ -126,7 +128,7 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
                 list.add(Component.translatable("tooltip.enchlib.extracting", Component.translatable("enchantment.level." + targetLevel)).withStyle(ChatFormatting.BLUE));
                 list.add(Component.translatable("tooltip.enchlib.cost", cost).withStyle(cost > libSlot.points ? ChatFormatting.RED : ChatFormatting.GOLD));
             }
-            gfx.renderComponentTooltip(this.font, list, this.getGuiLeft() - 16 - list.stream().map(this.font::width).max(Integer::compare).get(), mouseY, ItemStack.EMPTY);
+            this.drawOnLeft(gfx, list, mouseY);
         }
     }
 
