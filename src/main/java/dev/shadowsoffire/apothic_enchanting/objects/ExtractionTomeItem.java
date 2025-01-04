@@ -4,7 +4,6 @@ import java.util.List;
 
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -51,7 +50,7 @@ public class ExtractionTomeItem extends BookItem {
             return false;
         }
 
-        ItemEnchantments wepEnch = weapon.getAllEnchantments(ev.getPlayer().registryAccess().lookupOrThrow(Registries.ENCHANTMENT));
+        ItemEnchantments wepEnch = EnchantmentHelper.getEnchantmentsForCrafting(weapon);
         ItemStack out = new ItemStack(Items.ENCHANTED_BOOK);
         EnchantmentHelper.setEnchantments(out, wepEnch);
         ev.setMaterialCost(1);
