@@ -10,6 +10,7 @@ import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import dev.shadowsoffire.placebo.util.EnchantmentUtils;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -138,8 +139,10 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
                 }
 
                 player.awardStat(Stats.ENCHANT_ITEM);
-                if (player instanceof ServerPlayer) {
+                if (player instanceof ServerPlayer sp) {
                     // ((EnchantedTrigger) CriteriaTriggers.ENCHANTED_ITEM).trigger((ServerPlayer) player, enchanted, level, eterna, quanta, arcana, rectification);
+                    Ench.Triggers.ENCHANTED.trigger(sp, this.enchantSlots.getItem(0), level, eterna, quanta, arcana, this.stats.stable());
+                    CriteriaTriggers.ENCHANTED_ITEM.trigger(sp, this.enchantSlots.getItem(0), level);
                 }
 
                 this.enchantSlots.setChanged();

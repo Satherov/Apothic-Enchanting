@@ -1,21 +1,17 @@
 {
-	"conditions": [{
-		"type": "apotheosis:module",
-		"module": "enchantment"
-	}],
 	"display": {
 		"icon": {
-			"item": "minecraft:enchanting_table"
+			"id": "minecraft:enchanting_table"
 		},
 		"title": {
-			"translate": "advancements.apotheosis.enchantment"
+			"translate": "advancements.apothic_enchanting.enchantment"
 		},
 		"description": {
-			"translate": "advancements.apotheosis.enchantment.desc"
+			"translate": "advancements.apothic_enchanting.enchantment.desc"
 		},
 		"frame": "task",
 		"hidden": false,
-		"background": "apotheosis:textures/advancements/bg/apoth.png"
+		"background": "apothic_enchanting:textures/advancements/bg/apoth.png"
 	},
 	"criteria": {
 		"enchanting_table": {

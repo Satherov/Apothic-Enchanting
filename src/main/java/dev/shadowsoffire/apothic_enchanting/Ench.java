@@ -7,6 +7,7 @@ import java.util.function.UnaryOperator;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
+import dev.shadowsoffire.apothic_enchanting.advancements.EnchantedTrigger;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BerserkingComponent;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BoonComponent;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.ReflectiveComponent;
@@ -82,19 +83,6 @@ public class Ench {
         R.custom("enchantment_table_item_handler", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, () -> EnchantmentTableItemHandler.TYPE);
         R.custom("rebounding", Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, () -> ReboundingEffect.CODEC);
         R.custom("exponential", Registries.ENCHANTMENT_LEVEL_BASED_VALUE_TYPE, () -> ExponentialLevelBasedValue.CODEC);
-    }
-
-    public static void bootstrap(IEventBus bus) {
-        Blocks.bootstrap();
-        Items.bootstrap();
-        EnchantEffects.bootstrap();
-        Tabs.bootstrap();
-        Tiles.bootstrap();
-        Particles.bootstrap();
-        Menus.bootstrap();
-        RecipeTypes.bootstrap();
-        Components.bootstrap();
-        bus.register(R);
     }
 
     public static final class Blocks {
@@ -445,6 +433,13 @@ public class Ench {
         private static void bootstrap() {}
     }
 
+    public static class Triggers {
+
+        public static final EnchantedTrigger ENCHANTED = R.criteriaTrigger("enchanted", new EnchantedTrigger());
+
+        private static void bootstrap() {}
+    }
+
     public static final class Tags {
         public static final TagKey<Item> BOON_DROPS = ItemTags.create(ApothicEnchanting.loc("boon_drops"));
         public static final TagKey<Item> SPEARFISHING_DROPS = ItemTags.create(ApothicEnchanting.loc("spearfishing_drops"));
@@ -459,6 +454,20 @@ public class Ench {
         public static final Supplier<BlockEntityType<BasicLibraryTile>> LIBRARY = R.blockEntity("library", BasicLibraryTile::new, () -> ImmutableSet.of(Blocks.LIBRARY.value()));
 
         private static void bootstrap() {}
+    }
+
+    public static void bootstrap(IEventBus bus) {
+        Blocks.bootstrap();
+        Items.bootstrap();
+        EnchantEffects.bootstrap();
+        Tabs.bootstrap();
+        Tiles.bootstrap();
+        Particles.bootstrap();
+        Menus.bootstrap();
+        RecipeTypes.bootstrap();
+        Components.bootstrap();
+        Triggers.bootstrap();
+        bus.register(R);
     }
 
 }

@@ -1,18 +1,14 @@
 {
-	"parent": "apotheosis:enchanting/deepshelf",
-	"conditions": [{
-		"type": "apotheosis:module",
-		"module": "enchantment"
-	}],
+	"parent": "apothic_enchanting:deepshelf",
 	"display": {
 		"icon": {
-			"item": "apotheosis:echoing_sculkshelf"
+			"id": "apothic_enchanting:echoing_sculkshelf"
 		},
 		"title": {
-			"translate": "advancements.apotheosis.sculkshelf"
+			"translate": "advancements.apothic_enchanting.sculkshelf"
 		},
 		"description": {
-			"translate": "advancements.apotheosis.sculkshelf.desc"
+			"translate": "advancements.apothic_enchanting.sculkshelf.desc"
 		},
 		"frame": "task"
 	},
@@ -21,7 +17,7 @@
 			"trigger": "minecraft:inventory_changed",
 			"conditions": {
 				"items": [{
-					"items": ["apotheosis:echoing_sculkshelf"]
+					"items": ["apothic_enchanting:echoing_sculkshelf"]
 				}]
 			}
 		},
@@ -29,7 +25,7 @@
 			"trigger": "minecraft:inventory_changed",
 			"conditions": {
 				"items": [{
-					"items": ["apotheosis:soul_touched_sculkshelf"]
+					"items": ["apothic_enchanting:soul_touched_sculkshelf"]
 				}]
 			}
 		}
