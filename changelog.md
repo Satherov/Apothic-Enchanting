@@ -1,3 +1,10 @@
+## 1.3.0
+* Fixed the Tome of Extraction using gameplay enchantments instead of NBT enchantments.
+* Fixed Library tooltips going offscreen when advanced tooltips (f3+h) are enabled.
+* Fixed higher level books not showing any uses in JEI.
+* Fixed all the advancements.
+* A stock datapack artifact will now be published to CurseForge with each release of the mod.
+
 ## 1.2.5
 * Crescendo of Bolts now works with Ars' Spell Crossbow.
 * MelnCat: The Seashelf of Aquatic Filtration can now accept most books for decorative purposes.
