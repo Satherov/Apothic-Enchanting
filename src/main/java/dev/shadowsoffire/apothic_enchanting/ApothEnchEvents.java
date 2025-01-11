@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
@@ -22,6 +23,7 @@ import dev.shadowsoffire.apothic_enchanting.payloads.EnchantmentInfoPayload;
 import dev.shadowsoffire.placebo.config.Configuration;
 import dev.shadowsoffire.placebo.util.RunnableReloader;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EnchantmentTags;
@@ -38,6 +40,7 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
@@ -49,6 +52,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
@@ -318,7 +322,7 @@ public class ApothEnchEvents {
 
     @SubscribeEvent
     public void logout(ClientPlayerNetworkEvent.LoggingOut e) {
-       // ApothicEnchanting.ENCHANTMENT_INFO.clear();
+        // ApothicEnchanting.ENCHANTMENT_INFO.clear();
     }
 
     @SubscribeEvent
@@ -326,5 +330,18 @@ public class ApothEnchEvents {
         e.getRelevantPlayers().forEach(p -> {
             PacketDistributor.sendToPlayer(p, new EnchantmentInfoPayload(ApothicEnchanting.ENCHANTMENT_INFO));
         });
+    }
+
+    @SubscribeEvent
+    public void clamp(GetEnchantmentLevelEvent e) {
+        ItemEnchantments.Mutable enchantments = e.getEnchantments();
+        Iterator<Holder<Enchantment>> it = enchantments.keySet().iterator();
+        while (it.hasNext()) {
+            Holder<Enchantment> ench = it.next();
+            EnchantmentInfo info = ApothicEnchanting.getEnchInfo(ench);
+            if (info.levelCap() != -1 && enchantments.getLevel(ench) > info.levelCap()) {
+                enchantments.set(ench, info.levelCap());
+            }
+        }
     }
 }

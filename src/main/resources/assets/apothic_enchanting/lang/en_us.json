@@ -104,6 +104,7 @@
     "info.apothic_enchanting.treasure.not": "Not Treasure",
     "info.apothic_enchanting.filtering_shelf": "Insert enchanted books to prevent them from appearing in the table.",
     "info.apothic_enchanting.filtering_shelf2": "Gains eterna and arcana based on the number of inserted books.",
+    "info.apothic_enchanting.limit": "[Limit: %s]",
 
     "enchantment.apothic_enchanting.infusion": "Infusion",
     "enchantment.apothic_enchanting.infusion.desc": "Placeholder for Enchantment Crafting",

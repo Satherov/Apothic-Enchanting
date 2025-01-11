@@ -14,12 +14,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 /**
  * EnchantmentInfo retains all configurable data about an {@link Enchantment}.
  */
-public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLootLevel, PowerFunction maxPower, PowerFunction minPower) {
+public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLootLevel, int levelCap, PowerFunction maxPower, PowerFunction minPower) {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentInfo> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), EnchantmentInfo::ench,
         ByteBufCodecs.VAR_INT, EnchantmentInfo::maxLevel,
         ByteBufCodecs.VAR_INT, EnchantmentInfo::maxLootLevel,
+        ByteBufCodecs.VAR_INT, EnchantmentInfo::levelCap,
         PowerFunction.STREAM_CODEC, EnchantmentInfo::maxPower,
         PowerFunction.STREAM_CODEC, EnchantmentInfo::minPower,
         EnchantmentInfo::new);
@@ -61,7 +62,7 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
     }
 
     public static EnchantmentInfo fallback(Holder<Enchantment> ench) {
-        return new EnchantmentInfo(ench, ench.value().getMaxLevel(), ench.value().getMaxLevel(), DefaultMaxPowerFunction.INSTANCE, new DefaultMinPowerFunction(ench));
+        return new EnchantmentInfo(ench, ench.value().getMaxLevel(), ench.value().getMaxLevel(), -1, DefaultMaxPowerFunction.INSTANCE, new DefaultMinPowerFunction(ench));
     }
 
     public static EnchantmentInfo load(Holder<Enchantment> ench, Configuration cfg) {
@@ -69,11 +70,19 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
         int vanillaMax = ench.value().definition().maxLevel();
         int max = cfg.getInt("Max Level", category, ApothicEnchanting.getDefaultMaxLevel(ench), 1, 127, "The max level of this enchantment - originally " + vanillaMax + ".");
         int maxLoot = cfg.getInt("Max Loot Level", category, vanillaMax, 1, 127, "The max level of this enchantment available from loot sources.");
+        int levelCap = cfg.getInt("Forced Level Cap", category, -1, -1, 127,
+            "The enforced effective max level of this enchantment. Regardless of NBT and other buffs, this enchantment will never exceed this level. -1 to disable.");
+
+        if (levelCap < max) {
+            ApothicEnchanting.LOGGER.error("Invalid level cap of {} for enchantment \"{}\" will be ignored. The level cap must be greater than or equal to the configured max level ({}).", levelCap, category, max);
+            levelCap = -1;
+        }
+
         String maxF = cfg.getString("Max Power Function", category, "", "A function to determine the max enchanting power.  The variable \"x\" is level.  See: https://github.com/uklimaschewski/EvalEx#usage-examples");
         String minF = cfg.getString("Min Power Function", category, "", "A function to determine the min enchanting power.");
         PowerFunction maxPower = maxF.isEmpty() ? DefaultMaxPowerFunction.INSTANCE : new ExpressionPowerFunction(maxF);
         PowerFunction minPower = minF.isEmpty() ? new DefaultMinPowerFunction(ench) : new ExpressionPowerFunction(minF);
-        return new EnchantmentInfo(ench, max, maxLoot, maxPower, minPower);
+        return new EnchantmentInfo(ench, max, maxLoot, levelCap, maxPower, minPower);
     }
 
 }

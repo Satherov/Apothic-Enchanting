@@ -1,6 +1,7 @@
 package dev.shadowsoffire.apothic_enchanting;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EnchantmentTags;
@@ -144,25 +147,46 @@ public class ApothEnchClient {
                     Object2IntMap.Entry<Holder<Enchantment>> entry = enchMap.entrySet().iterator().next(); // pull the first enchantment via iterator
                     Holder<Enchantment> ench = entry.getKey();
                     int level = entry.getIntValue();
+
                     if (!ModList.get().isLoaded("enchdesc")) {
                         String key = ench.getKey().location().toLanguageKey("enchantment") + ".desc";
                         if (I18n.exists(key)) {
                             tooltip.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
                         }
                     }
+
                     if (ApothEnchConfig.showEnchantedBookMetadata) {
                         EnchantmentInfo info = ApothicEnchanting.getEnchInfo(ench);
                         Object[] args = new Object[4];
                         args[0] = boolComp("info.apothic_enchanting.discoverable", ench.is(EnchantmentTags.IN_ENCHANTING_TABLE));
                         args[1] = boolComp("info.apothic_enchanting.lootable", ench.is(EnchantmentTags.ON_RANDOM_LOOT));
                         args[2] = boolComp("info.apothic_enchanting.tradeable", ench.is(EnchantmentTags.TRADEABLE));
-                        args[3] = boolComp("info.apothic_enchanting.treasure", ench.is(EnchantmentTags.TRADEABLE));
+                        args[3] = boolComp("info.apothic_enchanting.treasure", ench.is(EnchantmentTags.TREASURE));
                         if (e.getFlags().isAdvanced()) {
                             tooltip.add(Component.translatable("%s \u2507 %s \u2507 %s \u2507 %s", args[0], args[1], args[2], args[3]).withStyle(ChatFormatting.DARK_GRAY));
                             tooltip.add(Component.translatable("info.apothic_enchanting.book_range", info.getMinPower(level), info.getMaxPower(level)).withStyle(ChatFormatting.GREEN));
                         }
                         else {
                             tooltip.add(Component.translatable("%s \u2507 %s", args[2], args[3]).withStyle(ChatFormatting.DARK_GRAY));
+                        }
+                    }
+
+                    EnchantmentInfo info = ApothicEnchanting.getEnchInfo(ench);
+                    if (info.levelCap() != -1) {
+                        Iterator<Component> it = tooltip.iterator();
+                        Component toReplace = null;
+                        while (it.hasNext()) {
+                            Component comp = it.next();
+                            if (comp.contains(ench.value().description())) {
+                                toReplace = comp;
+                                break;
+                            }
+                        }
+                        if (toReplace != null) {
+                            MutableComponent newComp = toReplace.copy();
+                            Component limit = Component.translatable("info.apothic_enchanting.limit", Component.translatable("enchantment.level." + info.levelCap())).withStyle(ChatFormatting.DARK_GRAY);
+                            newComp.append(CommonComponents.SPACE).append(limit);
+                            tooltip.set(tooltip.indexOf(toReplace), newComp);
                         }
                     }
                 }
