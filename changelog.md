@@ -1,3 +1,8 @@
+## 1.3.1
+* Added the "Forced Level Cap" config option to each element in the enchantments.cfg file.
+  * This option allows modpack developers to cap the gameplay level, regardless of how high players may be able to get the enchantment otherwise.
+* RuyaSavascisi: Added Turkish translation.
+
 ## 1.3.0
 * Fixed the Tome of Extraction using gameplay enchantments instead of NBT enchantments.
 * Fixed Library tooltips going offscreen when advanced tooltips (f3+h) are enabled.
