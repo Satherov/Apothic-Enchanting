@@ -73,7 +73,7 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
         int levelCap = cfg.getInt("Forced Level Cap", category, -1, -1, 127,
             "The enforced effective max level of this enchantment. Regardless of NBT and other buffs, this enchantment will never exceed this level. -1 to disable.");
 
-        if (levelCap < max) {
+        if (levelCap != -1 && levelCap < max) {
             ApothicEnchanting.LOGGER.error("Invalid level cap of {} for enchantment \"{}\" will be ignored. The level cap must be greater than or equal to the configured max level ({}).", levelCap, category, max);
             levelCap = -1;
         }
