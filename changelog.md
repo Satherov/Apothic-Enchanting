@@ -1,3 +1,6 @@
+## 1.3.2
+* Fixed log spam when loading an unset level cap (value of -1).
+
 ## 1.3.1
 * Added the "Forced Level Cap" config option to each element in the enchantments.cfg file.
   * This option allows modpack developers to cap the gameplay level, regardless of how high players may be able to get the enchantment otherwise.
