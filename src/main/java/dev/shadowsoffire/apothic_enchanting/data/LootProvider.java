@@ -118,8 +118,8 @@ public class LootProvider extends LootTableProvider {
                         .add(item(Items.RAW_COPPER, 3, 5).setWeight(100))
                         .add(item(Items.RAW_IRON, 3, 5).setWeight(100).setQuality(1))
                         .add(item(Items.COAL, 2, 10).setWeight(100))
-                        .add(item(Items.RAW_GOLD, 1, 5).setWeight(20).setQuality(2))
-                        .add(item(Items.LAPIS_LAZULI, 1, 7).setWeight(20).setQuality(2))
+                        .add(item(Items.RAW_GOLD, 2, 5).setWeight(20).setQuality(2))
+                        .add(item(Items.LAPIS_LAZULI, 2, 7).setWeight(20).setQuality(2))
                         .add(item(Items.DIAMOND, 1, 1).setWeight(5).setQuality(3))
 
                     )
@@ -137,11 +137,11 @@ public class LootProvider extends LootTableProvider {
                 LootTable.lootTable()
                     .withPool(LootPool.lootPool()
                         .setBonusRolls(UniformGenerator.between(0, 0.02F))
-                        .add(item(Items.RAW_IRON, 3, 5).setWeight(150))
+                        .add(item(Items.RAW_IRON, 3, 5).setWeight(80))
                         .add(item(Items.RAW_GOLD, 1, 5).setWeight(100).setQuality(1))
                         .add(item(Items.REDSTONE, 2, 10).setWeight(60).setQuality(1))
-                        .add(item(Items.LAPIS_LAZULI, 1, 7).setWeight(30).setQuality(2))
-                        .add(item(Items.DIAMOND, 1, 1).setWeight(25).setQuality(3))
+                        .add(item(Items.LAPIS_LAZULI, 5, 15).setWeight(60).setQuality(2))
+                        .add(item(Items.DIAMOND, 1, 3).setWeight(60).setQuality(3))
 
                     )
                     // At the bottom of the earth, add extra redstone and diamonds.
