@@ -19,9 +19,9 @@
               "per_level_above_first": 2.0
             }
           },
-          "max_duration": 400.0,
+          "max_duration": 20.0,
           "min_amplifier": 0.0,
-          "min_duration": 200.0,
+          "min_duration": 10.0,
           "to_apply": "minecraft:slowness"
         },
         "enchanted": "victim",
