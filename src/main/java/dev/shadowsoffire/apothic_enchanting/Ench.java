@@ -441,8 +441,14 @@ public class Ench {
     }
 
     public static final class Tags {
+        // TODO: Replace these with loot tables.
         public static final TagKey<Item> BOON_DROPS = ItemTags.create(ApothicEnchanting.loc("boon_drops"));
         public static final TagKey<Item> SPEARFISHING_DROPS = ItemTags.create(ApothicEnchanting.loc("spearfishing_drops"));
+
+        /**
+         * Any items in this tag will not be converted to experience when the Drops to XP effect (KoTA) is active.
+         */
+        public static final TagKey<Item> CANNOT_BE_CONVERTED_TO_XP = ItemTags.create(ApothicEnchanting.loc("cannot_be_converted_to_xp"));
     }
 
     public static class Tiles {
