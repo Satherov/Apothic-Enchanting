@@ -93,7 +93,6 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void renderTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
         super.renderTooltip(gfx, mouseX, mouseY);
         LibrarySlot libSlot = this.getHoveredSlot(mouseX, mouseY);
@@ -133,7 +132,6 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void renderBg(GuiGraphics gfx, float partial, int mouseX, int mouseY) {
         int left = this.leftPos;
         int top = this.topPos;
@@ -154,10 +152,10 @@ public class EnchLibraryScreen extends AbstractContainerScreen<EnchLibraryContai
         gfx.blit(TEXTURES, x + 3, y + 14, 197, 42, progress, 3, 307, 256);
         PoseStack stack = gfx.pose();
         stack.pushPose();
-        Component txt = data.ench().value().description();
+        Component txt = data.ench().value().description().plainCopy();
         float scale = 1;
-        if (this.font.width(txt) > ENTRY_WIDTH - 6) {
-            scale = 60F / this.font.width(txt);
+        if (this.font.width(txt) > 85) {
+            scale = 85F / this.font.width(txt);
         }
         stack.scale(scale, scale, 1);
         gfx.drawString(this.font, txt, (int) ((x + 3) / scale), (int) ((y + 3) / scale), 0x8EE14D, false);
