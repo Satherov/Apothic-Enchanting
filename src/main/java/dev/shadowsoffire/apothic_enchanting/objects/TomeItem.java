@@ -42,7 +42,7 @@ public class TomeItem extends BookItem implements EnchantableItem {
     public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
         if (this.rep.isEmpty()) {
             // The Tome of the Others accepts enchantments that are not available on any of the other tomes.
-            return ApothicEnchanting.TYPED_BOOKS.stream().filter(b -> b != this).allMatch(b -> !enchantment.value().isPrimaryItem(new ItemStack(b)));
+            return ApothicEnchanting.TYPED_BOOKS.stream().filter(b -> b != this).allMatch(b -> !b.isPrimaryItemFor(b.getDefaultInstance(), enchantment));
         }
         return enchantment.value().isPrimaryItem(this.rep);
     }
