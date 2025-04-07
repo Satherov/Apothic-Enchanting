@@ -1,7 +1,5 @@
 package dev.shadowsoffire.apothic_enchanting.objects;
 
-import java.util.function.Supplier;
-
 import dev.shadowsoffire.apothic_enchanting.ApothEnchConfig;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
@@ -15,21 +13,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class TypedShelfBlock extends Block implements EnchantmentStatBlock {
 
-    protected final Supplier<? extends ParticleOptions> particle;
+    protected final ParticleOptions particle;
 
-    public TypedShelfBlock(Properties props, Supplier<? extends ParticleOptions> particle) {
+    public TypedShelfBlock(Properties props, ParticleOptions particle) {
         super(props);
         this.particle = particle;
     }
 
     @Override
     public ParticleOptions getTableParticle(BlockState state) {
-        return this.particle.get();
+        return this.particle;
     }
 
     public static class SculkShelfBlock extends TypedShelfBlock {
 
-        public SculkShelfBlock(Properties props, Supplier<? extends ParticleOptions> particle) {
+        public SculkShelfBlock(Properties props, ParticleOptions particle) {
             super(props, particle);
         }
 

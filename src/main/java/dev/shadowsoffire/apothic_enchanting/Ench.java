@@ -17,6 +17,7 @@ import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryBlock;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryContainer;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile.BasicLibraryTile;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile.EnderLibraryTile;
+import dev.shadowsoffire.apothic_enchanting.objects.EnderLeadItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ExtractionTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock.FilteringShelfTile;
@@ -39,22 +40,29 @@ import dev.shadowsoffire.placebo.color.GradientColor;
 import dev.shadowsoffire.placebo.registry.DeferredHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -80,15 +88,15 @@ public class Ench {
     static {
         R.recipeSerializer("infusion", () -> InfusionRecipe.SERIALIZER);
         R.recipeSerializer("keep_nbt_infusion", () -> KeepNBTInfusionRecipe.SERIALIZER);
-        R.custom("warden_tendril", NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, () -> WardenLootModifier.CODEC);
-        R.custom("enchantment_table_item_handler", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, () -> EnchantmentTableItemHandler.TYPE);
-        R.custom("rebounding", Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, () -> ReboundingEffect.CODEC);
-        R.custom("exponential", Registries.ENCHANTMENT_LEVEL_BASED_VALUE_TYPE, () -> ExponentialLevelBasedValue.CODEC);
+        R.custom("warden_tendril", NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, WardenLootModifier.CODEC);
+        R.custom("enchantment_table_item_handler", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, EnchantmentTableItemHandler.TYPE);
+        R.custom("rebounding", Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ReboundingEffect.CODEC);
+        R.custom("exponential", Registries.ENCHANTMENT_LEVEL_BASED_VALUE_TYPE, ExponentialLevelBasedValue.CODEC);
     }
 
     public static final class Blocks {
 
-        public static final Holder<Block> BEESHELF = woodShelf("beeshelf", MapColor.COLOR_YELLOW, 0.75F, () -> ParticleTypes.ENCHANT);
+        public static final Holder<Block> BEESHELF = woodShelf("beeshelf", MapColor.COLOR_YELLOW, 0.75F, ParticleTypes.ENCHANT);
 
         public static final Holder<Block> BLAZING_HELLSHELF = stoneShelf("blazing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
@@ -126,7 +134,7 @@ public class Ench {
 
         public static final Holder<Block> LIBRARY = R.block("library", () -> new EnchLibraryBlock(BasicLibraryTile::new, 16));
 
-        public static final Holder<Block> MELONSHELF = woodShelf("melonshelf", MapColor.COLOR_GREEN, 0.75F, () -> ParticleTypes.ENCHANT);
+        public static final Holder<Block> MELONSHELF = woodShelf("melonshelf", MapColor.COLOR_GREEN, 0.75F, ParticleTypes.ENCHANT);
 
         public static final Holder<Block> PEARL_ENDSHELF = stoneShelf("pearl_endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
 
@@ -140,7 +148,7 @@ public class Ench {
 
         public static final Holder<Block> SOUL_TOUCHED_SCULKSHELF = sculkShelf("soul_touched_sculkshelf");
 
-        public static final Holder<Block> STONESHELF = stoneShelf("stoneshelf", MapColor.STONE, 1.75F, () -> ParticleTypes.ENCHANT);
+        public static final Holder<Block> STONESHELF = stoneShelf("stoneshelf", MapColor.STONE, 1.75F, ParticleTypes.ENCHANT);
 
         public static final Holder<Block> TREASURE_SHELF = R.block("treasure_shelf", TreasureShelfBlock::new,
             p -> p.mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).strength(1.75F).requiresCorrectToolForDrops());
@@ -151,11 +159,11 @@ public class Ench {
             return R.block(id, () -> new SculkShelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).randomTicks().requiresCorrectToolForDrops().strength(3.5F), Particles.ENCHANT_SCULK));
         }
 
-        private static Holder<Block> stoneShelf(String id, MapColor color, float strength, Supplier<? extends ParticleOptions> particle) {
+        private static Holder<Block> stoneShelf(String id, MapColor color, float strength, ParticleOptions particle) {
             return R.block(id, () -> new TypedShelfBlock(Block.Properties.of().requiresCorrectToolForDrops().sound(SoundType.STONE).mapColor(color).strength(strength), particle));
         }
 
-        private static Holder<Block> woodShelf(String id, MapColor color, float strength, Supplier<? extends ParticleOptions> particle) {
+        private static Holder<Block> woodShelf(String id, MapColor color, float strength, ParticleOptions particle) {
             return R.block(id, () -> new TypedShelfBlock(Block.Properties.of().sound(SoundType.WOOD).mapColor(color).strength(strength), particle));
         }
 
@@ -183,6 +191,20 @@ public class Ench {
          * Used when Crescendo of Bolts is active to track the number of remaining bonus shots.
          */
         public static final DataComponentType<Integer> CRESCENDO_SHOTS = R.component("crescendo_shots", b -> b.persistent(Codec.intRange(1, 1024)).networkSynchronized(ByteBufCodecs.VAR_INT));
+
+        /**
+         * Used by the {@link EnderLeadItem} to record the leashed entity type.
+         * <p>
+         * The rest of the entity data is stored via {@link DataComponents#ENTITY_DATA}.
+         */
+        public static final DataComponentType<EntityType<?>> LEASHED_ENTITY_TYPE = R.component("leashed_entity_type",
+            b -> b.persistent(BuiltInRegistries.ENTITY_TYPE.byNameCodec()).networkSynchronized(ByteBufCodecs.registry(Registries.ENTITY_TYPE)));
+
+        /**
+         * Used by the {@link EnderLeadItem} to record the name of the leashed entity.
+         */
+        public static final DataComponentType<Component> LEASHED_ENTITY_NAME = R.component("leashed_entity_name",
+            b -> b.persistent(ComponentSerialization.FLAT_CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC).cacheEncoding());
 
         private static void bootstrap() {}
     }
@@ -399,6 +421,16 @@ public class Ench {
 
         public static final Holder<Item> WEAPON_TOME = R.item("weapon_tome", () -> new TomeItem(net.minecraft.world.item.Items.DIAMOND_SWORD));
 
+        // Animals only, low durability
+        public static final Holder<Item> FLIMSY_ENDER_LEAD = R.item("flimsy_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.FLIMSY), p -> p.stacksTo(1).durability(8));
+
+        // All entities, reasonable durability
+        public static final Holder<Item> ENDER_LEAD = R.item("ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.NORMAL), p -> p.stacksTo(1).durability(64));
+
+        // All entities, high durability. Can convert mob spawners to the leashed entity.
+        public static final Holder<Item> OCCULT_ENDER_LEAD = R.item("occult_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.REINFORCED),
+            p -> p.stacksTo(1).durability(1024).component(DataComponents.UNBREAKABLE, new Unbreakable(true)));
+
         private static void bootstrap() {}
 
     }
@@ -413,10 +445,10 @@ public class Ench {
     }
 
     public static class Particles {
-        public static final Supplier<SimpleParticleType> ENCHANT_END = R.simpleParticle("enchant_end", false);
-        public static final Supplier<SimpleParticleType> ENCHANT_FIRE = R.simpleParticle("enchant_fire", false);
-        public static final Supplier<SimpleParticleType> ENCHANT_SCULK = R.simpleParticle("enchant_sculk", false);
-        public static final Supplier<SimpleParticleType> ENCHANT_WATER = R.simpleParticle("enchant_water", false);
+        public static final SimpleParticleType ENCHANT_END = R.simpleParticle("enchant_end", false);
+        public static final SimpleParticleType ENCHANT_FIRE = R.simpleParticle("enchant_fire", false);
+        public static final SimpleParticleType ENCHANT_SCULK = R.simpleParticle("enchant_sculk", false);
+        public static final SimpleParticleType ENCHANT_WATER = R.simpleParticle("enchant_water", false);
 
         private static void bootstrap() {}
     }
@@ -449,6 +481,8 @@ public class Ench {
          * Any items in this tag will not be converted to experience when the Drops to XP effect (KoTA) is active.
          */
         public static final TagKey<Item> CANNOT_BE_CONVERTED_TO_XP = ItemTags.create(ApothicEnchanting.loc("cannot_be_converted_to_xp"));
+
+        public static final TagKey<EntityType<?>> BLACKLISTED_FROM_SPAWNERS = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("apothic_spawners", "blacklisted_from_spawners"));
     }
 
     public static class Tiles {

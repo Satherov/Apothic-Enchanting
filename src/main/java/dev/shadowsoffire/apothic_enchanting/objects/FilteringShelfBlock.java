@@ -92,7 +92,7 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
 
     @Override
     public ParticleOptions getTableParticle(BlockState state) {
-        return Ench.Particles.ENCHANT_WATER.get();
+        return Ench.Particles.ENCHANT_WATER;
     }
 
     @Override
