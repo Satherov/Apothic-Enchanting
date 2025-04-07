@@ -42,7 +42,7 @@
                 {
                     "type": "placebo:stack_entry",
                     "max": 5,
-                    "min": 1,
+                    "min": 2,
                     "quality": 2,
                     "stack": {
                         "count": 1,
@@ -53,7 +53,7 @@
                 {
                     "type": "placebo:stack_entry",
                     "max": 7,
-                    "min": 1,
+                    "min": 2,
                     "quality": 2,
                     "stack": {
                         "count": 1,
