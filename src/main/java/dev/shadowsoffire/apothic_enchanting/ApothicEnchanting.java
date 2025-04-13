@@ -59,6 +59,7 @@ import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 @Mod(ApothicEnchanting.MODID)
 public class ApothicEnchanting {
@@ -141,6 +142,7 @@ public class ApothicEnchanting {
         e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.LIBRARY.get(), EnchLibraryTile::getItemHandler);
         e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.ENDER_LIBRARY.get(), EnchLibraryTile::getItemHandler);
         e.registerBlockEntity(ItemHandler.BLOCK, BlockEntityType.ENCHANTING_TABLE, ApothEnchantingTableBlock::getItemHandler);
+        e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.FILTERING_SHELF.get(), (container, side) -> new InvWrapper(container));
     }
 
     @SubscribeEvent
