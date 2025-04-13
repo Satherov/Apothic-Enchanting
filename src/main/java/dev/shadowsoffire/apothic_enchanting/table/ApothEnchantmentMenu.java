@@ -118,6 +118,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
             float eterna = this.stats.eterna();
             float quanta = this.stats.quanta();
             float arcana = this.stats.arcana();
+            boolean stable = this.stats.stable();
             List<EnchantmentInstance> list = this.getEnchantmentList(toEnchant, slot, this.costs[slot]);
             if (!list.isEmpty()) {
                 EnchantmentUtils.chargeExperience(player, MiscUtil.getExpCostForSlot(level, slot));
@@ -140,8 +141,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
 
                 player.awardStat(Stats.ENCHANT_ITEM);
                 if (player instanceof ServerPlayer sp) {
-                    // ((EnchantedTrigger) CriteriaTriggers.ENCHANTED_ITEM).trigger((ServerPlayer) player, enchanted, level, eterna, quanta, arcana, rectification);
-                    Ench.Triggers.ENCHANTED.trigger(sp, this.enchantSlots.getItem(0), level, eterna, quanta, arcana, this.stats.stable());
+                    Ench.Triggers.ENCHANTED.trigger(sp, this.enchantSlots.getItem(0), level, eterna, quanta, arcana, stable);
                     CriteriaTriggers.ENCHANTED_ITEM.trigger(sp, this.enchantSlots.getItem(0), level);
                 }
 

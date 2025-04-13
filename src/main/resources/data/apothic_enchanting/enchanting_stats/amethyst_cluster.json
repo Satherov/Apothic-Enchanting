@@ -1,11 +1,10 @@
 {
 	"block": "minecraft:amethyst_cluster",
 	"stats": {
-		"maxEterna": 0,
-		"eterna": 0,
-		"quanta": 0,
+		"maxEterna": 40,
+		"eterna": 1,
+		"quanta": -1,
 		"arcana": 0,
-		"rectification": 1.5,
 		"clues": 0
 	}
 }

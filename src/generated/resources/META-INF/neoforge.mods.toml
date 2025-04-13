@@ -29,7 +29,7 @@ config="apothic_enchanting.mixins.json"
 [[dependencies.apothic_enchanting]]
     modId="neoforge"
     type="required"
-    versionRange="[21.1.133,)"
+    versionRange="[21.1.144,)"
     ordering="NONE"
     side="BOTH"
 

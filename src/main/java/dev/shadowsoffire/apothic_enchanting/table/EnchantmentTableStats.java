@@ -96,7 +96,7 @@ public record EnchantmentTableStats(float eterna, float quanta, float arcana, in
      * If you are collecting all stats, you should use {@link #gatherStats(Level, BlockPos)} instead.
      *
      * @param eternaMap A map of max eterna contributions to eterna contributions for that max.
-     * @param stats     The stat array, with order {eterna, quanta, arcana, rectification, clues}.
+     * @param stats     The stat array, with order {eterna, quanta, arcana, stability, clues}.
      * @param level     The world.
      * @param pos       The position of the stat-providing block.
      */

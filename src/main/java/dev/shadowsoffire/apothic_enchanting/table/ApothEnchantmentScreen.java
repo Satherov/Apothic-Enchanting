@@ -268,18 +268,16 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
             List<Component> list = Lists.newArrayList();
             list.add(quanta().append(TooltipUtil.lang("gui", "enchant.quanta.desc")));
             list.add(TooltipUtil.lang("gui", "enchant.quanta.desc2").withStyle(ChatFormatting.GRAY));
-            list.add(rectification().append(TooltipUtil.lang("gui", "enchant.quanta.desc3").withStyle(ChatFormatting.GRAY)));
+            list.add(stability().append(TooltipUtil.lang("gui", "enchant.quanta.desc3").withStyle(ChatFormatting.GRAY)));
             if (this.menu.stats.quanta() > 0) {
                 list.add(CommonComponents.EMPTY);
                 list.add(TooltipUtil.lang("gui", "enchant.quanta.desc4", f(this.menu.stats.quanta())).withStyle(ChatFormatting.GRAY));
-                // list.add(TooltipUtil.lang("info", "gui_rectification", f(this.menu.stats.rectification())).withStyle(ChatFormatting.YELLOW));
             }
             gfx.renderComponentTooltip(this.font, list, mouseX, mouseY);
             float quanta = this.menu.stats.quanta();
             if (quanta > 0) {
                 list.clear();
                 list.add(TooltipUtil.lang("info", "quanta_buff").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.RED));
-                // list.add(TooltipUtil.lang("info", "quanta_reduc", f(-quanta + quanta * rectification / 100F)).withStyle(ChatFormatting.DARK_RED));
                 list.add(TooltipUtil.lang("info", "quanta_growth", f(quanta)).withStyle(ChatFormatting.BLUE));
                 this.drawOnLeft(gfx, list, this.getGuiTop() + 29);
             }
@@ -379,8 +377,8 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
         return TooltipUtil.lang("gui", "enchant.arcana").withStyle(ChatFormatting.DARK_PURPLE);
     }
 
-    private static MutableComponent rectification() {
-        return TooltipUtil.lang("gui", "enchant.rectification").withStyle(ChatFormatting.YELLOW);
+    private static MutableComponent stability() {
+        return TooltipUtil.lang("gui", "enchant.stability").withStyle(ChatFormatting.GOLD);
     }
 
     private static String f(float f) {
