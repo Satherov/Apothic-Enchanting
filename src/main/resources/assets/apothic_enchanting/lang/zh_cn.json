@@ -1,84 +1,6 @@
 {
-    "advancements.apothic_enchanting.enchantment": "附魔的秘密",
-    "advancements.apothic_enchanting.enchantment.desc": "获得一个附魔台，开始揭开神秘的面纱。",
+    "creative_tab.apothic_enchanting.all": "神化附魔",
 
-    "advancements.apothic_enchanting.30ench": "基础理论",
-    "advancements.apothic_enchanting.30ench.desc": "对一个物品进行30级附魔。",
-
-    "advancements.apothic_enchanting.60ench": "驾驭地狱和海洋",
-    "advancements.apothic_enchanting.60ench.desc": "对一个物品进行60级附魔。",
-
-    "advancements.apothic_enchanting.80ench": "来自深处的魔咒",
-    "advancements.apothic_enchanting.80ench.desc": "对一个物品进行80级附魔。",
-
-    "advancements.apothic_enchanting.100ench": "巨龙附魔",
-    "advancements.apothic_enchanting.100ench.desc": "对一个物品进行100级附魔。",
-
-    "advancements.apothic_enchanting.bookshelf": "本地图书管理员",
-    "advancements.apothic_enchanting.bookshelf.desc": "制作一个书架。",
-
-    "advancements.apothic_enchanting.hellshelf": "混沌地狱",
-    "advancements.apothic_enchanting.hellshelf.desc": "获得下界书架。",
-
-    "advancements.apothic_enchanting.upgrade_hellshelf": "驾驭地狱",
-    "advancements.apothic_enchanting.upgrade_hellshelf.desc": "升级灌注下界书架。",
-
-    "advancements.apothic_enchanting.deepshelf": "深入黑暗",
-    "advancements.apothic_enchanting.deepshelf.desc": "激活休眠深暗书架。",
-
-    "advancements.apothic_enchanting.sculkshelf": "拥抱幽匿",
-    "advancements.apothic_enchanting.sculkshelf.desc": "使用监守者卷须制作幽匿书架。",
-
-    "advancements.apothic_enchanting.endshelf": "屠龙附魔师",
-    "advancements.apothic_enchanting.endshelf.desc": "获得灌注龙息，并制作末地书架。",
-
-    "advancements.apothic_enchanting.upgrade_endshelf": "终极书架",
-    "advancements.apothic_enchanting.upgrade_endshelf.desc": "将末地书架升级为巨龙末地书架。",
-
-    "advancements.apothic_enchanting.seashelf": "纯净海洋",
-    "advancements.apothic_enchanting.seashelf.desc": "获得海洋书架。",
-
-    "advancements.apothic_enchanting.infuse_seashelf": "海洋灌注",
-    "advancements.apothic_enchanting.infuse_seashelf.desc": "通过灌注附魔获得灌注海洋书架。",
-
-    "advancements.apothic_enchanting.upgrade_seashelf": "幽寒归处",
-    "advancements.apothic_enchanting.upgrade_seashelf.desc": "升级灌注海洋书架。",
-
-    "advancements.apothic_enchanting.infuse_hellshelf": "地狱灌注",
-    "advancements.apothic_enchanting.infuse_hellshelf.desc": "通过灌注附魔获得灌注下界书架。",
-
-    "advancements.apothic_enchanting.anvilench": "铁砧附魔师",
-    "advancements.apothic_enchanting.anvilench.desc": "对铁砧进行附魔。",
-    "advancements.apothic_enchanting.shieldench": "盾牌附魔师",
-    "advancements.apothic_enchanting.shieldench.desc": "对盾牌进行附魔。",
-    "advancements.apothic_enchanting.altar": "海洋转化",
-    "advancements.apothic_enchanting.altar.desc": "建造并放置一座海之祭坛，其可以把不需要的四个附魔物品转化为一本新的附魔书。",
-    "advancements.apothic_enchanting.splitting": "魔咒分解者",
-    "advancements.apothic_enchanting.splitting.desc": "成功地使用附有拆分魔咒的铁砧拆分一本有多种魔咒的附魔书。",
-    "advancements.apothic_enchanting.sharp10": "削铁如泥",
-    "advancements.apothic_enchanting.sharp10.desc": "附魔出一把锋利X或更高等级的武器。",
-    "advancements.apothic_enchanting.level20": "超限之力",
-    "advancements.apothic_enchanting.level20.desc": "获得一个魔咒等级XX或更高等级的物品。",
-    "advancements.apothic_enchanting.enchanting_stats": "位阶、量子化、阿卡那",
-    "advancements.apothic_enchanting.enchanting_stats.desc": "在每种属性至少都达到10的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.quanta0": "走开，不确定性",
-    "advancements.apothic_enchanting.quanta0.desc": "在量子化达到0%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.quanta50": "混沌导论",
-    "advancements.apothic_enchanting.quanta50.desc": "在量子化达到50%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.quanta100": "冥冥之中",
-    "advancements.apothic_enchanting.quanta100.desc": "在量子化达到100%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.arcana50": "魔法能量",
-    "advancements.apothic_enchanting.arcana50.desc": "在阿卡那达到50%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.arcana100": "阿卡那之力",
-    "advancements.apothic_enchanting.arcana100.desc": "在阿卡那达到100%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.max_stats": "登峰造极",
-    "advancements.apothic_enchanting.max_stats.desc": "在每种属性都达到最大值的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.max_stable": "恒稳力量",
-    "advancements.apothic_enchanting.max_stable.desc": "在位阶和阿卡那都达到最大值，但量子化为0%的情况下附魔一个物品。",
-    "advancements.apothic_enchanting.max_rectified": "精益求精",
-    "advancements.apothic_enchanting.max_rectified.desc": "在每种属性和校准都达到最大值的情况下附魔一个物品。",
-
-    "Exclusive With: %s" : "与%s冲突",
     "block.apothic_enchanting.hellshelf": "下界书架",
     "block.apothic_enchanting.infused_hellshelf": "灌注下界书架",
     "block.apothic_enchanting.blazing_hellshelf": "炽热下界书架",
@@ -93,6 +15,7 @@
     "block.apothic_enchanting.deepshelf": "深暗书架",
     "block.apothic_enchanting.echoing_deepshelf": "回响深暗书架",
     "block.apothic_enchanting.soul_touched_deepshelf": "灵魂触摸深暗书架",
+
     "block.apothic_enchanting.echoing_sculkshelf": "回响幽匿书架",
     "block.apothic_enchanting.soul_touched_sculkshelf": "灵魂触摸幽匿书架",
 
@@ -107,19 +30,19 @@
 
     "block.apothic_enchanting.sightshelf": "视界下界书架",
     "block.apothic_enchanting.sightshelf_t2": "精湛视界下界书架",
-    "block.apothic_enchanting.rectifier": "海洋束缚校准书架",
-    "block.apothic_enchanting.rectifier_t2": "下界束缚校准书架",
-    "block.apothic_enchanting.rectifier_t3": "末地聚合校准书架",
+
     "block.apothic_enchanting.filtering_shelf": "水之过滤海洋书架",
     "block.apothic_enchanting.treasure_shelf": "奥术宝藏深暗书架",
+    "block.apothic_enchanting.geode_shelf": "方解石封存稳定书架",
+
+    "block.apothic_enchanting.library": "魔咒图书馆",
+    "block.apothic_enchanting.ender_library": "亚历山大图书馆",
 
     "info.apothic_enchanting.ench_power": "提供%s附魔威力。",
-    "info.apothic_enchanting.cobweb": "能够用来移除魔咒。",
     "info.apothic_enchanting.masterwork": "极品",
     "info.apothic_enchanting.twisted": "扭曲",
     "info.apothic_enchanting.corrupted": "腐化",
     "info.apothic_enchanting.enchanting": "附魔台的最大附魔等级可以超过30级。部分魔咒只会出现在30级之后。",
-    "info.apothic_enchanting.altar": "海之祭坛用于转换你不想要的附魔物品。\\n\\n首先开始，在每根柱子上放置一个任意的附魔物品，放置完成后，祭坛将开始吸取附近玩家的经验。\\n如果经验不足，将会产生白色粒子。\\n\\n经验吸取完成后，海之祭坛上的物品都会被消耗，并生成一本附魔书，其有概率附有宝藏型魔咒。",
     "gui.apothic_enchanting.enchant.eterna": "位阶",
     "gui.apothic_enchanting.enchant.quanta": "量子化",
     "gui.apothic_enchanting.enchant.arcana": "阿卡那",
@@ -131,6 +54,7 @@
     "info.apothic_enchanting.rectification": " - 校准：%s%%",
     "info.apothic_enchanting.clues": " - 魔咒线索：%s",
     "info.apothic_enchanting.allows_treasure": " - 允许宝藏型魔咒",
+    "info.apothic_enchanting.provides_stability": " - 提供量子稳定性",
     "info.apothic_enchanting.filter": "魔咒过滤器：",
     "info.apothic_enchanting.eterna.p": " - 位阶：+%s（最高 %s）",
     "info.apothic_enchanting.quanta.p": " - 量子化：+%s%%",
@@ -161,10 +85,6 @@
     "info.apothic_enchanting.quanta_growth": "增高程度：%s%%",
     "info.apothic_enchanting.ench_bonus": "附魔能力加成：%s%%",
     "info.apothic_enchanting.rel_weights": "相对权重",
-    "rarity.enchantment.common": "普通",
-    "rarity.enchantment.uncommon": "罕见",
-    "rarity.enchantment.rare": "珍贵",
-    "rarity.enchantment.very_rare": "非常珍贵",
     "info.apothic_enchanting.weight": "%s：%s",
     "info.apothic_enchanting.eterna_at_least": "最少需要：%s/%s",
     "info.apothic_enchanting.percent_at_least": "最少需要：%s%%",
@@ -172,7 +92,7 @@
     "info.apothic_enchanting.percent_at_most": "但不超过：%s%%",
     "info.apothic_enchanting.eterna_exact": "精确需求：%s/%s",
     "info.apothic_enchanting.percent_exact": "精确需求：%s%%",
-    "apothic_enchanting.recipes.enchanting": "灌注附魔",
+    "recipes.apothic_enchanting.infusion": "灌注附魔",
     "info.apothic_enchanting.book_range": "威力范围：[%s, %s]",
     "info.apothic_enchanting.discoverable": "可发现",
     "info.apothic_enchanting.discoverable.not": "不可发现",
@@ -184,6 +104,7 @@
     "info.apothic_enchanting.treasure.not": "非宝藏型",
     "info.apothic_enchanting.filtering_shelf": "放入附魔书，防止它们出现在附魔台中。",
     "info.apothic_enchanting.filtering_shelf2": "根据放入附魔书的数量获得位阶和阿卡那。",
+    "info.apothic_enchanting.limit": "[上限：%s]",
 
     "enchantment.apothic_enchanting.infusion": "灌注",
     "enchantment.apothic_enchanting.infusion.desc": "用于附魔合成的占位符。",
@@ -254,20 +175,14 @@
     "enchantment.apothic_enchanting.shield_bash": "盾击",
     "enchantment.apothic_enchanting.shield_bash.desc": "增加盾牌造成的伤害。",
 
-    "enchantment.apothic_enchanting.reflective": "防御反击",
-    "enchantment.apothic_enchanting.reflective.desc": "格挡攻击有概率对攻击者造成伤害。",
+    "enchantment.apothic_enchanting.reflective_defenses": "盾反",
+    "enchantment.apothic_enchanting.reflective_defenses.desc": "格挡攻击时，有概率对敌人造成伤害。",
 
     "enchantment.apothic_enchanting.berserkers_fury": "狂战士之怒",
     "enchantment.apothic_enchanting.berserkers_fury.desc": "受到伤害后狂怒。[⌛ 0:45]",
 
-    "enchantment.apothic_enchanting.knowledge": "岁月学识",
-    "enchantment.apothic_enchanting.knowledge.desc": "将敌人的掉落物直接转化为经验。",
-
-    "enchantment.apothic_enchanting.splitting": "拆分",
-    "enchantment.apothic_enchanting.splitting.desc": "铁砧砸中多魔咒附魔书后，能将其拆分成多本单一魔咒的附魔书。",
-
-    "enchantment.apothic_enchanting.obliteration": "分裂",
-    "enchantment.apothic_enchanting.obliteration.desc": "铁砧砸中单魔咒附魔书后，能将其拆分成两本次级魔咒的附魔书。",
+    "enchantment.apothic_enchanting.knowledge_of_the_ages": "阅历",
+    "enchantment.apothic_enchanting.knowledge_of_the_ages.desc": "敌人的掉落物直接转化为经验。",
 
     "enchantment.apothic_enchanting.natures_blessing": "自然祝福",
     "enchantment.apothic_enchanting.natures_blessing.desc": "可以使用锄对作物施加骨粉。",
@@ -278,14 +193,14 @@
     "enchantment.apothic_enchanting.magic_protection": "厌魔者",
     "enchantment.apothic_enchanting.magic_protection.desc": "减少使用者造成与受到的魔法伤害。",
 
-    "enchantment.apothic_enchanting.crescendo": "叠装弩箭",
-    "enchantment.apothic_enchanting.crescendo.desc": "弩装填后可额外进行多次射击。",
+    "enchantment.apothic_enchanting.crescendo_of_bolts": "叠装弩箭",
+    "enchantment.apothic_enchanting.crescendo_of_bolts.desc": "装填一枚弩箭后，能够发射多次。",
 
     "enchantment.apothic_enchanting.chromatic": "色差",
     "enchantment.apothic_enchanting.chromatic.desc": "剪羊毛能获得随机颜色的羊毛。",
 
-    "enchantment.apothic_enchanting.exploitation": "剥削",
-    "enchantment.apothic_enchanting.exploitation.desc": "剪羊毛能获得双倍的羊毛，但会使绵羊受到伤害。",
+    "enchantment.apothic_enchanting.worker_exploitation": "剥削",
+    "enchantment.apothic_enchanting.worker_exploitation.desc": "剪羊毛能获得双倍的羊毛，但会使羊受到伤害。",
 
     "enchantment.apothic_enchanting.growth_serum": "生长血清",
     "enchantment.apothic_enchanting.growth_serum.desc": "剪羊毛后，绵羊有50%概率立即长出羊毛。",
@@ -301,6 +216,146 @@
 
     "enchantment.apothic_enchanting.endless_quiver": "无尽箭袋",
     "enchantment.apothic_enchanting.endless_quiver.desc": "射击时不会消耗所有种类的箭。",
+
+    "menu.apothic_enchanting.library": "魔咒图书馆",
+    "tooltip.enchlib.capacity": "等级容量：%s",
+    "tooltip.enchlib.max_lvl": "可用最大魔咒等级：%s",
+    "tooltip.enchlib.points": "储存点数：%s/%s",
+    "tooltip.enchlib.unavailable": "无法达到下一魔咒等级",
+    "tooltip.enchlib.extracting": "提取魔咒等级%s",
+    "tooltip.enchlib.cost": "消耗点数：%s",
+    "tooltip.enchlib.item": "当前储存了%d种魔咒。",
+    "tooltip.enchlib.nfilt": "名称筛选",
+    "tooltip.enchlib.ifilt": "物品筛选",
+    "info.apothic_enchanting.library": "魔咒图书馆是一个储存魔咒的方块。放入一本附有魔咒的附魔书可以将其中的魔咒储存进去。左击一种储存的魔咒将提取一级魔咒，按住Shift左击将提取可用的最高等级。",
+    "info.apothic_enchanting.runes": "符文之语",
+    "info.apothic_enchanting.no_clue": "符文什么也没揭示",
+    "info.apothic_enchanting.runes_all": "符文揭示了一切",
+    "info.apothic_enchanting.arcana_bonus": "秘术赋能",
+    "info.apothic_enchanting.weights_changed": "稀有度权重改变",
+    "info.apothic_enchanting.min_enchants": "最少%s个魔咒",
+    "info.apothic_enchanting.ench_at": "在%s级附魔",
+    "info.apothic_enchanting.xp_cost": "初始经验花费：%s（%s级）",
+    "info.apothic_enchanting.power_range": "威力范围：%s~%s",
+    "info.apothic_enchanting.item_ench": "物品附魔能力：%s",
+    "info.apothic_enchanting.num_clues": "魔咒线索：%s",
+    "info.apothic_enchanting.infusion_failed": "不符合灌注条件",
+    "info.apothic_enchanting.anvil_at": "在%s级时锻造",
+    "info.apothic_enchanting.anvil_xp_cost": "原始经验消耗：%s",
+
+    "menu.apothic_enchanting.enchanting_info": "可用魔咒",
+    "info.apothic_enchanting.slider_power": "威力：%s",
+    "info.apothic_enchanting.enchinfo_level": "等级：%s",
+    "info.apothic_enchanting.enchinfo_weight": "权重：%s (%s)",
+    "info.apothic_enchanting.enchinfo_chance": "概率：%s",
+    "info.apothic_enchanting.enchinfo_slot": "附魔选项 %s",
+    "info.apothic_enchanting.enchinfo_minpow": "最小威力：%s",
+    "info.apothic_enchanting.enchinfo_maxpow": "最大威力：%s",
+
+    "rarity.apothic_enchanting.common": "普通",
+    "rarity.apothic_enchanting.uncommon": "罕见",
+    "rarity.apothic_enchanting.rare": "珍贵",
+    "rarity.apothic_enchanting.very_rare": "非常珍贵",
+
+    "info.apothic_enchanting.weights": "权重",
+    "info.apothic_enchanting.all_available": "浏览所有可出现的魔咒",
+
+    "advancements.apothic_enchanting.enchantment": "附魔的秘密",
+    "advancements.apothic_enchanting.enchantment.desc": "获得一个附魔台，开始揭开神秘的面纱。",
+
+    "advancements.apothic_enchanting.30ench": "基础理论",
+    "advancements.apothic_enchanting.30ench.desc": "对一个物品进行30级附魔。",
+
+    "advancements.apothic_enchanting.60ench": "驾驭地狱和海洋",
+    "advancements.apothic_enchanting.60ench.desc": "对一个物品进行60级附魔。",
+
+    "advancements.apothic_enchanting.80ench": "来自深处的魔咒",
+    "advancements.apothic_enchanting.80ench.desc": "对一个物品进行80级附魔。",
+
+    "advancements.apothic_enchanting.100ench": "巨龙附魔",
+    "advancements.apothic_enchanting.100ench.desc": "对一个物品进行100级附魔。",
+
+    "advancements.apothic_enchanting.bookshelf": "本地图书管理员",
+    "advancements.apothic_enchanting.bookshelf.desc": "制作一个书架。",
+
+    "advancements.apothic_enchanting.hellshelf": "混沌地狱",
+    "advancements.apothic_enchanting.hellshelf.desc": "获得下界书架。",
+
+    "advancements.apothic_enchanting.upgrade_hellshelf": "驾驭地狱",
+    "advancements.apothic_enchanting.upgrade_hellshelf.desc": "升级灌注下界书架。",
+
+    "advancements.apothic_enchanting.deepshelf": "深入黑暗",
+    "advancements.apothic_enchanting.deepshelf.desc": "激活休眠深暗书架。",
+
+    "advancements.apothic_enchanting.sculkshelf": "拥抱幽匿",
+    "advancements.apothic_enchanting.sculkshelf.desc": "使用监守者卷须制作幽匿书架。",
+
+    "advancements.apothic_enchanting.endshelf": "屠龙附魔师",
+    "advancements.apothic_enchanting.endshelf.desc": "获得灌注龙息，并制作末地书架。",
+
+    "advancements.apothic_enchanting.upgrade_endshelf": "终极书架",
+    "advancements.apothic_enchanting.upgrade_endshelf.desc": "将末地书架升级为巨龙末地书架。",
+
+    "advancements.apothic_enchanting.seashelf": "纯净海洋",
+    "advancements.apothic_enchanting.seashelf.desc": "获得海洋书架。",
+
+    "advancements.apothic_enchanting.infuse_seashelf": "海洋灌注",
+    "advancements.apothic_enchanting.infuse_seashelf.desc": "通过灌注附魔获得灌注海洋书架。",
+
+    "advancements.apothic_enchanting.upgrade_seashelf": "幽寒归处",
+    "advancements.apothic_enchanting.upgrade_seashelf.desc": "升级灌注海洋书架。",
+
+    "advancements.apothic_enchanting.infuse_hellshelf": "地狱灌注",
+    "advancements.apothic_enchanting.infuse_hellshelf.desc": "通过灌注附魔获得灌注下界书架。",
+
+    "advancements.apothic_enchanting.shieldench": "盾牌附魔师",
+    "advancements.apothic_enchanting.shieldench.desc": "对盾牌进行附魔。",
+
+    "advancements.apothic_enchanting.altar": "海洋转化",
+    "advancements.apothic_enchanting.altar.desc": "建造并放置一座海之祭坛，其可以把不需要的四个附魔物品转化为一本新的附魔书。",
+
+    "advancements.apothic_enchanting.splitting": "魔咒分解者",
+    "advancements.apothic_enchanting.splitting.desc": "成功地使用附有拆分魔咒的铁砧拆分一本有多种魔咒的附魔书。",
+
+    "advancements.apothic_enchanting.sharp10": "削铁如泥",
+    "advancements.apothic_enchanting.sharp10.desc": "附魔出一把锋利 X或更高等级的武器。",
+
+    "advancements.apothic_enchanting.level20": "超限之力",
+    "advancements.apothic_enchanting.level20.desc": "获得一个魔咒等级 XX或更高等级的物品。",
+
+    "advancements.apothic_enchanting.enchanting_stats": "位阶、量子化、阿卡那",
+    "advancements.apothic_enchanting.enchanting_stats.desc": "在每种属性至少都达到10的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.quanta0": "走开，不确定性",
+    "advancements.apothic_enchanting.quanta0.desc": "在量子化达到0%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.quanta50": "混沌导论",
+    "advancements.apothic_enchanting.quanta50.desc": "在量子化达到50%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.quanta100": "冥冥之中",
+    "advancements.apothic_enchanting.quanta100.desc": "在量子化达到100%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.arcana50": "魔法能量",
+    "advancements.apothic_enchanting.arcana50.desc": "在阿卡那达到50%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.arcana100": "阿卡那之力",
+    "advancements.apothic_enchanting.arcana100.desc": "在阿卡那达到100%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.max_stats": "登峰造极",
+    "advancements.apothic_enchanting.max_stats.desc": "在每种属性都达到最大值的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.max_stable": "恒稳力量",
+    "advancements.apothic_enchanting.max_stable.desc": "在位阶和阿卡那都达到最大值，但量子化为0%的情况下附魔一个物品。",
+
+    "advancements.apothic_enchanting.max_rectified": "精益求精",
+    "advancements.apothic_enchanting.max_rectified.desc": "在每种属性和校准都达到最大值的情况下附魔一个物品。",
+
+    "config.jade.plugin_apothic_enchanting.ench": "神化附魔",
+
+    "rarity.enchantment.common": "普通",
+    "rarity.enchantment.uncommon": "罕见",
+    "rarity.enchantment.rare": "珍贵",
+    "rarity.enchantment.very_rare": "非常珍贵",
 
     "enchantment.level.0": "0",
     "enchantment.level.11": "XI",
@@ -419,44 +474,5 @@
     "enchantment.level.124": "CXXIV",
     "enchantment.level.125": "CXXV",
     "enchantment.level.126": "CXXVI",
-    "enchantment.level.127": "CXXVII",
-
-    "block.apothic_enchanting.library": "魔咒图书馆",
-    "block.apothic_enchanting.ender_library": "亚历山大图书馆",
-    "apothic_enchanting.ench.library": "魔咒图书馆",
-    "tooltip.enchlib.capacity": "等级容量：%s",
-    "tooltip.enchlib.max_lvl": "可用最大魔咒等级：%s",
-    "tooltip.enchlib.points": "储存点数：%s/%s",
-    "tooltip.enchlib.unavailable": "无法达到下一魔咒等级",
-    "tooltip.enchlib.extracting": "提取魔咒等级%s",
-    "tooltip.enchlib.cost": "消耗点数：%s",
-    "tooltip.enchlib.item": "当前储存了%d种魔咒。",
-    "tooltip.enchlib.nfilt": "名称筛选",
-    "tooltip.enchlib.ifilt": "物品筛选",
-    "info.apothic_enchanting.library": "魔咒图书馆是一个储存魔咒的方块。放入一本附有魔咒的附魔书可以将其中的魔咒储存进去。左击一种储存的魔咒将提取一级魔咒，按住Shift左击将提取可用的最高等级。",
-    "info.apothic_enchanting.runes": "符文之语",
-    "info.apothic_enchanting.no_clue": "符文什么也没揭示",
-    "info.apothic_enchanting.runes_all": "符文揭示了一切",
-    "info.apothic_enchanting.arcana_bonus": "秘术赋能",
-    "info.apothic_enchanting.weights_changed": "稀有度权重改变",
-    "info.apothic_enchanting.min_enchants": "最少%s个魔咒",
-    "info.apothic_enchanting.ench_at": "在%s级附魔",
-    "info.apothic_enchanting.xp_cost": "初始经验花费：%s（%s级）",
-    "info.apothic_enchanting.power_range": "威力范围：%s~%s",
-    "info.apothic_enchanting.item_ench": "物品附魔能力：%s",
-    "info.apothic_enchanting.num_clues": "魔咒线索：%s",
-    "info.apothic_enchanting.infusion_failed": "不符合灌注条件",
-    "info.apothic_enchanting.anvil_at": "在%s级时锻造",
-    "info.apothic_enchanting.anvil_xp_cost": "原始经验消耗：%s",
-
-    "info.apothic_enchanting.slider_power": "威力：%s",
-    "info.apothic_enchanting.enchinfo_level": "等级：%s",
-    "info.apothic_enchanting.enchinfo_rarity": "稀有度：%s",
-    "info.apothic_enchanting.enchinfo_chance": "概率：%s",
-    "info.apothic_enchanting.enchinfo_slot": "附魔选项 %s",
-    "info.apothic_enchanting.enchinfo_minpow": "最小威力：%s",
-    "info.apothic_enchanting.enchinfo_maxpow": "最大威力：%s",
-    "info.apothic_enchanting.enchinfo_title": "可用魔咒",
-    "info.apothic_enchanting.weights": "权重",
-    "info.apothic_enchanting.all_available": "浏览所有可出现的魔咒"
+    "enchantment.level.127": "CXXVII"
 }
