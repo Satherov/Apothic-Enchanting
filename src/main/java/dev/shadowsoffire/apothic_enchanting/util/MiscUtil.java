@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -113,9 +114,14 @@ public class MiscUtil {
         if (source != null) {
             player = FakePlayerFactory.get(level, new GameProfile(source, UsernameCache.getLastKnownUsername(source)));
             Player realPlayer = level.getPlayerByUUID(source);
+            player.removeAllEffects();
             if (realPlayer != null) {
                 // Move the fakeplayer to the position of the real player, if one is known
                 player.setPos(realPlayer.position());
+                // Clone all mob effects from the real player. Prevents issues with Occultism's Trees
+                for (MobEffectInstance effect : realPlayer.getActiveEffects()) {
+                    player.forceAddEffect(new MobEffectInstance(effect), null);
+                }
             }
         }
         else {
