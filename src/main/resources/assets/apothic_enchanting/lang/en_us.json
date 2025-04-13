@@ -151,6 +151,12 @@
     "item.apothic_enchanting.extraction_tome": "Tome of Extraction",
     "item.apothic_enchanting.warden_tendril": "Warden Tendril",
     "item.apothic_enchanting.infused_breath": "Infused Dragon's Breath",
+    "item.apothic_enchanting.flimsy_ender_lead": "Flimsy Ender Lead",
+    "item.apothic_enchanting.flimsy_ender_lead.desc": "Can capture and move animals",
+    "item.apothic_enchanting.ender_lead": "Ender Lead",
+    "item.apothic_enchanting.ender_lead.desc": "Can capture and move most entities",
+    "item.apothic_enchanting.occult_ender_lead": "Occult Ender Lead",
+    "item.apothic_enchanting.occult_ender_lead.desc": "Can capture and move most entities, and bind them to Mob Spawners",
 
     "info.apothic_enchanting.tome_error": "Bugged Item - Right click in the air to turn into an enchanted book.",
     "info.apothic_enchanting.other_tome": "Accepts miscellaneous enchantments.",
@@ -168,6 +174,9 @@
     "info.apothic_enchanting.improved_scrap_tome2": "Destroys the item in the process.",
     "info.apothic_enchanting.extraction_tome": "Extracts all of the enchantments from an item.",
     "info.apothic_enchanting.extraction_tome2": "Does not destroy the item.",
+    "info.apothic_enchanting.leashed_entity_title": "%s - %s",
+    "info.apothic_enchanting.leash_no_entity": "Held Entity: Nothing",
+    "info.apothic_enchanting.leashed_entity": "Held Entity: %s",
 
     "enchantment.apothic_enchanting.tempting": "Temptation",
     "enchantment.apothic_enchanting.tempting.desc": "Entices nearby farm animals.",

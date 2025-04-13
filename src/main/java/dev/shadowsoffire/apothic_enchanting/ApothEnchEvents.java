@@ -16,6 +16,7 @@ import dev.shadowsoffire.apothic_enchanting.enchantments.ChainsawTask;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BerserkingComponent;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BoonComponent;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.ReflectiveComponent;
+import dev.shadowsoffire.apothic_enchanting.objects.EnderLeadItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ExtractionTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ImprovedScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ScrappingTomeItem;
@@ -345,6 +346,20 @@ public class ApothEnchEvents {
             EnchantmentInfo info = ApothicEnchanting.getEnchInfo(ench);
             if (info.levelCap() != -1 && enchantments.getLevel(ench) > info.levelCap()) {
                 enchantments.set(ench, info.levelCap());
+            }
+        }
+    }
+
+    /**
+     * Handles capturing mobs that would otherwise not call {@link Item#interactLivingEntity} (like villagers).
+     */
+    @SubscribeEvent
+    public void captureMobs(PlayerInteractEvent.EntityInteract e) {
+        if (e.getItemStack().getItem() instanceof EnderLeadItem lead && e.getTarget() instanceof LivingEntity living) {
+            InteractionResult result = lead.interactLivingEntity(e.getItemStack(), e.getEntity(), living, e.getHand());
+            if (result.consumesAction()) {
+                e.setCanceled(true);
+                e.setCancellationResult(result);
             }
         }
     }

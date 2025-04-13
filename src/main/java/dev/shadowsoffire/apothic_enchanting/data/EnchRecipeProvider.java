@@ -138,5 +138,7 @@ public class EnchRecipeProvider extends LegacyRecipeProvider {
             null, Items.BAMBOO, null,
             Items.BAMBOO, ItemTags.FISHES, Items.BAMBOO,
             null, Items.BAMBOO, null);
+
+        addShapeless(Ench.Items.FLIMSY_ENDER_LEAD, Tags.Items.ENDER_PEARLS, Items.LEAD, Items.GOLD_INGOT);
     }
 }

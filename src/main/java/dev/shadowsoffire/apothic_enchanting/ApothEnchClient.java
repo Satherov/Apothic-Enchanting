@@ -77,10 +77,10 @@ public class ApothEnchClient {
 
     @SubscribeEvent
     public static void particleFactories(RegisterParticleProvidersEvent e) {
-        e.registerSpriteSet(Particles.ENCHANT_FIRE.get(), FlyTowardsPositionParticle.EnchantProvider::new);
-        e.registerSpriteSet(Particles.ENCHANT_WATER.get(), FlyTowardsPositionParticle.EnchantProvider::new);
-        e.registerSpriteSet(Particles.ENCHANT_SCULK.get(), FlyTowardsPositionParticle.EnchantProvider::new);
-        e.registerSpriteSet(Particles.ENCHANT_END.get(), FlyTowardsPositionParticle.EnchantProvider::new);
+        e.registerSpriteSet(Particles.ENCHANT_FIRE, FlyTowardsPositionParticle.EnchantProvider::new);
+        e.registerSpriteSet(Particles.ENCHANT_WATER, FlyTowardsPositionParticle.EnchantProvider::new);
+        e.registerSpriteSet(Particles.ENCHANT_SCULK, FlyTowardsPositionParticle.EnchantProvider::new);
+        e.registerSpriteSet(Particles.ENCHANT_END, FlyTowardsPositionParticle.EnchantProvider::new);
     }
 
     public static void handleCluePayload(CluePayload msg) {

@@ -38,6 +38,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -91,7 +93,8 @@ public class ApothicEnchanting {
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.HELMET_TOME, Ench.Items.CHESTPLATE_TOME, Ench.Items.LEGGINGS_TOME, Ench.Items.BOOTS_TOME, Ench.Items.WEAPON_TOME, Ench.Items.BOW_TOME, Ench.Items.PICKAXE_TOME,
                 Ench.Items.FISHING_TOME, Ench.Items.OTHER_TOME, Ench.Items.SCRAP_TOME, Ench.Items.IMPROVED_SCRAP_TOME, Ench.Items.EXTRACTION_TOME);
 
-            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.PRISMATIC_WEB, Ench.Items.INERT_TRIDENT, Ench.Items.WARDEN_TENDRIL, Ench.Items.INFUSED_BREATH);
+            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.PRISMATIC_WEB, Ench.Items.INERT_TRIDENT, Ench.Items.WARDEN_TENDRIL, Ench.Items.INFUSED_BREATH,
+                Ench.Items.FLIMSY_ENDER_LEAD, Ench.Items.ENDER_LEAD, Ench.Items.OCCULT_ENDER_LEAD);
 
             fill(Ench.Tabs.ENCH.getKey(), Ench.Enchantments.BERSERKERS_FURY, Ench.Enchantments.CHAINSAW, Ench.Enchantments.CHROMATIC, Ench.Enchantments.CRESCENDO_OF_BOLTS, Ench.Enchantments.BOON_OF_THE_EARTH,
                 Ench.Enchantments.ENDLESS_QUIVER, Ench.Enchantments.WORKER_EXPLOITATION, Ench.Enchantments.GROWTH_SERUM, Ench.Enchantments.ICY_THORNS, Ench.Enchantments.KNOWLEDGE_OF_THE_AGES, Ench.Enchantments.LIFE_MENDING,
@@ -213,5 +216,20 @@ public class ApothicEnchanting {
 
     public static ResourceLocation loc(String path) {
         return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
+    /**
+     * Constructs a mutable component with a lang key of the form "type.modid.path", using {@link Apotheosis#MODID}.
+     *
+     * @param type The type of language key, "misc", "info", "title", etc...
+     * @param path The path of the language key.
+     * @param args Translation arguments passed to the created translatable component.
+     */
+    public static MutableComponent lang(String type, String path, Object... args) {
+        return Component.translatable(langKey(type, path), args);
+    }
+
+    public static String langKey(String type, String path) {
+        return type + "." + MODID + "." + path;
     }
 }
