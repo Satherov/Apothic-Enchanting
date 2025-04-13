@@ -50,8 +50,8 @@ public class EnchHooks {
      * Injected by coremods/ench/fishing_hook.js
      */
     public static int getTicksCaughtDelay(FishingHook bobber) {
-        int lowBound = Math.max(1, 100 - bobber.lureSpeed * 10);
-        int highBound = Math.max(lowBound, 600 - bobber.lureSpeed * 60);
+        int lowBound = Math.max(1, 100 - bobber.lureSpeed);
+        int highBound = Math.max(lowBound, 600 - bobber.lureSpeed);
         return Mth.nextInt(bobber.level().getRandom(), lowBound, highBound);
     }
 
