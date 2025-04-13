@@ -34,7 +34,9 @@ function initializeCoreMod() {
                         'net.minecraft.world.inventory.AnvilMenu',
                         'com.mrcrayfish.goblintraders.Hooks',
                         'net.minecraft.world.item.CreativeModeTabs',
-                        'net.minecraft.world.item.enchantment.Enchantment'
+                        'net.minecraft.world.item.enchantment.Enchantment',
+                        'com.natamus.enchantmentlevelcapindicator_common_neoforge.mixin.EnchantmentScreenMixin',
+                        'com.natamus.enchantmentlevelcapindicator_common_neoforge.mixin.ItemStackMixin'
                     ]
                 }
             },
