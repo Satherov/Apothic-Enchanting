@@ -1,3 +1,31 @@
+## 1.4.0
+### Features
+* Boon of the Earth now uses Loot Tables! This means Boon is actually a viable enchantment, instead of a spam-producing mess.
+  * Boon was previously relying on an implementation from ~1.16 where it dropped ore blocks. Since Raw Ores were introduced, this approach became stale.
+  * Now, Boon of the Earth works by specifying a set of input blocks and a corresponding loot table for what can drop from those blocks.
+  * By default, Boon has different loot tables for stones, deepslate, and nether blocks.
+* Added the Ender Lead! This is an item from Apotheosis's Garden Module in 1.20 that didn't have a home before, but will live here for now.
+  * The ender lead has three variants, the Flimsy Ender Lead, the Ender Lead, and the Occult Ender Lead.
+  * The Occult Ender Lead has the ability to change the target mob in Mob Spawners (similar to a spawn egg).
+  * It will respect the blacklist set by the entity type tag `apothic_spawners:blacklisted_from_spawners`.
+* Added the item tag `apothic_enchanting:cannot_be_converted_to_xp`.
+  * This tag allows exempting items from being converted to experience via Knowledge of the Ages.
+
+### Bugfixes
+* Fixed a hang when placing certain invalid items in the anvil.
+* Fixed Icy Thorns having a duration 20x higher than intended.
+* Fixed an issue where colors in the Enchantment Library were incorrect.
+* Fixed the Tome of the Others not working.
+* Fixed Seashelves of Aquatic Filtration not working with modded automation.
+* Fixed Chainsaw not working with Occultism trees.
+* Fixed an issue that was causing Lure to be instant at all levels.
+
+### Misc
+* Zakoz777: Added Japanese Translation.
+* ZHAY10086: Updated Chinese Translation.
+* Removed remaining mentions of rectification and updated them to stability.
+* Added Enchantment Level Cap Indicator to coremod targets so it reads the Apoth max levels.
+
 ## 1.3.2
 * Fixed log spam when loading an unset level cap (value of -1).
 
