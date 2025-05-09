@@ -186,7 +186,9 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
         @Override
         public void setItem(int pSlot, ItemStack pStack) {
             super.setItem(pSlot, pStack);
-            VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+            if (!this.level.isClientSide) {
+                VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+            }
         }
 
     }
