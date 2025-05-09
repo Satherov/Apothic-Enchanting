@@ -164,7 +164,7 @@ public class EnderLeadItem extends Item {
                 case AMBIENT, CREATURE -> ChatFormatting.DARK_GREEN;
                 case MONSTER -> ChatFormatting.RED;
                 case WATER_AMBIENT, UNDERGROUND_WATER_CREATURE, WATER_CREATURE, AXOLOTLS -> ChatFormatting.BLUE;
-                case MISC -> ChatFormatting.WHITE;
+                default -> ChatFormatting.WHITE;
             };
             return ApothicEnchanting.lang("info", "leashed_entity_title", super.getName(stack), Component.translatable("%s", name).withStyle(color));
         }
