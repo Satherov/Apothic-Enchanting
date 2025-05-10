@@ -1,3 +1,8 @@
+## 1.4.1
+* Fixed a crash when an ender lead holds an entity with a custom mob category.
+* Fixed an issue where the filtering shelf could attempt to send packets on the client.
+* mc-kaishixiaxue: Updated Chinese translation.
+
 ## 1.4.0
 ### Features
 * Boon of the Earth now uses Loot Tables! This means Boon is actually a viable enchantment, instead of a spam-producing mess.
