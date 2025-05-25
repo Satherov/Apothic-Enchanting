@@ -13,9 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
+import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -23,9 +22,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.TagKey;
@@ -61,7 +58,7 @@ public class ItemStackMixin {
             // 2. Any other NBT enchantments not in the iteration order.
             // 3. Any other Gameplay enchantments not in either of the other two passes.
 
-            Consumer<Holder<Enchantment>> applyTooltip = ench -> applyEnchTooltip(ench, enchants, realLevels, tooltip);
+            Consumer<Holder<Enchantment>> applyTooltip = ench -> TooltipUtil.applyEnchTooltip(ench, enchants, realLevels, tooltip);
 
             iterationOrder.forEach(applyTooltip);
 
@@ -83,41 +80,6 @@ public class ItemStackMixin {
 
             ci.cancel();
         }
-    }
-
-    @Unique
-    private static void applyEnchTooltip(Holder<Enchantment> ench, ItemEnchantments nbt, ItemEnchantments gameplay, Consumer<Component> tooltip) {
-        int nbtLevel = nbt.getLevel(ench);
-        int realLevel = gameplay.getLevel(ench);
-
-        if (nbtLevel == realLevel) {
-            // Default logic when levels are the same
-            if (realLevel > 0) {
-                tooltip.accept(Enchantment.getFullname(ench, realLevel));
-            }
-        }
-        else {
-            // Show the change vs nbt level
-            appendModifiedEnchTooltip(tooltip, ench, realLevel, nbtLevel);
-        }
-    }
-
-    @Unique
-    private static void appendModifiedEnchTooltip(Consumer<Component> tooltip, Holder<Enchantment> ench, int realLevel, int nbtLevel) {
-        MutableComponent mc = Enchantment.getFullname(ench, realLevel).copy();
-        mc.getSiblings().clear();
-        Component nbtLevelComp = Component.translatable("enchantment.level." + nbtLevel);
-        Component realLevelComp = Component.translatable("enchantment.level." + realLevel);
-        if (realLevel != 1 || EnchHooks.getMaxLevel(ench.value()) != 1) mc.append(CommonComponents.SPACE).append(realLevelComp);
-
-        int diff = realLevel - nbtLevel;
-        char sign = diff > 0 ? '+' : '-';
-        Component diffComp = Component.translatable("(%s " + sign + " %s)", nbtLevelComp, Component.translatable("enchantment.level." + Math.abs(diff))).withStyle(ChatFormatting.DARK_GRAY);
-        mc.append(CommonComponents.SPACE).append(diffComp);
-        if (realLevel == 0) {
-            mc.withStyle(ChatFormatting.DARK_GRAY);
-        }
-        tooltip.accept(mc);
     }
 
     @Unique
