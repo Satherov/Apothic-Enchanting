@@ -1,3 +1,9 @@
+## 1.4.2
+* ZzThanhBaozZ: Added Vietnamese translation.
+* Added a new config option to add inline enchantment description tooltips.
+  * Apoth's custom handling of item tooltips breaks the stock implementation used by Enchantment Descriptions.
+  * If you want to re-enable inline tooltips, flip the config option. You'll still need to install enchdesc for the translations.
+
 ## 1.4.1
 * Fixed a crash when an ender lead holds an entity with a custom mob category.
 * Fixed an issue where the filtering shelf could attempt to send packets on the client.
