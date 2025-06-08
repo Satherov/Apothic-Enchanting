@@ -10,6 +10,7 @@ import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import dev.shadowsoffire.placebo.util.EnchantmentUtils;
+import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
@@ -105,6 +106,11 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (id < 0 || id >= this.costs.length) {
+            Util.logAndPauseIfInIde(player.getName() + " pressed invalid button id: " + id);
+            return false;
+        }
+
         int slot = id;
         int level = this.costs[slot];
         ItemStack toEnchant = this.enchantSlots.getItem(0);
@@ -153,7 +159,6 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
 
         });
         return true;
-
     }
 
     /**
