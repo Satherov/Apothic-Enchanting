@@ -98,6 +98,9 @@ public class EnderLeadItem extends Item {
         else {
             if (this.type == Type.REINFORCED && level.getBlockEntity(pos) instanceof Spawner spawner) {
                 EntityType<?> type = getType(stack);
+                if (type.is(Ench.Tags.BLACKLISTED_FROM_SPAWNERS)) {
+                    return InteractionResult.FAIL;
+                }
                 spawner.setEntityId(type, level.getRandom());
                 level.sendBlockUpdated(pos, state, state, 3);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
