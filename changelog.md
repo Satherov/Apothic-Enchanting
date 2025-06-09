@@ -1,3 +1,9 @@
+## 1.4.3
+* Fixed the Occult Ender Lead not respecting `apothic_spawners:blacklisted_from_spawners`.
+* Fixed `ApothEnchantmentScreen#clickMenuButton` crashing when given an invalid index.
+* Made the "View all available enchantments" button play the button click sound.
+* Made Boon of the Earth respect Fortune and Silk Touch, adjusting its effects appropriately.
+
 ## 1.4.2
 * ZzThanhBaozZ: Added Vietnamese translation.
 * Added a new config option to add inline enchantment description tooltips.
