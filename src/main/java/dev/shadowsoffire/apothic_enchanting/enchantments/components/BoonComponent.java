@@ -1,6 +1,7 @@
 package dev.shadowsoffire.apothic_enchanting.enchantments.components;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,18 +13,21 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
@@ -52,8 +56,7 @@ public record BoonComponent(List<BoonData> entries) {
                             break;
                         }
 
-                        // TODO: Custom context which has the tool available so fortune can be evaluated.
-                        LootContext ctx = Enchantment.blockHitContext(e.getLevel(), level, e.getBreaker(), Vec3.atCenterOf(e.getPos()), e.getState());
+                        LootContext ctx = boonContext(e.getLevel(), stack, e.getBreaker(), Vec3.atCenterOf(e.getPos()), e.getState());
 
                         float chance = ApothEnchantmentHelper.processValue(entry.dropChance, ctx, level, 0);
                         RandomSource rand = e.getLevel().random;
@@ -86,6 +89,23 @@ public record BoonComponent(List<BoonData> entries) {
         public boolean matches(BlockState state) {
             return targets.contains(state.getBlockHolder());
         }
+    }
+
+    /**
+     * Creates the loot context used by Boon of the Earth. It uses {@link LootContextParamSets#ADVANCEMENT_LOCATION} since it has all the params we want.
+     * <p>
+     * I used to use {@link LootContextParamSets#HIT_BLOCK} but that doesn't include the tool, which is needed for fortune evaluation.
+     * 
+     * @apiNote Technically this means you can't evaluate the level of the specific enchantment with the boon component, but w/e.
+     */
+    public static LootContext boonContext(ServerLevel level, ItemStack tool, Entity entity, Vec3 origin, BlockState state) {
+        LootParams lootparams = new LootParams.Builder(level)
+            .withParameter(LootContextParams.ORIGIN, origin)
+            .withParameter(LootContextParams.TOOL, tool)
+            .withParameter(LootContextParams.THIS_ENTITY, entity)
+            .withParameter(LootContextParams.BLOCK_STATE, state)
+            .create(LootContextParamSets.ADVANCEMENT_LOCATION);
+        return new LootContext.Builder(lootparams).create(Optional.empty());
     }
 
 }
