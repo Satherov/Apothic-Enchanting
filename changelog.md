@@ -1,3 +1,6 @@
+## 1.4.4
+* Updated to Placebo 9.9.0
+
 ## 1.4.3
 * Fixed the Occult Ender Lead not respecting `apothic_spawners:blacklisted_from_spawners`.
 * Fixed `ApothEnchantmentScreen#clickMenuButton` crashing when given an invalid index.
