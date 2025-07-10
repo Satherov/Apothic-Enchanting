@@ -45,14 +45,14 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
     }
 
     @Override
-    protected void beginReload() {
-        super.beginReload();
+    protected void beginReload(ReloadType type) {
+        super.beginReload(type);
         this.statsPerBlock.clear();
     }
 
     @Override
-    protected void onReload() {
-        super.onReload();
+    protected void onReload(ReloadType type) {
+        super.onReload(type);
         for (BlockStats bStats : this.registry.values()) {
             bStats.blocks.forEach(b -> this.statsPerBlock.put(b, bStats.stats));
         }
