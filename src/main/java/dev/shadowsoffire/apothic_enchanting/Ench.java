@@ -51,6 +51,7 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
@@ -60,6 +61,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.component.Unbreakable;
@@ -92,6 +94,25 @@ public class Ench {
         R.custom("enchantment_table_item_handler", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, EnchantmentTableItemHandler.TYPE);
         R.custom("rebounding", Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ReboundingEffect.CODEC);
         R.custom("exponential", Registries.ENCHANTMENT_LEVEL_BASED_VALUE_TYPE, ExponentialLevelBasedValue.CODEC);
+    }
+
+    public static final class Sounds {
+
+        public static final Holder<SoundEvent> MUSIC_DISC_ETERNA = R.sound("music_disc.eterna");
+        public static final Holder<SoundEvent> MUSIC_DISC_QUANTA = R.sound("music_disc.quanta");
+        public static final Holder<SoundEvent> MUSIC_DISC_ARCANA = R.sound("music_disc.arcana");
+
+        private static void bootstrap() {}
+    }
+
+    public static final class Songs {
+        public static final ResourceKey<JukeboxSong> ETERNA = key("eterna");
+        public static final ResourceKey<JukeboxSong> QUANTA = key("quanta");
+        public static final ResourceKey<JukeboxSong> ARCANA = key("arcana");
+
+        private static ResourceKey<JukeboxSong> key(String name) {
+            return ResourceKey.create(Registries.JUKEBOX_SONG, ApothicEnchanting.loc(name));
+        }
     }
 
     public static final class Blocks {
@@ -431,6 +452,12 @@ public class Ench {
         public static final Holder<Item> OCCULT_ENDER_LEAD = R.item("occult_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.REINFORCED),
             p -> p.stacksTo(1).durability(1024).component(DataComponents.UNBREAKABLE, new Unbreakable(true)));
 
+        public static final Holder<Item> MUSIC_DISC_ETERNA = R.item("music_disc_eterna", Item::new, p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(Songs.ETERNA));
+
+        public static final Holder<Item> MUSIC_DISC_QUANTA = R.item("music_disc_quanta", Item::new, p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(Songs.QUANTA));
+
+        public static final Holder<Item> MUSIC_DISC_ARCANA = R.item("music_disc_arcana", Item::new, p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(Songs.ARCANA));
+
         private static void bootstrap() {}
 
     }
@@ -503,6 +530,7 @@ public class Ench {
     }
 
     public static void bootstrap(IEventBus bus) {
+        Sounds.bootstrap();
         Blocks.bootstrap();
         Items.bootstrap();
         EnchantEffects.bootstrap();

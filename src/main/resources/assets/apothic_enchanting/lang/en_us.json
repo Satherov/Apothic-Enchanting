@@ -154,6 +154,18 @@
     "item.apothic_enchanting.occult_ender_lead": "Occult Ender Lead",
     "item.apothic_enchanting.occult_ender_lead.desc": "Can capture and move most entities, and bind them to Mob Spawners",
 
+    "item.apothic_enchanting.music_disc_eterna": "Music Disc",
+    "jukebox_song.apothic_enchanting.eterna": "Firel - Eterna",
+    "subtitle.apothic_enchanting.music_disc.eterna": "Firel - Eterna",
+
+    "item.apothic_enchanting.music_disc_quanta": "Music Disc",
+    "jukebox_song.apothic_enchanting.quanta": "Firel - Quanta",
+    "subtitle.apothic_enchanting.music_disc.quanta": "Firel - Quanta",
+
+    "item.apothic_enchanting.music_disc_arcana": "Music Disc",
+    "jukebox_song.apothic_enchanting.arcana": "Firel - Arcana",
+    "subtitle.apothic_enchanting.music_disc.arcana": "Firel - Arcana",
+
     "info.apothic_enchanting.tome_error": "Bugged Item - Right click in the air to turn into an enchanted book.",
     "info.apothic_enchanting.other_tome": "Accepts miscellaneous enchantments.",
     "info.apothic_enchanting.helmet_tome": "Accepts helmet enchantments.",

@@ -18,6 +18,7 @@ import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.LootProvider;
+import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
@@ -95,7 +96,7 @@ public class ApothicEnchanting {
                 Ench.Items.FISHING_TOME, Ench.Items.OTHER_TOME, Ench.Items.SCRAP_TOME, Ench.Items.IMPROVED_SCRAP_TOME, Ench.Items.EXTRACTION_TOME);
 
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.PRISMATIC_WEB, Ench.Items.INERT_TRIDENT, Ench.Items.WARDEN_TENDRIL, Ench.Items.INFUSED_BREATH,
-                Ench.Items.FLIMSY_ENDER_LEAD, Ench.Items.ENDER_LEAD, Ench.Items.OCCULT_ENDER_LEAD);
+                Ench.Items.FLIMSY_ENDER_LEAD, Ench.Items.ENDER_LEAD, Ench.Items.OCCULT_ENDER_LEAD, Ench.Items.MUSIC_DISC_ETERNA, Ench.Items.MUSIC_DISC_QUANTA, Ench.Items.MUSIC_DISC_ARCANA);
 
             fill(Ench.Tabs.ENCH.getKey(), Ench.Enchantments.BERSERKERS_FURY, Ench.Enchantments.CHAINSAW, Ench.Enchantments.CHROMATIC, Ench.Enchantments.CRESCENDO_OF_BOLTS, Ench.Enchantments.BOON_OF_THE_EARTH,
                 Ench.Enchantments.ENDLESS_QUIVER, Ench.Enchantments.WORKER_EXPLOITATION, Ench.Enchantments.GROWTH_SERUM, Ench.Enchantments.ICY_THORNS, Ench.Enchantments.KNOWLEDGE_OF_THE_AGES, Ench.Enchantments.LIFE_MENDING,
@@ -150,6 +151,7 @@ public class ApothicEnchanting {
         DataProvider.INDENT_WIDTH.set(4);
         DataGenBuilder.create(MODID, "minecraft")
             .registry(Registries.ENCHANTMENT, ApothEnchantmentProvider::bootstrap)
+            .registry(Registries.JUKEBOX_SONG, SongProvider::bootstrap)
             .provider(LootProvider::create)
             .provider(EnchTagsProvider::new)
             .provider(EnchRecipeProvider::new)
