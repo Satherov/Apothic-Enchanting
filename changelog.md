@@ -1,3 +1,8 @@
+## 1.5.0
+* Added three new Music Discs (Eterna, Quanta, and Arcana) by Firel.
+* PrincessStellar: Updated Brazilian Translation
+* MaybeMedic: Updated Russian Translation
+
 ## 1.4.4
 * Updated to Placebo 9.9.0
 
