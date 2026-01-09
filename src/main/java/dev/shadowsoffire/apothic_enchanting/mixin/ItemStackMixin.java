@@ -46,7 +46,7 @@ public class ItemStackMixin {
         T t = ths.get(component);
         if (component == DataComponents.ENCHANTMENTS && t instanceof ItemEnchantments enchants) {
             HolderLookup.Provider regs = ctx.registries();
-            if (regs == null) {
+            if (regs == null || !enchants.showInTooltip) {
                 return;
             }
 
