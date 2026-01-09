@@ -29,7 +29,7 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
      * Returns the max level of the enchantment, as set by the config or enforced by IMC.
      */
     public int getMaxLevel() {
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench, 127), this.maxLevel);
+        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench.getKey(), 127), this.maxLevel);
     }
 
     /**
@@ -40,7 +40,7 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
      * @see #defaultMax(Enchantment)
      */
     public int getMaxLootLevel() {
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench, 127), this.maxLootLevel);
+        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench.getKey(), 127), this.maxLootLevel);
     }
 
     /**
