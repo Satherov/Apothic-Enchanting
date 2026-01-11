@@ -1,3 +1,8 @@
+## 1.5.1
+* Fixed enchantments with `"show_in_tooltip": false` still showing in tooltips.
+* Fixed enchantment hard caps being ignored.
+* mc-kaishixiaxue: Updated Chinese translation.
+
 ## 1.5.0
 * Added three new Music Discs (Eterna, Quanta, and Arcana) by Firel.
 * PrincessStellar: Updated Brazilian Translation
