@@ -51,11 +51,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -169,7 +171,12 @@ public class ApothicEnchanting {
      */
     public static EnchantmentInfo getEnchInfo(Holder<Enchantment> ench) {
         if (ENCHANTMENT_INFO.isEmpty()) {
-            throw new UnsupportedOperationException("Cannot access enchantment information before it has been loaded!");
+            if (FMLEnvironment.dist == Dist.CLIENT && ApothEnchClient.isOnVanillaServer()) {
+                // Do nothing, the vanilla server will never send this packet to us.
+            }
+            else {
+                throw new UnsupportedOperationException("Cannot access enchantment information before it has been loaded!");
+            }
         }
 
         EnchantmentInfo info = ENCHANTMENT_INFO.get(ench);

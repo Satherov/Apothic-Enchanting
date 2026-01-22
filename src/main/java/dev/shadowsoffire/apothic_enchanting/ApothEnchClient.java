@@ -57,6 +57,7 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.network.connection.ConnectionType;
 
 @EventBusSubscriber(modid = ApothicEnchanting.MODID, value = Dist.CLIENT)
 public class ApothEnchClient {
@@ -210,6 +211,17 @@ public class ApothEnchClient {
 
     private static Component boolComp(String key, boolean flag) {
         return Component.translatable(key + (flag ? "" : ".not")).withStyle(Style.EMPTY.withColor(flag ? 0x108810 : 0xAA1616));
+    }
+
+    /**
+     * Returns true if the client is connected to a server and the server is not a NeoForge server.
+     */
+    public static boolean isOnVanillaServer() {
+        ClientPacketListener listener = Minecraft.getInstance().getConnection();
+        if (listener != null) {
+            return listener.getConnectionType() == ConnectionType.OTHER;
+        }
+        return false;
     }
 
 }
