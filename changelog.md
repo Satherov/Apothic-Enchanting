@@ -1,3 +1,8 @@
+## 1.5.2
+* Fixed an issue that prevented connecting to Vanilla servers.
+* Updated the Enchantment Library's GUI texture.
+* Mgazul: Fixed an incorrect signature in `ItemMixin#apoth_ignoreDamageForEnchantable`.
+
 ## 1.5.1
 * Fixed enchantments with `"show_in_tooltip": false` still showing in tooltips.
 * Fixed enchantment hard caps being ignored.
