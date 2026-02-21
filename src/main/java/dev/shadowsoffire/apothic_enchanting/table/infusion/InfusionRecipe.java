@@ -50,8 +50,11 @@ public class InfusionRecipe implements Recipe<RecipeInput> {
     }
 
     public boolean matches(ItemStack input, float eterna, float quanta, float arcana) {
-        if (this.maxRequirements.eterna() > -1 && eterna > this.maxRequirements.eterna() || this.maxRequirements.quanta() > -1 && quanta > this.maxRequirements.quanta()
-            || this.maxRequirements.arcana() > -1 && arcana > this.maxRequirements.arcana()) return false;
+        if (this.maxRequirements.eterna() > -1 && eterna > this.maxRequirements.eterna() ||
+            this.maxRequirements.quanta() > -1 && quanta > this.maxRequirements.quanta() ||
+            this.maxRequirements.arcana() > -1 && arcana > this.maxRequirements.arcana()) {
+            return false;
+        }
         return this.input.test(input) && eterna >= this.requirements.eterna() && quanta >= this.requirements.quanta() && arcana >= this.requirements.arcana();
     }
 
