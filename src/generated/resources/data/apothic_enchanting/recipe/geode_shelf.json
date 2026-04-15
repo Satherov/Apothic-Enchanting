@@ -3,15 +3,9 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "tag": "c:bookshelves"
-        },
-        "C": {
-            "item": "minecraft:calcite"
-        },
-        "U": {
-            "item": "minecraft:budding_amethyst"
-        }
+        "B": "#c:bookshelves",
+        "C": "minecraft:calcite",
+        "U": "minecraft:budding_amethyst"
     },
     "pattern": [
         "CCC",
@@ -19,7 +13,6 @@
         "CUC"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:geode_shelf"
     }
 }

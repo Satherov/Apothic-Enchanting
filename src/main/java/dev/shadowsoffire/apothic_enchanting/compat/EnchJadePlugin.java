@@ -1,18 +1,28 @@
 package dev.shadowsoffire.apothic_enchanting.compat;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
-import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
+import org.jspecify.annotations.Nullable;
+
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock.FilteringShelfTile;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
@@ -22,16 +32,23 @@ import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.JadeIds;
+import snownee.jade.api.StreamServerDataProvider;
 import snownee.jade.api.WailaPlugin;
 import snownee.jade.api.config.IPluginConfig;
-import snownee.jade.api.ui.IDisplayHelper;
-import snownee.jade.api.ui.IElement;
-import snownee.jade.api.ui.IElementHelper;
 
 @WailaPlugin
 public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
+
+    private static final Identifier UID = ApothicEnchanting.loc("ench");
+    private static final StreamCodec<RegistryFriendlyByteBuf, List<Identifier>> BLACKLIST_STREAM_CODEC = Identifier.STREAM_CODEC.<RegistryFriendlyByteBuf>cast().apply(ByteBufCodecs.list());
+
+    @Override
+    public void register(IWailaCommonRegistration reg) {
+        reg.registerBlockDataProvider(FilterDataProvider.INSTANCE, ChiseledBookShelfBlock.class);
+    }
 
     @Override
     public void registerClient(IWailaClientRegistration reg) {
@@ -40,28 +57,91 @@ public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        // Filtering shelves have to bypass the normal appendBlockStats path: every stat getter on
+        // FilteringShelfBlock reads the block entity's item list, which isn't synced to the client
+        // (ChiseledBookShelfBlockEntity has no update packet), so client-side stat lookups always
+        // return zero and the blacklist comes up empty. We stream the blacklist from the server
+        // separately (via FilterDataProvider) and derive the stat lines from its size, since
+        // canInsert already restricts the shelf to single-enchantment books → blacklist count
+        // equals getEnchantedBooks().size().
+        if (accessor.getBlock() == Ench.Blocks.FILTERING_SHELF.value()) {
+            tooltip.remove(JadeIds.MC_ENCHANTMENT_POWER);
+            tooltip.remove(JadeIds.UNIVERSAL_ITEM_STORAGE);
+
+            List<Identifier> filtered = FilterDataProvider.INSTANCE.decodeFromData(accessor).orElse(List.of());
+            appendFilteringShelfStats(tooltip, filtered.size());
+
+            // Suppress the filter list when the player is looking directly at a populated slot.
+            // In that case, vanilla Jade's ShelfProvider renders the book + its stored enchantment,
+            // which is more relevant than the broader filter overview.
+            if (isHoveringPopulatedSlot(accessor)) {
+                return;
+            }
+
+            if (!filtered.isEmpty()) {
+                HolderLookup.RegistryLookup<Enchantment> lookup = accessor.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+                tooltip.add(TooltipUtil.lang("info", "filter").withStyle(s -> s.withColor(0x58B0CC)));
+                for (Identifier id : filtered) {
+                    Holder<Enchantment> ench = lookup.get(ResourceKey.create(Registries.ENCHANTMENT, id)).orElse(null);
+                    if (ench == null) continue;
+                    Component line = Enchantment.getFullname(ench, 1).copy().withStyle(ChatFormatting.RESET).withStyle(s -> s.withColor(0x5878AA));
+                    tooltip.add(Component.literal(" - ").append(line).withStyle(s -> s.withColor(0x5878AA)));
+                }
+            }
+            return;
+        }
+
         TooltipUtil.appendBlockStats(accessor.getLevel(), accessor.getBlockState(), accessor.getPosition(), tooltip::add);
         if (accessor.getBlock() == Blocks.ENCHANTING_TABLE) {
             TooltipUtil.appendTableStats(accessor.getLevel(), accessor.getPosition(), tooltip::add);
             tooltip.remove(JadeIds.MC_TOTAL_ENCHANTMENT_POWER);
         }
+    }
 
-        if (accessor.getBlock() == Ench.Blocks.FILTERING_SHELF.value()) {
-            this.handleFilteringShelf(tooltip, accessor);
+    /**
+     * Mirrors the format that {@link TooltipUtil#appendBlockStats} produces, but sources the numbers
+     * from the streamed blacklist size rather than from {@link FilteringShelfBlock#getEnchantPowerBonus}
+     * et al. (which return zero client-side). Keeps the values in sync with {@code FilteringShelfBlock}:
+     * eterna = count, maxEterna = 30, arcana = count, everything else defaulted.
+     */
+    private static void appendFilteringShelfStats(ITooltip tooltip, int bookCount) {
+        float eterna = bookCount * 1.0F;      // FilteringShelfBlock#getEnchantPowerBonus returns count * 0.5F, × 2 in EnchantingStatRegistry#getEterna
+        float maxEterna = 30F;
+        float arcana = bookCount;
+        if (eterna == 0 && arcana == 0) {
+            return;
+        }
+        tooltip.add(TooltipUtil.lang("info", "ench_stats").withStyle(ChatFormatting.GOLD));
+        if (eterna != 0) {
+            tooltip.add(TooltipUtil.lang("info", "eterna.p", String.format("%.2f", eterna), String.format("%.2f", maxEterna)).withStyle(ChatFormatting.GREEN));
+        }
+        if (arcana != 0) {
+            tooltip.add(TooltipUtil.lang("info", "arcana.p", String.format("%.2f", arcana)).withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
 
-    @Override
-    public IElement getIcon(BlockAccessor accessor, IPluginConfig config, IElement currentIcon) {
-        if (accessor.getBlock() == Ench.Blocks.FILTERING_SHELF.value()) {
-            return IElementHelper.get().item(accessor.getPickedResult()); // Need to override the book icon back to the shelf when Jade triggers vanilla integration.
+    /**
+     * Mirrors the check vanilla Jade's {@code ShelfProvider.shouldRequestData} uses: if the player is
+     * looking at the front face of a chiseled-bookshelf-like block AND the targeted slot's occupied
+     * flag is set in the block state, vanilla will stream the book there and render it. We want to
+     * stay out of the way in that case.
+     */
+    private static boolean isHoveringPopulatedSlot(BlockAccessor accessor) {
+        Direction facing = accessor.getBlockState().getValue(ChiseledBookShelfBlock.FACING);
+        OptionalInt slot = ((ChiseledBookShelfBlock) accessor.getBlock()).getHitSlot(accessor.getHitResult(), facing);
+        if (slot.isEmpty()) {
+            return false;
         }
-        return currentIcon;
+        int i = slot.getAsInt();
+        if (i >= ChiseledBookShelfBlock.SLOT_OCCUPIED_PROPERTIES.size()) {
+            return false;
+        }
+        return accessor.getBlockState().getValue(ChiseledBookShelfBlock.SLOT_OCCUPIED_PROPERTIES.get(i));
     }
 
     @Override
-    public ResourceLocation getUid() {
-        return ApothicEnchanting.loc("ench");
+    public Identifier getUid() {
+        return UID;
     }
 
     @Override
@@ -69,38 +149,47 @@ public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
         return 1150; // Magic number which puts us after item display.
     }
 
-    public void handleFilteringShelf(ITooltip tooltip, BlockAccessor accessor) {
-        tooltip.remove(JadeIds.MC_ENCHANTMENT_POWER);
-        tooltip.remove(JadeIds.MC_CHISELED_BOOKSHELF);
-        tooltip.remove(JadeIds.UNIVERSAL_ITEM_STORAGE);
+    /**
+     * Server-side stream provider for the filtering shelf's current enchantment blacklist. Must be a
+     * separate class from the client component provider — since MC 1.21.6 Jade refuses to register
+     * a provider that implements both {@link IComponentProvider} and {@link IServerDataProvider}.
+     * <p>
+     * Computes the blacklist on the server because {@link net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity}
+     * doesn't sync its book contents over the normal update packet, so the client cannot compute it
+     * directly from the block entity.
+     */
+    public static final class FilterDataProvider implements StreamServerDataProvider<BlockAccessor, List<Identifier>> {
 
-        if (accessor.showDetails()) {
-            return;
+        public static final FilterDataProvider INSTANCE = new FilterDataProvider();
+
+        @Override
+        public @Nullable List<Identifier> streamData(BlockAccessor accessor) {
+            if (!(accessor.getBlockEntity() instanceof FilteringShelfTile shelf)) {
+                return null;
+            }
+            List<Identifier> ids = new java.util.ArrayList<>();
+            for (ItemStack book : shelf.getEnchantedBooks()) {
+                ItemEnchantments enchants = EnchantmentHelper.getEnchantmentsForCrafting(book);
+                if (enchants.size() != 1) continue; // Only single-enchantment books contribute to the filter.
+                Optional<ResourceKey<Enchantment>> key = enchants.keySet().stream().findFirst().flatMap(Holder::unwrapKey);
+                key.ifPresent(k -> ids.add(k.identifier()));
+            }
+            return ids.isEmpty() ? null : ids;
         }
 
-        if (accessor.getBlockEntity() instanceof FilteringShelfTile tile) {
-            int slot = ((ChiseledBookShelfBlock) accessor.getBlock()).getHitSlot(accessor.getHitResult(), accessor.getBlockState()).orElse(-1);
-            if (slot == -1) return;
-            ItemStack stack = tile.getItem(slot);
-            if (stack.isEmpty()) return;
-            tooltip.add(CommonComponents.EMPTY);
-            IElementHelper helper = IElementHelper.get();
-            List<IElement> elements = new ArrayList<>();
-            elements.add(helper.smallItem(stack).clearCachedMessage());
-            elements.add(helper
-                .text(
-                    Component.literal(" ").append(Component.literal(IDisplayHelper.get().humanReadableNumber(stack.getCount(), "", false)).append("× ").append(stack.getHoverName())))
-                .message(null));
-            tooltip.add(elements);
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, List<Identifier>> streamCodec() {
+            return BLACKLIST_STREAM_CODEC;
+        }
 
-            ItemEnchantments enchants = EnchantmentHelper.getEnchantmentsForCrafting(stack);
-            if (!enchants.isEmpty()) {
-                List<Component> list = new ArrayList<>();
-                enchants.addToTooltip(TooltipContext.of(accessor.getLevel()), list::add, ApothicAttributes.getTooltipFlag());
-                for (Component c : list) {
-                    tooltip.add(Component.literal(" - ").append(c));
-                }
-            }
+        @Override
+        public boolean shouldRequestData(BlockAccessor accessor) {
+            return accessor.getBlock() == Ench.Blocks.FILTERING_SHELF.value();
+        }
+
+        @Override
+        public Identifier getUid() {
+            return UID;
         }
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.TooltipProvider;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -38,48 +39,55 @@ public class ItemStackMixin {
 
     /**
      * Rewrites the enchantment tooltip lines to include the effective level, as well as the (NBT + bonus) calculation.
+     *
+     * <p>In 26.1 {@code ItemStack#addToTooltip} is called once per {@link DataComponentType}, so this injection filters for
+     * the enchantment component types up front and cancels the vanilla path only for those. Display filtering uses
+     * {@link TooltipDisplay#shows(DataComponentType)} since the old {@code ItemEnchantments.showInTooltip} field was removed.
      */
     @SuppressWarnings("deprecation")
     @Inject(method = "addToTooltip", at = @At(value = "HEAD"), cancellable = true)
-    public <T extends TooltipProvider> void apoth_enchTooltipRewrite(DataComponentType<T> component, Item.TooltipContext ctx, Consumer<Component> tooltip, TooltipFlag tooltipFlag, CallbackInfo ci) {
+    public <T extends TooltipProvider> void apoth_enchTooltipRewrite(DataComponentType<T> component, Item.TooltipContext ctx, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag tooltipFlag, CallbackInfo ci) {
+        if (component != DataComponents.ENCHANTMENTS && component != DataComponents.STORED_ENCHANTMENTS) return;
+        if (!display.shows(component)) return;
+
         ItemStack ths = (ItemStack) (Object) this;
-        T t = ths.get(component);
-        if (component == DataComponents.ENCHANTMENTS && t instanceof ItemEnchantments enchants) {
-            HolderLookup.Provider regs = ctx.registries();
-            if (regs == null || !enchants.showInTooltip) {
-                return;
-            }
+        T value = ths.get(component);
+        if (!(value instanceof ItemEnchantments enchants)) return;
 
-            HolderSet<Enchantment> iterationOrder = getTagOrEmpty(regs, Registries.ENCHANTMENT, EnchantmentTags.TOOLTIP_ORDER);
-            ItemEnchantments realLevels = ths.getAllEnchantments(regs.lookupOrThrow(Registries.ENCHANTMENT));
-
-            // Apply tooltips in the following order:
-            // 1. By iteration order.
-            // 2. Any other NBT enchantments not in the iteration order.
-            // 3. Any other Gameplay enchantments not in either of the other two passes.
-
-            Consumer<Holder<Enchantment>> applyTooltip = ench -> TooltipUtil.applyEnchTooltip(ench, enchants, realLevels, tooltip);
-
-            iterationOrder.forEach(applyTooltip);
-
-            Set<Holder<Enchantment>> seen = new HashSet<>();
-
-            enchants.entrySet().stream()
-                .map(Entry::getKey)
-                .filter(ench -> !iterationOrder.contains(ench))
-                .forEach(ench -> {
-                    applyTooltip.accept(ench);
-                    seen.add(ench);
-                });
-
-            realLevels.entrySet().stream()
-                .map(Entry::getKey)
-                .filter(ench -> !iterationOrder.contains(ench))
-                .filter(ench -> !seen.contains(ench))
-                .forEach(applyTooltip);
-
-            ci.cancel();
+        HolderLookup.Provider regs = ctx.registries();
+        HolderSet<Enchantment> iterationOrder = getTagOrEmpty(regs, Registries.ENCHANTMENT, EnchantmentTags.TOOLTIP_ORDER);
+        // STORED_ENCHANTMENTS (books) have no "effective" level — getAllEnchantments only reads the active
+        // ENCHANTMENTS component, so comparing stored vs that emits the modified-level rewrite for every line.
+        // Use the NBT levels directly so the normal getFullname path runs (which still picks up the over-max color flash).
+        ItemEnchantments realLevels;
+        if (component == DataComponents.STORED_ENCHANTMENTS || regs == null) {
+            realLevels = enchants;
         }
+        else {
+            realLevels = ths.getAllEnchantments(regs.lookupOrThrow(Registries.ENCHANTMENT));
+        }
+
+        Consumer<Holder<Enchantment>> applyTooltip = ench -> TooltipUtil.applyEnchTooltip(ench, enchants, realLevels, tooltip);
+
+        iterationOrder.forEach(applyTooltip);
+
+        Set<Holder<Enchantment>> seen = new HashSet<>();
+
+        enchants.entrySet().stream()
+            .map(Entry::getKey)
+            .filter(ench -> !iterationOrder.contains(ench))
+            .forEach(ench -> {
+                applyTooltip.accept(ench);
+                seen.add(ench);
+            });
+
+        realLevels.entrySet().stream()
+            .map(Entry::getKey)
+            .filter(ench -> !iterationOrder.contains(ench))
+            .filter(ench -> !seen.contains(ench))
+            .forEach(applyTooltip);
+
+        ci.cancel();
     }
 
     @Unique

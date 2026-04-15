@@ -28,8 +28,8 @@ public record CluePayload(int slot, List<EnchantmentInstance> clues, boolean all
     public static final Type<CluePayload> TYPE = new Type<>(ApothicEnchanting.loc("clue"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentInstance> ENCH_INST_STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), i -> i.enchantment,
-        ByteBufCodecs.VAR_INT, i -> i.level,
+        ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), i -> i.enchantment(),
+        ByteBufCodecs.VAR_INT, i -> i.level(),
         EnchantmentInstance::new);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CluePayload> CODEC = StreamCodec.composite(
@@ -56,7 +56,7 @@ public record CluePayload(int slot, List<EnchantmentInstance> clues, boolean all
         }
 
         @Override
-        public void handle(CluePayload msg, IPayloadContext ctx) {
+        public void handleClient(CluePayload msg, IPayloadContext ctx) {
             ApothEnchClient.handleCluePayload(msg);
         }
 

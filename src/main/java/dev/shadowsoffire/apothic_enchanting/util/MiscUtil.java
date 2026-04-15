@@ -14,7 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Holder.Kind;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -83,17 +83,17 @@ public class MiscUtil {
     }
 
     /**
-     * Checks if the affix is still on cooldown, if a cooldown was set via {@link #startCooldown(ResourceLocation, int, LivingEntity)}
+     * Checks if the affix is still on cooldown, if a cooldown was set via {@link #startCooldown(Identifier, int, LivingEntity)}
      */
-    public static boolean isOnCooldown(ResourceLocation id, LivingEntity entity) {
-        long cooldownEndTime = entity.getPersistentData().getLong("apothic_enchanting.cooldown." + id.toString());
+    public static boolean isOnCooldown(Identifier id, LivingEntity entity) {
+        long cooldownEndTime = entity.getPersistentData().getLongOr("apothic_enchanting.cooldown." + id.toString(), 0L);
         return cooldownEndTime > entity.level().getGameTime();
     }
 
     /**
-     * Records the current time as a cooldown tracker. Used in conjunction with {@link #isOnCooldown(ResourceLocation, int, LivingEntity)}
+     * Records the current time as a cooldown tracker. Used in conjunction with {@link #isOnCooldown(Identifier, int, LivingEntity)}
      */
-    public static void startCooldown(ResourceLocation id, LivingEntity entity, int cooldown) {
+    public static void startCooldown(Identifier id, LivingEntity entity, int cooldown) {
         entity.getPersistentData().putLong("apothic_enchanting.cooldown." + id.toString(), entity.level().getGameTime() + cooldown);
     }
 
@@ -128,7 +128,7 @@ public class MiscUtil {
             player = FakePlayerFactory.getMinecraft(level);
         }
 
-        player.getInventory().items.set(player.getInventory().selected, mainhand);
+        player.getInventory().setItem(player.getInventory().getSelectedSlot(), mainhand);
 
         if (state.getDestroySpeed(level, pos) < 0 || !state.canHarvestBlock(level, pos, player)) {
             return false;
@@ -186,7 +186,7 @@ public class MiscUtil {
      * @return If the block was actually removed.
      */
     public static boolean removeBlock(ServerLevel level, ServerPlayer player, BlockPos pos, BlockState state, boolean canHarvest) {
-        boolean removed = state.onDestroyedByPlayer(level, pos, player, canHarvest, level.getFluidState(pos));
+        boolean removed = state.onDestroyedByPlayer(level, pos, player, player.getMainHandItem(), canHarvest, level.getFluidState(pos));
         if (removed) {
             state.getBlock().destroy(level, pos, state);
         }
@@ -194,7 +194,7 @@ public class MiscUtil {
     }
 
     public static String getEnchDescKey(Holder<Enchantment> ench) {
-        return ench.getKey().location().toLanguageKey("enchantment") + ".desc";
+        return ench.getKey().identifier().toLanguageKey("enchantment") + ".desc";
     }
 
     /**
@@ -218,7 +218,7 @@ public class MiscUtil {
     public static <T> Holder<T> findHolderFromServer(ResourceKey<? extends Registry<T>> registryKey, T obj) {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null) {
-            Registry<T> registry = server.registries().compositeAccess().registry(registryKey).orElse(null);
+            Registry<T> registry = server.registries().compositeAccess().lookup(registryKey).orElse(null);
             if (registry != null) {
                 Holder<T> holder = registry.wrapAsHolder(obj);
                 if (holder.kind() == Kind.REFERENCE) {
@@ -231,7 +231,7 @@ public class MiscUtil {
 
     @Nullable
     public static <T> Holder<T> findHolderFromClient(ResourceKey<? extends Registry<T>> registryKey, T obj) {
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             Registry<T> registry = ApothEnchClient.findClientRegistry(registryKey);
             if (registry != null) {
                 Holder<T> holder = registry.wrapAsHolder(obj);

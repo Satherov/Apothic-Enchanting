@@ -7,14 +7,14 @@ import java.util.function.BiConsumer;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
-import dev.shadowsoffire.placebo.loot.StackLootEntry;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicates;
-import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
+import net.minecraft.advancements.criterion.DataComponentMatchers;
+import net.minecraft.advancements.criterion.EnchantmentPredicate;
+import net.minecraft.core.component.predicates.EnchantmentsPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.core.component.predicates.DataComponentPredicates;
+import net.minecraft.advancements.criterion.LocationPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds.Doubles;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
@@ -29,7 +29,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -39,10 +38,11 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -106,7 +106,7 @@ public class LootProvider extends LootTableProvider {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return BuiltInRegistries.BLOCK.holders().filter(h -> h.getKey().location().getNamespace().equals(ApothicEnchanting.MODID)).map(Holder::value).toList();
+            return BuiltInRegistries.BLOCK.listElements().filter(h -> h.getKey().identifier().getNamespace().equals(ApothicEnchanting.MODID)).map(Holder::value).toList();
         }
 
         protected void dropSelf(Holder<Block> block) {
@@ -229,13 +229,16 @@ public class LootProvider extends LootTableProvider {
         }
 
         protected LootItemCondition.Builder hasSilkTouch() {
-            HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+            HolderLookup.RegistryLookup<Enchantment> enchants = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
             return MatchTool.toolMatches(
                 ItemPredicate.Builder.item()
-                    .withSubPredicate(
-                        ItemSubPredicates.ENCHANTMENTS,
-                        ItemEnchantmentsPredicate.enchantments(
-                            List.of(new EnchantmentPredicate(registrylookup.getOrThrow(Enchantments.SILK_TOUCH), MinMaxBounds.Ints.atLeast(1))))));
+                    .withComponents(
+                        DataComponentMatchers.Builder.components()
+                            .partial(
+                                DataComponentPredicates.ENCHANTMENTS,
+                                EnchantmentsPredicate.enchantments(
+                                    List.of(new EnchantmentPredicate(enchants.getOrThrow(Enchantments.SILK_TOUCH), MinMaxBounds.Ints.atLeast(1)))))
+                            .build()));
         }
 
         protected LootItemCondition.Builder doesNotHaveSilkTouch() {
@@ -255,40 +258,7 @@ public class LootProvider extends LootTableProvider {
 
     }
 
-    private static StackEntryBuilder item(Item item, int min, int max) {
-        return new StackEntryBuilder(item.getDefaultInstance()).count(min, max);
-    }
-
-    public static class StackEntryBuilder extends LootPoolSingletonContainer.Builder<StackEntryBuilder> {
-
-        protected final ItemStack stack;
-        protected int min = -1, max = -1;
-
-        public StackEntryBuilder(ItemStack stack) {
-            this.stack = stack;
-        }
-
-        public StackEntryBuilder count(int min, int max) {
-            this.min = min;
-            this.max = max;
-            return this;
-        }
-
-        @Override
-        protected StackEntryBuilder getThis() {
-            return this;
-        }
-
-        @Override
-        public LootPoolEntryContainer build() {
-            if (this.min == -1) {
-                this.min = stack.getCount();
-            }
-            if (this.max == -1) {
-                this.max = stack.getCount();
-            }
-            return new StackLootEntry(this.stack, this.min, this.max, this.weight, this.quality, this.getConditions(), this.getFunctions());
-
-        }
+    private static LootPoolSingletonContainer.Builder<?> item(Item item, int min, int max) {
+        return LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max)));
     }
 }

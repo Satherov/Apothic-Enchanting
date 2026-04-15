@@ -46,7 +46,8 @@ public record EnchantmentInfoPayload(Map<Holder<Enchantment>, EnchantmentInfo> i
         }
 
         @Override
-        public void handle(EnchantmentInfoPayload msg, IPayloadContext ctx) {
+        public void handleClient(EnchantmentInfoPayload msg, IPayloadContext ctx) {
+            // Discard this payload when sent by an integrated server, since it may lose some information from the "full" server data.
             if (ServerLifecycleHooks.getCurrentServer() != null) {
                 return;
             }

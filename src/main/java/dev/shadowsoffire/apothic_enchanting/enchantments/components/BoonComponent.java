@@ -52,14 +52,14 @@ public record BoonComponent(List<BoonData> entries) {
                     if (entry.matches(e.getState())) {
                         LootTable table = e.getLevel().getServer().reloadableRegistries().getLootTable(entry.lootTable);
                         if (table == LootTable.EMPTY) {
-                            ApothicEnchanting.LOGGER.error("[Boon] Loot table '{}' not found!", entry.lootTable.location());
+                            ApothicEnchanting.LOGGER.error("[Boon] Loot table '{}' not found!", entry.lootTable.identifier());
                             break;
                         }
 
                         LootContext ctx = boonContext(e.getLevel(), stack, e.getBreaker(), Vec3.atCenterOf(e.getPos()), e.getState());
 
                         float chance = ApothEnchantmentHelper.processValue(entry.dropChance, ctx, level, 0);
-                        RandomSource rand = e.getLevel().random;
+                        RandomSource rand = e.getLevel().getRandom();
 
                         if (rand.nextFloat() <= chance) {
                             Vec3 pos = e.getDrops().stream().findAny().map(ItemEntity::position).orElse(Vec3.atCenterOf(e.getPos()));
@@ -83,11 +83,11 @@ public record BoonComponent(List<BoonData> entries) {
         public static Codec<BoonData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
             RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("target").forGetter(BoonData::targets),
             ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("loot_table").forGetter(BoonData::lootTable),
-            ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.HIT_BLOCK).listOf().fieldOf("drop_chance").forGetter(BoonData::dropChance))
+            ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf().fieldOf("drop_chance").forGetter(BoonData::dropChance))
             .apply(inst, BoonData::new));
 
         public boolean matches(BlockState state) {
-            return targets.contains(state.getBlockHolder());
+            return targets.contains(state.getBlock().builtInRegistryHolder());
         }
     }
 

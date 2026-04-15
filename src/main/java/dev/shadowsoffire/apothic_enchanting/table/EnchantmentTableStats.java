@@ -23,8 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
-
 /**
  * Holder for the computed stat values of an enchantment table.
  */
@@ -32,8 +30,7 @@ public record EnchantmentTableStats(float eterna, float quanta, float arcana, in
 
     public static final EnchantmentTableStats INVALID = new EnchantmentTableStats(0, 0, 0, 0, Collections.emptySet(), false, false);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentTableStats> STREAM_CODEC = NeoForgeStreamCodecs
-        .<RegistryFriendlyByteBuf, EnchantmentTableStats, Float, Float, Float, Integer, Set<Holder<Enchantment>>, Boolean, Boolean>composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentTableStats> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, EnchantmentTableStats::eterna,
             ByteBufCodecs.FLOAT, EnchantmentTableStats::quanta,
             ByteBufCodecs.FLOAT, EnchantmentTableStats::arcana,

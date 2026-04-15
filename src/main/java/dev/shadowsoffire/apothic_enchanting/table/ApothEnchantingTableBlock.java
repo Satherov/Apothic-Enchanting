@@ -6,19 +6,20 @@ import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 public class ApothEnchantingTableBlock extends EnchantingTableBlock {
 
@@ -39,14 +40,18 @@ public class ApothEnchantingTableBlock extends EnchantingTableBlock {
         }
     }
 
+    /**
+     * Normally we'd do this in {@link BlockEntity#preRemoveSideEffects(BlockPos, BlockState)}, but since
+     * we don't own the block entity and instead use an attachment, we can't.
+     */
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity tileentity = world.getBlockEntity(pos);
-            if (tileentity instanceof EnchantingTableBlockEntity) {
-                ItemStack fuel = tileentity.getData(EnchantmentTableItemHandler.TYPE).getStackInSlot(0);
-                Block.popResource(world, pos, fuel);
-                world.removeBlockEntity(pos);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        if (level.getBlockEntity(pos) instanceof EnchantingTableBlockEntity be) {
+            EnchantmentTableItemHandler handler = be.getData(EnchantmentTableItemHandler.TYPE);
+            ItemResource fuel = handler.getResource(0);
+            int amount = handler.getAmountAsInt(0);
+            if (!fuel.isEmpty() && amount > 0) {
+                Block.popResource(level, pos, fuel.toStack(amount));
             }
         }
     }
@@ -59,7 +64,7 @@ public class ApothEnchantingTableBlock extends EnchantingTableBlock {
         }
     }
 
-    public static IItemHandler getItemHandler(EnchantingTableBlockEntity be, Direction dir) {
+    public static ResourceHandler<ItemResource> getItemHandler(EnchantingTableBlockEntity be, Direction dir) {
         return be.getData(EnchantmentTableItemHandler.TYPE);
     }
 

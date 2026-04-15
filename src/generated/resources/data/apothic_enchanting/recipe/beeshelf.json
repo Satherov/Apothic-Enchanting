@@ -3,18 +3,10 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "item": "minecraft:beehive"
-        },
-        "H": {
-            "item": "minecraft:honeycomb"
-        },
-        "K": {
-            "tag": "c:bookshelves"
-        },
-        "O": {
-            "item": "minecraft:honey_block"
-        }
+        "B": "minecraft:beehive",
+        "H": "minecraft:honeycomb",
+        "K": "#c:bookshelves",
+        "O": "minecraft:honey_block"
     },
     "pattern": [
         "HBH",
@@ -22,7 +14,6 @@
         "HBH"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:beeshelf"
     }
 }

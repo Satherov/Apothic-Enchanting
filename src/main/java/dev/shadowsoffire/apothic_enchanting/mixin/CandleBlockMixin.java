@@ -4,7 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +17,7 @@ public abstract class CandleBlockMixin extends AbstractCandleBlock implements En
     }
 
     @Override
-    public float getArcanaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    public float getArcanaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.25F * state.getValue(CandleBlock.CANDLES).intValue();
     }
 

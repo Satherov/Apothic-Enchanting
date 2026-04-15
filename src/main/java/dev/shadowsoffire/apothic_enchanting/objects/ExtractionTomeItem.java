@@ -1,6 +1,6 @@
 package dev.shadowsoffire.apothic_enchanting.objects;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import net.minecraft.ChatFormatting;
@@ -8,34 +8,30 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
-import net.neoforged.neoforge.event.entity.player.AnvilRepairEvent;
+import net.neoforged.neoforge.event.entity.player.AnvilCraftEvent;
 
-public class ExtractionTomeItem extends BookItem {
+public class ExtractionTomeItem extends Item {
 
     public ExtractionTomeItem(Item.Properties properties) {
         super(properties);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
         if (stack.isEnchanted()) {
             return;
         }
-        tooltip.add(TooltipUtil.lang("info", "extraction_tome").withStyle(ChatFormatting.GRAY));
-        tooltip.add(TooltipUtil.lang("info", "extraction_tome2").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(TooltipUtil.lang("info", "extraction_tome").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(TooltipUtil.lang("info", "extraction_tome2").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -54,7 +50,7 @@ public class ExtractionTomeItem extends BookItem {
         ItemStack out = new ItemStack(Items.ENCHANTED_BOOK);
         EnchantmentHelper.setEnchantments(out, wepEnch);
         ev.setMaterialCost(1);
-        ev.setCost(wepEnch.size() * 16);
+        ev.setXpCost(wepEnch.size() * 16);
         ev.setOutput(out);
         return true;
     }
@@ -71,7 +67,7 @@ public class ExtractionTomeItem extends BookItem {
         }
     }
 
-    public static boolean updateRepair(AnvilRepairEvent ev) {
+    public static boolean updateRepair(AnvilCraftEvent.Post ev) {
         ItemStack weapon = ev.getLeft();
         ItemStack book = ev.getRight();
         if (!(book.getItem() instanceof ExtractionTomeItem) || book.isEnchanted() || !weapon.isEnchanted()) return false;

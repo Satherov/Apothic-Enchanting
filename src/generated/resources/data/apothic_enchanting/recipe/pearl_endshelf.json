@@ -3,15 +3,9 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "D": {
-            "item": "apothic_enchanting:endshelf"
-        },
-        "E": {
-            "item": "minecraft:end_rod"
-        },
-        "N": {
-            "tag": "c:ender_pearls"
-        }
+        "D": "apothic_enchanting:endshelf",
+        "E": "minecraft:end_rod",
+        "N": "#c:ender_pearls"
     },
     "pattern": [
         "E E",
@@ -19,7 +13,6 @@
         "E E"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:pearl_endshelf"
     }
 }

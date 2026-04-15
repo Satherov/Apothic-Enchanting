@@ -66,7 +66,7 @@ public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLoo
     }
 
     public static EnchantmentInfo load(Holder<Enchantment> ench, Configuration cfg) {
-        String category = ench.getKey().location().toString();
+        String category = ench.getKey().identifier().toString();
         int vanillaMax = ench.value().definition().maxLevel();
         int max = cfg.getInt("Max Level", category, ApothicEnchanting.getDefaultMaxLevel(ench), 1, 127, "The max level of this enchantment - originally " + vanillaMax + ".");
         int maxLoot = cfg.getInt("Max Loot Level", category, vanillaMax, 1, 127, "The max level of this enchantment available from loot sources.");

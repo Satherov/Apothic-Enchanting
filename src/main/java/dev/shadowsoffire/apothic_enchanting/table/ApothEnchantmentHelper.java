@@ -18,18 +18,18 @@ import com.mojang.datafixers.util.Pair;
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.EnchantmentInfo;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantableItem;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup.RegistryLookup;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.WeightedEntry.IntrusiveBase;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
+import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -81,7 +81,7 @@ public class ApothEnchantmentHelper {
      */
     public static List<EnchantmentInstance> selectEnchantment(RandomSource rand, ItemStack stack, int level, EnchantmentTableStats stats, RegistryLookup<Enchantment> reg) {
         List<EnchantmentInstance> chosenEnchants = new ArrayList<>();
-        int enchantability = stack.getEnchantmentValue();
+        int enchantability = stack.getOrDefault(DataComponents.ENCHANTABLE, new Enchantable(1)).value();
 
         if (enchantability > 0) {
             float quantaFactor = getQuantaFactor(rand, stats.quanta(), stats.stable());
@@ -107,15 +107,18 @@ public class ApothEnchantmentHelper {
             }
         }
 
-        return ((EnchantableItem) stack.getItem()).selectEnchantments(chosenEnchants, rand, stack, level, stats);
+        if (stack.getItem() instanceof EnchantableItem ei) {
+            return ei.selectEnchantments(chosenEnchants, rand, stack, level, stats);
+        }
+        return chosenEnchants;
     }
 
     /**
      * Randomly selects an enchantment from the possible enchantments and adds it to the list of chosen enchantments.
      */
     public static void pickEnchantment(RandomSource rand, List<EnchantmentInstance> chosenEnchants, List<ArcanaEnchantmentData> possibleEnchants) {
-        chosenEnchants.add(WeightedRandom.getRandomItem(rand, possibleEnchants).get().data);
-        removeIncompatible(possibleEnchants, Util.lastOf(chosenEnchants));
+        chosenEnchants.add(WeightedRandom.getRandomItem(rand, possibleEnchants, ArcanaEnchantmentData::getWeight).get().data);
+        removeIncompatible(possibleEnchants, chosenEnchants.get(chosenEnchants.size() - 1));
     }
 
     /**
@@ -124,7 +127,7 @@ public class ApothEnchantmentHelper {
     public static void removeIncompatible(List<ArcanaEnchantmentData> possibleEnchants, EnchantmentInstance data) {
         Iterator<ArcanaEnchantmentData> iterator = possibleEnchants.iterator();
         while (iterator.hasNext()) {
-            if (!Enchantment.areCompatible(data.enchantment, iterator.next().data.enchantment)) {
+            if (!Enchantment.areCompatible(data.enchantment(), iterator.next().data.enchantment())) {
                 iterator.remove();
             }
         }
@@ -192,9 +195,11 @@ public class ApothEnchantmentHelper {
 
     public static float processValue(List<ConditionalEffect<EnchantmentValueEffect>> effects, LootContext ctx, int level, float initial) {
         MutableFloat f = new MutableFloat(initial);
-        Enchantment.applyEffects(effects, ctx, valueEffect -> {
-            f.setValue(valueEffect.process(level, ctx.getRandom(), f.getValue()));
-        });
+        for (ConditionalEffect<EnchantmentValueEffect> conditional : effects) {
+            if (conditional.matches(ctx)) {
+                f.setValue(conditional.effect().process(level, ctx.getRandom(), f.getValue()));
+            }
+        }
         return f.getValue();
     }
 
@@ -206,12 +211,17 @@ public class ApothEnchantmentHelper {
         return f.getValue();
     }
 
-    public static class ArcanaEnchantmentData extends IntrusiveBase {
+    public static class ArcanaEnchantmentData {
         EnchantmentInstance data;
+        final int weight;
 
         public ArcanaEnchantmentData(Arcana arcana, EnchantmentInstance data) {
-            super(arcana.adjustWeight(data.enchantment.value().getWeight()));
+            this.weight = arcana.adjustWeight(data.enchantment().value().getWeight());
             this.data = data;
+        }
+
+        public int getWeight() {
+            return this.weight;
         }
     }
 }

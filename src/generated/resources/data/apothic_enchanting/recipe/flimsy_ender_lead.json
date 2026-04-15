@@ -3,18 +3,11 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "ingredients": [
-        {
-            "tag": "c:ender_pearls"
-        },
-        {
-            "item": "minecraft:lead"
-        },
-        {
-            "item": "minecraft:gold_ingot"
-        }
+        "#c:ender_pearls",
+        "minecraft:lead",
+        "minecraft:gold_ingot"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:flimsy_ender_lead"
     }
 }

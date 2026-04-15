@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import dev.shadowsoffire.apothic_enchanting.enchantments.CrescendoHooks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -27,7 +27,7 @@ public class CrossbowItemMixin {
     }
 
     @Inject(method = "use", at = @At(value = "RETURN", ordinal = 0))
-    public void apoth_addCharges(Level pLevel, Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> ci) {
+    public void apoth_addCharges(Level pLevel, Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<InteractionResult> ci) {
         if (pPlayer.level() instanceof ServerLevel sl) {
             CrescendoHooks.reloadFromCrescendoCharge(sl, pPlayer.getItemInHand(pHand));
         }

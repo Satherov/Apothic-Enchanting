@@ -8,9 +8,9 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
 import dev.shadowsoffire.apothic_enchanting.Ench;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -37,6 +37,32 @@ public class ShearsEnchantments {
         map.put(DyeColor.RED, Blocks.RED_WOOL);
         map.put(DyeColor.BLACK, Blocks.BLACK_WOOL);
     });
+
+    /**
+     * Restores the pre-26.1 behaviour where Fortune on shears inflated sheep wool drops.
+     * The old {@code SheepMixin} widened {@code Sheep#shear}'s hardcoded {@code nextInt(3)} to
+     * {@code nextInt(3 + fortune*2)}; 26.1 moved the drop count into a loot table so that trick
+     * is no longer possible. Instead we duplicate a wool entry up to {@code fortune*2} extra times,
+     * which reproduces the OLD upper bound of {@code 3 + 2*fortune} when stacked on top of the
+     * vanilla 1..3 uniform roll.
+     */
+    public static List<ItemStack> applyFortune(Sheep sheep, ItemStack shears, List<ItemStack> items, int fortune) {
+        if (fortune <= 0 || items.isEmpty()) return items;
+        ItemStack wool = null;
+        for (ItemStack s : items) {
+            if (s.is(ItemTags.WOOL)) {
+                wool = s;
+                break;
+            }
+        }
+        if (wool == null) return items;
+        List<ItemStack> out = new ArrayList<>(items);
+        int bonus = sheep.getRandom().nextInt(fortune * 2 + 1);
+        for (int i = 0; i < bonus; i++) {
+            out.add(wool.copy());
+        }
+        return out;
+    }
 
     public static List<ItemStack> applyChromatic(Sheep sheep, ItemStack shears, List<ItemStack> items) {
         if (EnchantmentHelper.has(shears, Ench.EnchantEffects.CHROMATIC)) {

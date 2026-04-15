@@ -29,8 +29,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 3.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -41,17 +50,21 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:quartz"
-                    },
+                    "name": "minecraft:quartz",
                     "weight": 150
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -62,17 +75,21 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_gold"
-                    },
+                    "name": "minecraft:raw_gold",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 10.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -83,17 +100,21 @@
                             }
                         }
                     ],
-                    "max": 10,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:glowstone_dust"
-                    },
+                    "name": "minecraft:glowstone_dust",
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 1.0,
+                                "min": 0.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -104,12 +125,7 @@
                             }
                         }
                     ],
-                    "max": 1,
-                    "min": 0,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:ancient_debris"
-                    }
+                    "name": "minecraft:ancient_debris"
                 }
             ],
             "rolls": 1.0
@@ -139,43 +155,67 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 4,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:nether_quartz_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 4.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:nether_quartz_ore",
                     "weight": 150
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:nether_gold_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:nether_gold_ore",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:glowstone"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:glowstone",
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 1,
-                    "min": 0,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:ancient_debris"
-                    }
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 1.0,
+                                "min": 0.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:ancient_debris"
                 }
             ],
             "rolls": 1.0
@@ -197,8 +237,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 1.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -209,12 +258,7 @@
                             }
                         }
                     ],
-                    "max": 1,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:ancient_debris"
-                    },
+                    "name": "minecraft:ancient_debris",
                     "weight": 3
                 },
                 {

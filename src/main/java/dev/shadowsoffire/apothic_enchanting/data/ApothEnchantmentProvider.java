@@ -12,9 +12,9 @@ import dev.shadowsoffire.apothic_enchanting.enchantments.components.ReflectiveCo
 import dev.shadowsoffire.apothic_enchanting.enchantments.entity_effects.ReboundingEffect;
 import dev.shadowsoffire.apothic_enchanting.enchantments.values.ExponentialLevelBasedValue;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
-import net.minecraft.advancements.critereon.DamageSourcePredicate;
-import net.minecraft.advancements.critereon.TagPredicate;
+import net.minecraft.util.Util;
+import net.minecraft.advancements.criterion.DamageSourcePredicate;
+import net.minecraft.advancements.criterion.TagPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -23,7 +23,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
@@ -41,7 +41,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 import net.minecraft.world.item.enchantment.effects.ApplyMobEffect;
-import net.minecraft.world.item.enchantment.effects.DamageItem;
+import net.minecraft.world.item.enchantment.effects.ChangeItemDamage;
 import net.minecraft.world.item.enchantment.effects.SetValue;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
@@ -72,9 +72,9 @@ public class ApothEnchantmentProvider {
                     new BerserkingComponent(
                         List.of(noCondition(new AddValue(new ExponentialLevelBasedValue(2.5F)))),
                         List.of(
-                            noCondition(simpleMobEffect(MobEffects.DAMAGE_RESISTANCE, 500)),
-                            noCondition(simpleMobEffect(MobEffects.DAMAGE_BOOST, 500)),
-                            noCondition(simpleMobEffect(MobEffects.MOVEMENT_SPEED, 500))),
+                            noCondition(simpleMobEffect(MobEffects.RESISTANCE, 500)),
+                            noCondition(simpleMobEffect(MobEffects.STRENGTH, 500)),
+                            noCondition(simpleMobEffect(MobEffects.SPEED, 500))),
                         List.of(noCondition(new AddValue(LevelBasedValue.constant(900)))))));
 
         register(context, Ench.Enchantments.CHAINSAW,
@@ -167,7 +167,7 @@ public class ApothEnchantmentProvider {
                 .withEffect(EnchantmentEffectComponents.POST_ATTACK,
                     EnchantmentTarget.ATTACKER,
                     EnchantmentTarget.ATTACKER,
-                    new DamageItem(new LevelBasedValue.Clamped(LevelBasedValue.perLevel(20, -2), 1, 1024))));
+                    new ChangeItemDamage(new LevelBasedValue.Clamped(LevelBasedValue.perLevel(20, -2), 1, 1024))));
 
         register(context, Ench.Enchantments.BOON_OF_THE_EARTH,
             enchantment(
@@ -255,7 +255,7 @@ public class ApothEnchantmentProvider {
             enchantment(
                 Enchantment.definition(
                     items.getOrThrow(ItemTags.SHARP_WEAPON_ENCHANTABLE),
-                    items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                    items.getOrThrow(ItemTags.MELEE_WEAPON_ENCHANTABLE),
                     2, // weight
                     3, // max level
                     Enchantment.dynamicCost(55, 45),
@@ -269,7 +269,7 @@ public class ApothEnchantmentProvider {
             enchantment(
                 Enchantment.definition(
                     items.getOrThrow(ItemTags.SHARP_WEAPON_ENCHANTABLE),
-                    items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                    items.getOrThrow(ItemTags.MELEE_WEAPON_ENCHANTABLE),
                     1, // weight
                     3, // max level
                     Enchantment.dynamicCost(55, 50),
@@ -307,7 +307,7 @@ public class ApothEnchantmentProvider {
                     EnchantmentTarget.VICTIM,
                     EnchantmentTarget.ATTACKER,
                     new ApplyMobEffect(
-                        HolderSet.direct(MobEffects.MOVEMENT_SLOWDOWN),
+                        HolderSet.direct(MobEffects.SLOWNESS),
                         LevelBasedValue.constant(10), LevelBasedValue.constant(20),
                         LevelBasedValue.constant(0), new LevelBasedValue.Clamped(LevelBasedValue.perLevel(2), 1, 4)),
                     LootItemRandomChanceCondition.randomChance(EnchantmentLevelProvider.forEnchantmentLevel(LevelBasedValue.perLevel(0.5F)))));
@@ -357,7 +357,7 @@ public class ApothEnchantmentProvider {
             Enchantment.enchantment(
                 Enchantment.definition(
                     items.getOrThrow(ItemTags.SHARP_WEAPON_ENCHANTABLE),
-                    items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                    items.getOrThrow(ItemTags.MELEE_WEAPON_ENCHANTABLE),
                     10,
                     5,
                     Enchantment.dynamicCost(1, 11),
@@ -384,7 +384,7 @@ public class ApothEnchantmentProvider {
     }
 
     private static void register(BootstrapContext<Enchantment> context, ResourceKey<Enchantment> key, Enchantment.Builder builder) {
-        context.register(key, builder.build(key.location()));
+        context.register(key, builder.build(key.identifier()));
     }
 
     private static <T> ConditionalEffect<T> noCondition(T obj) {
@@ -416,7 +416,7 @@ public class ApothEnchantmentProvider {
         }
 
         @Override
-        public Enchantment build(ResourceLocation location) {
+        public Enchantment build(Identifier location) {
             return new Enchantment(
                 this.op.apply(Component.translatable(Util.makeDescriptionId("enchantment", location))), this.definition, this.exclusiveSet, this.effectMapBuilder.build());
         }

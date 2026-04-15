@@ -3,14 +3,10 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "E": {
-            "item": "minecraft:ender_eye"
-        },
-        "I": {
-            "item": "apothic_enchanting:infused_hellshelf"
-        },
+        "E": "minecraft:ender_eye",
+        "I": "apothic_enchanting:infused_hellshelf",
         "P": {
-            "type": "neoforge:components",
+            "neoforge:ingredient_type": "neoforge:components",
             "components": {
                 "minecraft:potion_contents": {
                     "potion": "minecraft:night_vision"
@@ -18,12 +14,8 @@
             },
             "items": "minecraft:potion"
         },
-        "S": {
-            "tag": "c:storage_blocks/gold"
-        },
-        "Y": {
-            "item": "minecraft:spyglass"
-        }
+        "S": "#c:storage_blocks/gold",
+        "Y": "minecraft:spyglass"
     },
     "pattern": [
         "SIS",
@@ -31,7 +23,6 @@
         "SIS"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:sightshelf"
     }
 }

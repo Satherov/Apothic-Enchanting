@@ -38,7 +38,7 @@ public record StatsPayload(EnchantmentTableStats stats) implements CustomPacketP
         }
 
         @Override
-        public void handle(StatsPayload msg, IPayloadContext ctx) {
+        public void handleClient(StatsPayload msg, IPayloadContext ctx) {
             ApothEnchClient.handleStatsPayload(msg);
         }
 

@@ -11,7 +11,7 @@ import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryScreen;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentScreen;
-import dev.shadowsoffire.apothic_enchanting.util.FakeLevelReader;
+import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipeCache;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import dev.shadowsoffire.placebo.util.DrawsOnLeft;
 import dev.shadowsoffire.placebo.util.EnchantmentUtils;
@@ -41,8 +41,9 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -52,6 +53,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -83,6 +86,18 @@ public class ApothEnchClient {
         e.registerSpriteSet(Particles.ENCHANT_END, FlyTowardsPositionParticle.EnchantProvider::new);
     }
 
+    @SubscribeEvent
+    public static void recipesReceived(RecipesReceivedEvent e) {
+        if (e.getRecipeTypes().contains(Ench.RecipeTypes.INFUSION)) {
+            InfusionRecipeCache.rebuildFromMap(e.getRecipeMap());
+        }
+    }
+
+    @SubscribeEvent
+    public static void logout(ClientPlayerNetworkEvent.LoggingOut e) {
+        InfusionRecipeCache.clear();
+    }
+
     public static void handleCluePayload(CluePayload msg) {
         if (Minecraft.getInstance().screen instanceof ApothEnchantmentScreen es) {
             es.acceptClues(msg.slot(), msg.clues(), msg.all());
@@ -101,7 +116,7 @@ public class ApothEnchClient {
         if (listener == null) {
             return null;
         }
-        return listener.registryAccess().registry(registryKey).orElse(null);
+        return listener.registryAccess().lookupOrThrow(registryKey);
     }
 
     public static class ForgeBusEvents {
@@ -132,13 +147,8 @@ public class ApothEnchClient {
                     state = block.defaultBlockState();
                 }
 
-                try {
-                    LevelReader reader = level == null ? new FakeLevelReader(state) : level;
-                    TooltipUtil.appendBlockStats(reader, state, BlockPos.ZERO, tooltip::add);
-                }
-                catch (NullPointerException ex) {
-                    // Ignore, we're trying to eagerly resolve this with a null level.
-                }
+                BlockGetter getter = level != null ? level : EmptyBlockGetter.INSTANCE;
+                TooltipUtil.appendBlockStats(getter, state, BlockPos.ZERO, tooltip::add);
             }
             else if (i == Items.ENCHANTED_BOOK) {
                 ItemStack stack = e.getItemStack();
@@ -149,7 +159,7 @@ public class ApothEnchClient {
                     int level = entry.getIntValue();
 
                     if (!ModList.get().isLoaded("enchdesc")) {
-                        String key = ench.getKey().location().toLanguageKey("enchantment") + ".desc";
+                        String key = ench.getKey().identifier().toLanguageKey("enchantment") + ".desc";
                         if (I18n.exists(key)) {
                             tooltip.add(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
                         }
@@ -203,7 +213,7 @@ public class ApothEnchClient {
                 int expCost = EnchantmentUtils.getTotalExperienceForLevel(level);
                 list.add(TooltipUtil.lang("info", "anvil_xp_cost", Component.literal("" + expCost).withStyle(ChatFormatting.GREEN),
                     Component.literal("" + level).withStyle(ChatFormatting.GREEN)));
-                DrawsOnLeft.draw(anv, e.getGuiGraphics(), list, anv.getGuiTop() + 28);
+                DrawsOnLeft.draw(anv, e.getGuiGraphics(), list, anv.getTopPos() + 28);
             }
         }
 

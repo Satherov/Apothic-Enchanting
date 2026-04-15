@@ -4,5 +4,7 @@
         "translate": "jukebox_song.apothic_enchanting.quanta"
     },
     "length_in_seconds": 176.0,
-    "sound_event": "apothic_enchanting:music_disc.quanta"
+    "sound_event": {
+        "sound_id": "apothic_enchanting:music_disc.quanta"
+    }
 }

@@ -3,11 +3,9 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "tag": "c:bookshelves"
-        },
+        "B": "#c:bookshelves",
         "O": {
-            "type": "neoforge:components",
+            "neoforge:ingredient_type": "neoforge:components",
             "components": {
                 "minecraft:potion_contents": {
                     "potion": "minecraft:water"
@@ -15,12 +13,8 @@
             },
             "items": "minecraft:potion"
         },
-        "P": {
-            "item": "minecraft:prismarine_bricks"
-        },
-        "U": {
-            "item": "minecraft:pufferfish"
-        }
+        "P": "minecraft:prismarine_bricks",
+        "U": "minecraft:pufferfish"
     },
     "pattern": [
         "PPP",
@@ -28,7 +22,6 @@
         "PPP"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:seashelf"
     }
 }

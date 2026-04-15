@@ -9,30 +9,21 @@ import java.util.Set;
 
 import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
-import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import dev.shadowsoffire.placebo.network.VanillaPacketDispatcher;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -47,8 +38,8 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
     }
 
     @Override
-    public Set<Holder<Enchantment>> getBlacklistedEnchantments(BlockState state, LevelReader world, BlockPos pos) {
-        BlockEntity be = world.getBlockEntity(pos);
+    public Set<Holder<Enchantment>> getBlacklistedEnchantments(BlockState state, BlockGetter level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof FilteringShelfTile shelf) {
             Set<Holder<Enchantment>> blacklist = new HashSet<>();
             for (ItemStack s : shelf.getEnchantedBooks()) {
@@ -68,12 +59,11 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
     }
 
     @Override
-    public float getMaxEnchantingPower(BlockState state, LevelReader world, BlockPos pos) {
+    public float getMaxEnchantingPower(BlockState state, BlockGetter level, BlockPos pos) {
         return 30F;
     }
 
-    @Override
-    public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+    public float getEnchantPowerBonus(BlockState state, BlockGetter level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof FilteringShelfTile shelf) {
             return shelf.getEnchantedBooks().size() * 0.5F;
@@ -82,8 +72,8 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
     }
 
     @Override
-    public float getArcanaBonus(BlockState state, LevelReader world, BlockPos pos) {
-        BlockEntity be = world.getBlockEntity(pos);
+    public float getArcanaBonus(BlockState state, BlockGetter level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof FilteringShelfTile shelf) {
             return shelf.getEnchantedBooks().size();
         }
@@ -96,27 +86,27 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ChiseledBookShelfBlockEntity shelf) {
             if (!canInsert(stack)) {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
 
-            OptionalInt slot = this.getHitSlot(hitResult, state);
+            OptionalInt slot = this.getHitSlot(hitResult, state.getValue(FACING));
             if (slot.isEmpty()) {
-                return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.PASS;
             }
             else if (state.getValue(SLOT_OCCUPIED_PROPERTIES.get(slot.getAsInt()))) {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
             else {
                 addBook(level, pos, player, shelf, stack, slot.getAsInt());
-                return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                return InteractionResult.SUCCESS;
             }
         }
 
-        return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -124,12 +114,13 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
         return new FilteringShelfTile(pPos, pState);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.add(TooltipUtil.lang("info", "filtering_shelf").withStyle(ChatFormatting.GRAY));
-    }
+    // NOTE (26.1 port): Block#appendHoverText was removed; tooltip descriptions now live on BlockItem
+    // or data components. Move the 'info.apothic_enchanting.filtering_shelf' tooltip to a BlockItem.
 
     public static boolean canInsert(ItemStack stack) {
+        if (EnchantmentHelper.getEnchantmentsForCrafting(stack).size() > 1) {
+            return false; // Books with more than 1 enchantment don't work for blacklisting, so prevent them from being used to avoid confusion.
+        }
         return stack.is(ItemTags.BOOKSHELF_BOOKS);
     }
 
@@ -150,7 +141,7 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
 
         @Override
         public BlockEntityType<?> getType() {
-            return Ench.Tiles.FILTERING_SHELF.get();
+            return Ench.Tiles.FILTERING_SHELF;
         }
 
         public List<ItemStack> getBooks() {
@@ -167,26 +158,14 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
         }
 
         @Override
-        public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-            CompoundTag tag = new CompoundTag();
-            this.saveAdditional(tag, registries);
-            return tag;
-        }
-
-        @Override
-        public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
-            this.loadAdditional(pkt.getTag(), registries);
-        }
-
-        @Override
-        public ClientboundBlockEntityDataPacket getUpdatePacket() {
-            return ClientboundBlockEntityDataPacket.create(this);
+        public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+            return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
         }
 
         @Override
         public void setItem(int pSlot, ItemStack pStack) {
             super.setItem(pSlot, pStack);
-            if (!this.level.isClientSide) {
+            if (!this.level.isClientSide()) {
                 VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
             }
         }

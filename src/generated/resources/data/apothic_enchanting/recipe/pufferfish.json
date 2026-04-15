@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "item": "minecraft:bamboo"
-        },
-        "F": {
-            "tag": "minecraft:fishes"
-        }
+        "B": "minecraft:bamboo",
+        "F": "#minecraft:fishes"
     },
     "pattern": [
         " B ",
@@ -17,9 +13,16 @@
     ],
     "result": {
         "components": {
-            "minecraft:custom_name": "{\"italic\":false,\"translate\":\"\\\"%s\\\"\",\"with\":[{\"translate\":\"item.minecraft.pufferfish\"}]}"
+            "minecraft:custom_name": {
+                "italic": false,
+                "translate": "\"%s\"",
+                "with": [
+                    {
+                        "translate": "item.minecraft.pufferfish"
+                    }
+                ]
+            }
         },
-        "count": 1,
         "id": "minecraft:pufferfish"
     }
 }

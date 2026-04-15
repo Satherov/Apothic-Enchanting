@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.joml.Matrix3x2fStack;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentHelper.ArcanaEnchantmentData;
@@ -18,28 +18,30 @@ import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
-import net.minecraft.util.random.WeightedEntry.IntrusiveBase;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 public class EnchantingInfoScreen extends Screen {
 
-    public static final ResourceLocation TEXTURES = ApothicEnchanting.loc("textures/gui/enchanting_info.png");
+    public static final Identifier TEXTURES = ApothicEnchanting.loc("textures/gui/enchanting_info.png");
 
     protected final ApothEnchantmentScreen parent;
     protected final int imageWidth, imageHeight;
@@ -87,11 +89,11 @@ public class EnchantingInfoScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
-        PoseStack pose = gfx.pose();
-        pose.pushPose();
-        pose.translate(this.leftPos, this.topPos, 0);
-        gfx.blit(TEXTURES, 0, 0, 0, 0, this.imageWidth, this.imageHeight);
+    public void extractRenderState(GuiGraphicsExtractor gfx, int pMouseX, int pMouseY, float pPartialTick) {
+        Matrix3x2fStack pose = gfx.pose();
+        pose.pushMatrix();
+        pose.translate(this.leftPos, this.topPos);
+        gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, 0, 0, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         for (int i = 0; i < 3; i++) {
             Holder<Enchantment> clue = parent.enchIdMap.byId(this.clues[i]);
             int u = 199, v = 225;
@@ -102,12 +104,12 @@ public class EnchantingInfoScreen extends Screen {
             else if (this.selectedSlot == i || this.isHovering(8, 18 + 18 * i, 18, 16, pMouseX, pMouseY)) {
                 u += 38;
             }
-            gfx.blit(TEXTURES, 8, 18 + 19 * i, 224, u, 18, 19);
-            gfx.blit(TEXTURES, 9, 22 + 18 * i + i, 16 * i, v, 16, 16);
+            gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, 8, 18 + 19 * i, 224, u, 18, 19, 256, 256);
+            gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, 9, 22 + 18 * i + i, 16 * i, v, 16, 16, 256, 256);
         }
 
         int scrollbarPos = (int) (128F * this.scrollOffs);
-        gfx.blit(TEXTURES, 220, 18 + scrollbarPos, 244, 173 + (this.isScrollBarActive() ? 0 : 15), 12, 15);
+        gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, 220, 18 + scrollbarPos, 244, 173 + (this.isScrollBarActive() ? 0 : 15), 12, 15, 256, 256);
 
         EnchantmentDataWrapper hover = this.getHovered(pMouseX, pMouseY);
         for (int i = 0; i < 11; i++) {
@@ -116,20 +118,24 @@ public class EnchantingInfoScreen extends Screen {
             EnchantmentDataWrapper data = this.enchantments.get(this.startIndex + i);
             if (data.isBlacklisted) v += 26;
             else if (hover == this.enchantments.get(this.startIndex + i)) v += 13;
-            gfx.blit(TEXTURES, 89, 18 + 13 * i, 96, v, 128, 13);
+            gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, 89, 18 + 13 * i, 96, v, 128, 13, 256, 256);
         }
 
         for (int i = 0; i < 11; i++) {
             if (this.enchantments.size() - 1 < i) break;
             EnchantmentDataWrapper data = this.enchantments.get(this.startIndex + i);
             if (data.isBlacklisted) {
-                gfx.drawString(this.font, data.getEnch().value().description().plainCopy().withStyle(s -> s.withColor(0x58B0CC).withStrikethrough(true)), 91, 21 + 13 * i, 0xFFFF80, false);
+                gfx.text(this.font, data.getEnch().value().description().plainCopy().withStyle(s -> s.withColor(0x58B0CC).withStrikethrough(true)), 91, 21 + 13 * i, 0xFFFFFF80, false);
             }
             else {
-                gfx.drawString(this.font, data.getEnch().value().description().getString(), 91, 21 + 13 * i, 0xFFFF80, false);
+                gfx.text(this.font, data.getEnch().value().description().getString(), 91, 21 + 13 * i, 0xFFFFFF80, false);
             }
         }
 
+        gfx.text(this.font, this.title, 7, 4, 0xFF404040, false);
+        pose.popMatrix();
+
+        // Tooltips (rendered outside of the pose translation)
         List<Component> list = new ArrayList<>();
         Arcana a = Arcana.getForThreshold(this.parent.getMenu().stats.arcana());
         list.add(TooltipUtil.lang("info", "weights").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.YELLOW));
@@ -137,11 +143,13 @@ public class EnchantingInfoScreen extends Screen {
         list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.uncommon"), a.getRarities()[1]).withStyle(ChatFormatting.GREEN));
         list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.rare"), a.getRarities()[2]).withStyle(ChatFormatting.BLUE));
         list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.very_rare"), a.getRarities()[3]).withStyle(ChatFormatting.GOLD));
-        gfx.renderComponentTooltip(this.font, list, a == Arcana.MAX ? -2 : 1, 120);
-
-        gfx.drawString(this.font, this.title, 7, 4, 4210752, false);
-        pose.popPose();
-        pose.translate(0, 0, 10);
+        gfx.tooltip(
+            this.font,
+            list.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create).toList(),
+            this.leftPos + (a == Arcana.MAX ? -2 : 1),
+            this.topPos + 120,
+            DefaultTooltipPositioner.INSTANCE,
+            null);
 
         for (int i = 0; i < 3; i++) {
             if (this.isHovering(8, 18 + 18 * i, 18, 16, pMouseX, pMouseY)) {
@@ -150,7 +158,7 @@ public class EnchantingInfoScreen extends Screen {
                 list.add(TooltipUtil.lang("info", "enchinfo_level", this.costs[i]).withStyle(ChatFormatting.GREEN));
                 list.add(TooltipUtil.lang("info", "enchinfo_minpow", this.powers[i][0]).withStyle(ChatFormatting.RED));
                 list.add(TooltipUtil.lang("info", "enchinfo_maxpow", this.powers[i][1]).withStyle(ChatFormatting.BLUE));
-                gfx.renderComponentTooltip(this.font, list, pMouseX, pMouseY);
+                gfx.setComponentTooltipForNextFrame(this.font, list, pMouseX, pMouseY);
             }
         }
 
@@ -165,12 +173,13 @@ public class EnchantingInfoScreen extends Screen {
             Component rarityName = TooltipUtil.lang("rarity", rarity.name().toLowerCase(Locale.ROOT)).withColor(rarity.color());
             list.add(TooltipUtil.lang("info", "enchinfo_weight", realWeight, rarityName).withStyle(ChatFormatting.DARK_AQUA));
 
-            list.add(TooltipUtil.lang("info", "enchinfo_chance", String.format("%.2f", 100F * hover.getWeight().asInt() / WeightedRandom.getTotalWeight(this.enchantments)) + "%").withStyle(ChatFormatting.DARK_AQUA));
+            int total = WeightedRandom.getTotalWeight(this.enchantments, EnchantmentDataWrapper::getWeightValue);
+            list.add(TooltipUtil.lang("info", "enchinfo_chance", String.format("%.2f", 100F * hover.getWeightValue() / (double) total) + "%").withStyle(ChatFormatting.DARK_AQUA));
             if (I18n.exists(MiscUtil.getEnchDescKey(hover.getEnch()))) {
                 list.add(Component.translatable(MiscUtil.getEnchDescKey(hover.getEnch())).withStyle(ChatFormatting.DARK_AQUA));
             }
             List<Holder<Enchantment>> excls = this.exclusions.get(hover.getEnch());
-            if (!excls.isEmpty()) {
+            if (excls != null && !excls.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < excls.size(); i++) {
                     sb.append(excls.get(i).value().description().getString());
@@ -178,31 +187,31 @@ public class EnchantingInfoScreen extends Screen {
                 }
                 list.add(Component.translatable("Exclusive With: %s", sb.toString()).withStyle(ChatFormatting.RED));
             }
-            gfx.renderComponentTooltip(this.font, list, pMouseX, pMouseY);
+            gfx.setComponentTooltipForNextFrame(this.font, list, pMouseX, pMouseY);
         }
 
-        gfx.renderFakeItem(this.toEnchant, this.leftPos + 49, this.topPos + 39);
+        gfx.item(this.toEnchant, this.leftPos + 49, this.topPos + 39);
         if (this.isHovering(49, 39, 18, 18, pMouseX, pMouseY)) {
-            AbstractContainerScreen.renderSlotHighlight(gfx, this.leftPos + 49, this.topPos + 39, 0);
-            gfx.renderTooltip(font, toEnchant, pMouseX, pMouseY);
+            gfx.setTooltipForNextFrame(this.font, this.toEnchant, pMouseX, pMouseY);
         }
 
-        pose.translate(0, 0, -10);
-
+        // Widgets (PowerSlider) rendered via the standard Renderable pass.
         for (Renderable renderable : this.renderables) {
-            renderable.render(gfx, pMouseX, pMouseY, pPartialTick);
+            renderable.extractRenderState(gfx, pMouseX, pMouseY, pPartialTick);
         }
     }
 
     @Override
-    public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double pMouseX = event.x();
+        double pMouseY = event.y();
         this.scrolling = false;
 
         int left = this.leftPos + 220;
         int top = this.topPos + 18;
         if (pMouseX >= left && pMouseX < left + 12 && pMouseY >= top && pMouseY < top + 143) {
             this.scrolling = true;
-            this.mouseDragged(pMouseX, pMouseY, 0, pMouseX, pMouseY);
+            this.mouseDragged(event, 0, 0);
         }
 
         for (int i = 0; i < 3; i++) {
@@ -214,21 +223,21 @@ public class EnchantingInfoScreen extends Screen {
                 return true;
             }
         }
-        return super.mouseClicked(pMouseX, pMouseY, pButton);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double pDragX, double pDragY) {
         if (this.scrolling && this.isScrollBarActive()) {
             int i = this.topPos + 18;
             int j = i + 143;
-            this.scrollOffs = ((float) pMouseY - i - 7.5F) / (j - i - 15.0F);
+            this.scrollOffs = ((float) event.y() - i - 7.5F) / (j - i - 15.0F);
             this.scrollOffs = Mth.clamp(this.scrollOffs, 0.0F, 1.0F);
             this.startIndex = (int) (this.scrollOffs * this.getOffscreenRows() + 0.5D);
             return true;
         }
         else {
-            return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
+            return super.mouseDragged(event, pDragX, pDragY);
         }
     }
 
@@ -271,7 +280,7 @@ public class EnchantingInfoScreen extends Screen {
         this.enchantments = ApothEnchantmentHelper.getAvailableEnchantmentResults(this.currentPower, this.toEnchant, possible)
             .stream()
             .map(e -> new ArcanaEnchantmentData(arc, e))
-            .map(a -> new EnchantmentDataWrapper(a, blacklist.contains(a.data.enchantment)))
+            .map(a -> new EnchantmentDataWrapper(a, blacklist.contains(a.data.enchantment())))
             .collect(Collectors.toList());
 
         if (this.startIndex + 11 >= this.enchantments.size()) {
@@ -377,23 +386,28 @@ public class EnchantingInfoScreen extends Screen {
         }
     }
 
-    protected static class EnchantmentDataWrapper extends IntrusiveBase {
+    protected static class EnchantmentDataWrapper {
 
         protected final ArcanaEnchantmentData data;
         protected final boolean isBlacklisted;
+        protected final int weight;
 
         public EnchantmentDataWrapper(ArcanaEnchantmentData data, boolean isBlacklisted) {
-            super(isBlacklisted ? 0 : data.getWeight().asInt());
             this.data = data;
             this.isBlacklisted = isBlacklisted;
+            this.weight = isBlacklisted ? 0 : data.getWeight();
         }
 
         public Holder<Enchantment> getEnch() {
-            return this.data.data.enchantment;
+            return this.data.data.enchantment();
         }
 
         public int getLevel() {
-            return this.data.data.level;
+            return this.data.data.level();
+        }
+
+        public int getWeightValue() {
+            return this.weight;
         }
 
     }

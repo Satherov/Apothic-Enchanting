@@ -36,12 +36,12 @@ ${mixinConfig}
     modId="placebo"
     type="required"
     versionRange="[${placeboVersion},)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${modid}]]
     modId="apothic_attributes"
     type="required"
     versionRange="[${attributeslibVersion},)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"

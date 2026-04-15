@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "item": "minecraft:book"
-        },
-        "L": {
-            "item": "minecraft:blaze_rod"
-        }
+        "B": "minecraft:book",
+        "L": "minecraft:blaze_rod"
     },
     "pattern": [
         "BLB",

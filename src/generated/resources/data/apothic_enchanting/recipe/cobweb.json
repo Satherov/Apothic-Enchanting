@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "H": {
-            "item": "minecraft:honeycomb"
-        },
-        "S": {
-            "tag": "c:strings"
-        }
+        "H": "minecraft:honeycomb",
+        "S": "#c:strings"
     },
     "pattern": [
         "SSS",
@@ -16,7 +12,6 @@
         "SSS"
     ],
     "result": {
-        "count": 1,
         "id": "minecraft:cobweb"
     }
 }

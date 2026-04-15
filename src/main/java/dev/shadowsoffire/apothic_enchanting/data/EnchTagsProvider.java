@@ -2,8 +2,6 @@ package dev.shadowsoffire.apothic_enchanting.data;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.jetbrains.annotations.Nullable;
-
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
 import net.minecraft.core.HolderLookup.Provider;
@@ -11,12 +9,11 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EnchantmentTagsProvider;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class EnchTagsProvider extends EnchantmentTagsProvider {
 
-    public EnchTagsProvider(PackOutput output, CompletableFuture<Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, ApothicEnchanting.MODID, existingFileHelper);
+    public EnchTagsProvider(PackOutput output, CompletableFuture<Provider> lookupProvider) {
+        super(output, lookupProvider, ApothicEnchanting.MODID);
     }
 
     @Override

@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "C": {
-            "item": "minecraft:cobweb"
-        },
-        "P": {
-            "item": "minecraft:prismarine_shard"
-        }
+        "C": "minecraft:cobweb",
+        "P": "minecraft:prismarine_shard"
     },
     "pattern": [
         " P ",
@@ -16,7 +12,6 @@
         " P "
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:prismatic_web"
     }
 }

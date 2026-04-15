@@ -3,15 +3,9 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "H": {
-            "item": "minecraft:heart_of_the_sea"
-        },
-        "I": {
-            "item": "apothic_enchanting:infused_seashelf"
-        },
-        "P": {
-            "item": "minecraft:prismarine_shard"
-        }
+        "H": "minecraft:heart_of_the_sea",
+        "I": "apothic_enchanting:infused_seashelf",
+        "P": "minecraft:prismarine_shard"
     },
     "pattern": [
         " H ",
@@ -19,7 +13,6 @@
         "PPP"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:heart_seashelf"
     }
 }

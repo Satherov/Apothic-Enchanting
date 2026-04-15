@@ -12,8 +12,8 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.extensions.IBlockExtension;
 
@@ -33,7 +33,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      * @apiNote Call via {@link EnchantingStatRegistry#getMaxEterna(BlockState, Level, BlockPos)}
      */
     @ApiStatus.OverrideOnly
-    default float getMaxEnchantingPower(BlockState state, LevelReader world, BlockPos pos) {
+    default float getMaxEnchantingPower(BlockState state, BlockGetter level, BlockPos pos) {
         return 30;
     }
 
@@ -44,7 +44,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      * @apiNote Call via {@link EnchantingStatRegistry#getQuanta(BlockState, Level, BlockPos)}
      */
     @ApiStatus.OverrideOnly
-    default float getQuantaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    default float getQuantaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return 0;
     }
 
@@ -55,7 +55,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      * @apiNote Call via {@link EnchantingStatRegistry#getArcana(BlockState, Level, BlockPos)}
      */
     @ApiStatus.OverrideOnly
-    default float getArcanaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    default float getArcanaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return 0;
     }
 
@@ -66,7 +66,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      * @apiNote Call via {@link EnchantingStatRegistry#getBonusClues(BlockState, Level, BlockPos)}
      */
     @ApiStatus.OverrideOnly
-    default int getBonusClues(BlockState state, LevelReader world, BlockPos pos) {
+    default int getBonusClues(BlockState state, BlockGetter level, BlockPos pos) {
         return 0;
     }
 
@@ -75,7 +75,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      *
      * @return A list of all enchantments that are blacklisted by the presence of this block.
      */
-    default Set<Holder<Enchantment>> getBlacklistedEnchantments(BlockState state, LevelReader world, BlockPos pos) {
+    default Set<Holder<Enchantment>> getBlacklistedEnchantments(BlockState state, BlockGetter level, BlockPos pos) {
         return Collections.emptySet();
     }
 
@@ -117,7 +117,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      *
      * @return If this block allows the table to roll treasure enchantments.
      */
-    default boolean allowsTreasure(BlockState state, LevelReader world, BlockPos pos) {
+    default boolean allowsTreasure(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 
@@ -126,7 +126,7 @@ public interface EnchantmentStatBlock extends IBlockExtension {
      *
      * @return If this block stabilizes the enchantment table.
      */
-    default boolean providesStability(BlockState state, LevelReader world, BlockPos pos) {
+    default boolean providesStability(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 }

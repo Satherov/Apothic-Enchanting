@@ -12,7 +12,7 @@ import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentHelper;
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -22,15 +22,14 @@ import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 public record BerserkingComponent(List<ConditionalEffect<EnchantmentValueEffect>> hpCost, List<ConditionalEffect<VariableMobEffect>> mobEffects, List<ConditionalEffect<EnchantmentValueEffect>> cooldown) {
 
     public static final Codec<BerserkingComponent> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf().fieldOf("hp_cost").forGetter(BerserkingComponent::hpCost),
-        ConditionalEffect.codec(VariableMobEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf().fieldOf("mob_effects").forGetter(BerserkingComponent::mobEffects),
-        ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf().fieldOf("cooldown").forGetter(BerserkingComponent::cooldown))
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf().fieldOf("hp_cost").forGetter(BerserkingComponent::hpCost),
+        ConditionalEffect.codec(VariableMobEffect.CODEC).listOf().fieldOf("mob_effects").forGetter(BerserkingComponent::mobEffects),
+        ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf().fieldOf("cooldown").forGetter(BerserkingComponent::cooldown))
         .apply(inst, BerserkingComponent::new));
 
     /**
@@ -38,7 +37,7 @@ public record BerserkingComponent(List<ConditionalEffect<EnchantmentValueEffect>
      */
     public static void attemptToGoBerserk(LivingDamageEvent.Post e) {
         LivingEntity target = e.getEntity();
-        ResourceLocation key = BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE.getKey(Ench.EnchantEffects.BERSERKING);
+        Identifier key = BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE.getKey(Ench.EnchantEffects.BERSERKING);
         if (e.getSource().getEntity() != null && !MiscUtil.isOnCooldown(key, target)) {
             Pair<BerserkingComponent, Integer> data = ApothEnchantmentHelper.getHighestEquippedLevel(Ench.EnchantEffects.BERSERKING, target);
             if (data != null) {
@@ -48,11 +47,13 @@ public record BerserkingComponent(List<ConditionalEffect<EnchantmentValueEffect>
 
                 float hpCost = ApothEnchantmentHelper.processValue(comp.hpCost, ctx, level, 0);
                 target.invulnerableTime = 0;
-                target.hurt(target.damageSources().source(Ench.DamageTypes.CORRUPTED), hpCost);
+                target.hurtServer(ctx.getLevel(), target.damageSources().source(Ench.DamageTypes.CORRUPTED), hpCost);
 
-                Enchantment.applyEffects(comp.mobEffects, ctx, variableEffect -> {
-                    target.addEffect(variableEffect.createEffectInstance(level, ctx.getRandom()));
-                });
+                for (ConditionalEffect<VariableMobEffect> conditional : comp.mobEffects) {
+                    if (conditional.matches(ctx)) {
+                        target.addEffect(conditional.effect().createEffectInstance(level, ctx.getRandom()));
+                    }
+                }
 
                 MiscUtil.startCooldown(key, target, (int) ApothEnchantmentHelper.processValue(comp.cooldown(), ctx, level, 0));
             }

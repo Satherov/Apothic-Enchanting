@@ -20,9 +20,12 @@ public record ReboundingEffect(LevelBasedValue range, LevelBasedValue horizontal
 
     @Override
     public void apply(ServerLevel level, int enchantmentLevel, EnchantedItemInUse item, Entity entity, Vec3 origin) {
-        if (entity.distanceToSqr(origin) <= range.calculate(enchantmentLevel)) {
-            Vec3 vec = new Vec3(entity.getX() - origin.x(), entity.getY() - origin.y(), entity.getZ() - origin.z());
-            entity.push(vec.x * horizontalStrength.calculate(enchantmentLevel), vec.y * verticalStrength.calculate(enchantmentLevel), vec.z * horizontalStrength.calculate(enchantmentLevel));
+        if (item.owner() != null) {
+            Vec3 ownerPos = item.owner().position();
+            if (entity.distanceToSqr(ownerPos) <= range.calculate(enchantmentLevel)) {
+                Vec3 vec = new Vec3(entity.getX() - ownerPos.x(), entity.getY() - ownerPos.y(), entity.getZ() - ownerPos.z()).normalize();
+                entity.push(vec.x * horizontalStrength.calculate(enchantmentLevel), (0.1 + vec.y) * verticalStrength.calculate(enchantmentLevel), vec.z * horizontalStrength.calculate(enchantmentLevel));
+            }
         }
     }
 

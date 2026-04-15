@@ -21,6 +21,7 @@ import dev.shadowsoffire.apothic_enchanting.objects.ExtractionTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ImprovedScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.payloads.EnchantmentInfoPayload;
+import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipeCache;
 import dev.shadowsoffire.placebo.config.Configuration;
 import dev.shadowsoffire.placebo.util.RunnableReloader;
 import net.minecraft.core.BlockPos;
@@ -45,12 +46,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
@@ -58,11 +61,12 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
-import net.neoforged.neoforge.event.entity.player.AnvilRepairEvent;
+import net.neoforged.neoforge.event.entity.player.AnvilCraftEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -70,7 +74,7 @@ public class ApothEnchEvents {
 
     private static final MethodHandle dropFromLootTable;
     static {
-        Method m = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "dropFromLootTable", DamageSource.class, boolean.class);
+        Method m = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "dropFromLootTable", ServerLevel.class, DamageSource.class, boolean.class);
         try {
             m.setAccessible(true);
             dropFromLootTable = MethodHandles.lookup().unreflect(m);
@@ -91,7 +95,7 @@ public class ApothEnchEvents {
             enchants.removeIf(h -> h.is(EnchantmentTags.CURSE));
             EnchantmentHelper.setEnchantments(stack, enchants.toImmutable());
 
-            e.setCost(30);
+            e.setXpCost(30);
             e.setMaterialCost(1);
             e.setOutput(stack);
             return;
@@ -101,7 +105,7 @@ public class ApothEnchEvents {
             Item target = left.getItem() == Items.CHIPPED_ANVIL ? Items.DAMAGED_ANVIL : Items.ANVIL; // Repair the anvil, chipped -> damaged, damaged -> normal
             ItemStack out = left.transmuteCopy(target);
             e.setOutput(out);
-            e.setCost(5);
+            e.setXpCost(5);
             e.setMaterialCost(1);
             return;
         }
@@ -112,7 +116,7 @@ public class ApothEnchEvents {
     }
 
     @SubscribeEvent
-    public void repairEvent(AnvilRepairEvent e) {
+    public void repairEvent(AnvilCraftEvent.Post e) {
         if (ExtractionTomeItem.updateRepair(e)) return;
     }
 
@@ -128,9 +132,9 @@ public class ApothEnchEvents {
                     ench.value().modifyDamageFilteredValue(Ench.EnchantEffects.EXTRA_LOOT_ROLL, (ServerLevel) p.level(), level, p.getWeaponItem(), p, e.getSource(), dropChance);
                 });
 
-                if (dropChance.floatValue() > 0 && p.level().random.nextFloat() <= dropChance.floatValue()) {
+                if (dropChance.floatValue() > 0 && p.level().getRandom().nextFloat() <= dropChance.floatValue()) {
                     e.getEntity().captureDrops(new ArrayList<>());
-                    dropFromLootTable.invoke(e.getEntity(), e.getSource(), true);
+                    dropFromLootTable.invoke(e.getEntity(), (ServerLevel) p.level(), e.getSource(), true);
                     e.getDrops().addAll(e.getEntity().captureDrops(null));
                 }
             }
@@ -173,7 +177,7 @@ public class ApothEnchEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void healing(LivingHealEvent e) {
         if (e.getEntity().getType() == EntityType.ARMOR_STAND) return; // https://github.com/Shadows-of-Fire/Apotheosis/issues/636
-        if (e.getEntity().level().isClientSide) return;
+        if (e.getEntity().level().isClientSide()) return;
         if (e.getAmount() <= 0F) return;
 
         EnchantmentHelper.getRandomItemWith(Ench.EnchantEffects.REPAIR_WITH_HP, e.getEntity(), s -> s.isDamaged()).ifPresent(itemInUse -> {
@@ -202,12 +206,12 @@ public class ApothEnchEvents {
         Pair<ReflectiveComponent, Integer> reflect = EnchantmentHelper.getHighestLevel(shield, Ench.EnchantEffects.REFLECTIVE);
         if (reflect != null) {
             float chance = reflect.getFirst().procChance().calculate(reflect.getSecond());
-            if (user.level().random.nextFloat() <= chance) {
+            if (user.level().getRandom().nextFloat() <= chance) {
                 DamageSource src = user.level().damageSources().indirectMagic(user, user);
                 if (attacker instanceof LivingEntity livingAttacker) {
                     float ratio = reflect.getFirst().reflectRatio().calculate(reflect.getSecond());
-                    livingAttacker.hurt(src, ratio * e.getBlockedDamage());
-                    shield.hurtAndBreak(10, user, LivingEntity.getSlotForHand(user.getUsedItemHand()));
+                    livingAttacker.hurtOrSimulate(src, ratio * e.getBlockedDamage());
+                    shield.hurtAndBreak(10, user, user.getUsedItemHand());
                 }
             }
         }
@@ -237,7 +241,7 @@ public class ApothEnchEvents {
                 }
             });
 
-            if (flag.getValue()) {
+            if (flag.booleanValue()) {
                 e.setNewSpeed(e.getNewSpeed() * 5F);
             }
         }
@@ -283,7 +287,15 @@ public class ApothEnchEvents {
         if (bonemealCost != null && !e.getEntity().isShiftKeyDown() && BoneMealItem.applyBonemeal(s.copy(), e.getLevel(), e.getPos(), e.getEntity())) {
             int cost = (int) bonemealCost.getFirst().calculate(bonemealCost.getSecond());
             if (cost > 0) {
-                s.hurtAndBreak(cost, e.getEntity(), LivingEntity.getSlotForHand(e.getHand()));
+                s.hurtAndBreak(cost, e.getEntity(), e.getHand());
+            }
+            // applyBonemeal only performs the block-state change; the particles and sound effect
+            // are triggered via level event 1505 (the client-side "bone meal used" broadcast),
+            // and the sculk vibration comes from causeUseVibration. Both are part of vanilla's
+            // BoneMealItem#useOn scaffolding and must be invoked explicitly here.
+            if (!e.getLevel().isClientSide()) {
+                s.causeUseVibration(e.getEntity(), GameEvent.ITEM_INTERACT_FINISH);
+                e.getLevel().levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, e.getPos(), 15);
             }
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.SUCCESS);
@@ -296,8 +308,8 @@ public class ApothEnchEvents {
     }
 
     @SubscribeEvent
-    public void reload(AddReloadListenerEvent e) {
-        e.addListener(RunnableReloader.of(() -> {
+    public void reload(AddServerReloadListenersEvent e) {
+        e.addListener(ApothicEnchanting.loc("reload"), RunnableReloader.of(() -> {
             Configuration enchInfoConfig = new Configuration(ApothicAttributes.getConfigFile("enchantments"));
             enchInfoConfig.setTitle("Apotheosis Enchantment Information");
             enchInfoConfig.setComment("This file contains configurable data for each enchantment.\nThe names of each category correspond to the registry names of every loaded enchantment.");
@@ -309,7 +321,7 @@ public class ApothEnchEvents {
                 for (int i = 1; i <= info.getMaxLevel(); i++) {
                     if (info.getMinPower(i) > info.getMaxPower(i)) {
                         ApothicEnchanting.LOGGER.warn("Enchantment {} has min/max power {}/{} at level {}, making this level unobtainable except by combination.",
-                            ench.key().location(),
+                            ench.key().identifier(),
                             info.getMinPower(i),
                             info.getMaxPower(i), i);
                     }
@@ -323,6 +335,12 @@ public class ApothEnchEvents {
     @SubscribeEvent
     public void stopped(ServerStoppedEvent e) {
         ApothicEnchanting.ENCHANTMENT_INFO.clear();
+        InfusionRecipeCache.clear();
+    }
+
+    @SubscribeEvent
+    public void started(ServerStartedEvent e) {
+        InfusionRecipeCache.rebuildFromServer(e.getServer());
     }
 
     @SubscribeEvent
@@ -332,6 +350,8 @@ public class ApothEnchEvents {
 
     @SubscribeEvent
     public void sync(OnDatapackSyncEvent e) {
+        InfusionRecipeCache.rebuildFromServer(e.getPlayerList().getServer());
+        e.sendRecipes(Ench.RecipeTypes.INFUSION);
         e.getRelevantPlayers().forEach(p -> {
             PacketDistributor.sendToPlayer(p, new EnchantmentInfoPayload(ApothicEnchanting.ENCHANTMENT_INFO));
         });

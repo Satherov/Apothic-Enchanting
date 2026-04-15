@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,23 +17,22 @@ public class GeodeShelfBlock extends HorizontalDirectionalBlock implements Encha
         super(pProperties);
     }
 
-    @Override
-    public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+    public float getEnchantPowerBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return 5;
     }
 
     @Override
-    public float getMaxEnchantingPower(BlockState state, LevelReader world, BlockPos pos) {
+    public float getMaxEnchantingPower(BlockState state, BlockGetter level, BlockPos pos) {
         return 60;
     }
 
     @Override
-    public float getQuantaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    public float getQuantaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return -15F;
     }
 
     @Override
-    public boolean providesStability(BlockState state, LevelReader world, BlockPos pos) {
+    public boolean providesStability(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 

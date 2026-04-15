@@ -1,10 +1,12 @@
 package dev.shadowsoffire.apothic_enchanting.objects;
 
-import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
@@ -18,29 +20,37 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Spawner;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.neoforge.common.Tags;
 
 public class EnderLeadItem extends Item {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     protected final Type type;
 
@@ -52,8 +62,8 @@ public class EnderLeadItem extends Item {
     public boolean canLeash(Entity target) {
         return target instanceof Mob
             && target.isAlive()
-            && !target.getType().is(Tags.EntityTypes.BOSSES)
-            && !target.getType().is(Tags.EntityTypes.CAPTURING_NOT_SUPPORTED)
+            && !target.is(Tags.EntityTypes.BOSSES)
+            && !target.is(Tags.EntityTypes.CAPTURING_NOT_SUPPORTED)
             && !target.isRemoved()
             && !target.isPassenger()
             && target.getType().canSerialize()
@@ -63,15 +73,20 @@ public class EnderLeadItem extends Item {
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand usedHand) {
         if (canLeash(target) && !containsEntity(stack)) {
-            CompoundTag tag = new CompoundTag();
-            if (!player.level().isClientSide && target.save(tag)) {
-                stack.set(DataComponents.ENTITY_DATA, CustomData.of(tag));
-                stack.set(Ench.Components.LEASHED_ENTITY_TYPE, target.getType());
-                stack.set(Ench.Components.LEASHED_ENTITY_NAME, target.getDisplayName());
-                target.discard();
+            if (!player.level().isClientSide()) {
+                try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LOGGER)) {
+                    TagValueOutput output = TagValueOutput.createWithContext(reporter, player.level().registryAccess());
+                    if (target.saveAsPassenger(output)) {
+                        CompoundTag tag = output.buildResult();
+                        stack.set(DataComponents.ENTITY_DATA, TypedEntityData.of(target.getType(), tag));
+                        stack.set(Ench.Components.LEASHED_ENTITY_TYPE, target.getType());
+                        stack.set(Ench.Components.LEASHED_ENTITY_NAME, target.getDisplayName());
+                        target.discard();
+                    }
+                }
             }
             playSound(player);
-            return InteractionResult.sidedSuccess(player.level().isClientSide);
+            return InteractionResult.SUCCESS;
         }
         return super.interactLivingEntity(stack, player, target, usedHand);
     }
@@ -92,19 +107,19 @@ public class EnderLeadItem extends Item {
 
         playSound(player);
 
-        if (!(level instanceof ServerLevel)) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return InteractionResult.SUCCESS;
         }
         else {
             if (this.type == Type.REINFORCED && level.getBlockEntity(pos) instanceof Spawner spawner) {
                 EntityType<?> type = getType(stack);
-                if (type.is(Ench.Tags.BLACKLISTED_FROM_SPAWNERS)) {
+                if (type.builtInRegistryHolder().is(Ench.Tags.BLACKLISTED_FROM_SPAWNERS)) {
                     return InteractionResult.FAIL;
                 }
                 spawner.setEntityId(type, level.getRandom());
                 level.sendBlockUpdated(pos, state, state, 3);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                stack.hurtAndBreak(1, player, hand);
                 stack.remove(Ench.Components.LEASHED_ENTITY_TYPE);
                 stack.remove(Ench.Components.LEASHED_ENTITY_NAME);
                 stack.remove(DataComponents.ENTITY_DATA);
@@ -120,21 +135,25 @@ public class EnderLeadItem extends Item {
                 }
 
                 EntityType<?> type = getType(stack);
-                CustomData data = stack.getOrDefault(DataComponents.ENTITY_DATA, CustomData.EMPTY);
+                TypedEntityData<EntityType<?>> data = stack.get(DataComponents.ENTITY_DATA);
+                if (data == null) {
+                    return InteractionResult.FAIL;
+                }
 
-                CompoundTag tag = data.copyTag();
+                CompoundTag tag = data.copyTagWithoutId().copy();
                 tag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
 
-                Entity entity = EntityType.loadEntityRecursive(tag, level, Function.identity());
-                if (entity != null) {
-                    entity.getSelfAndPassengers().forEach(ent -> {
-                        entity.absMoveTo(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, 0, 0);
+                try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LOGGER)) {
+                    ValueInput input = TagValueInput.create(reporter, serverLevel.registryAccess(), tag);
+                    Entity entity = EntityType.loadEntityRecursive(input, level, EntitySpawnReason.DISPENSER, e -> e);
+                    if (entity != null) {
+                        entity.snapTo((double) spawnPos.getX() + 0.5D, (double) spawnPos.getY(), (double) spawnPos.getZ() + 0.5D, 0.0F, 0.0F);
                         level.addFreshEntity(entity);
-                    });
+                    }
                 }
 
                 level.gameEvent(player, GameEvent.ENTITY_PLACE, spawnPos);
-                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                stack.hurtAndBreak(1, player, hand);
                 stack.remove(Ench.Components.LEASHED_ENTITY_TYPE);
                 stack.remove(Ench.Components.LEASHED_ENTITY_NAME);
                 stack.remove(DataComponents.ENTITY_DATA);
@@ -145,16 +164,16 @@ public class EnderLeadItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext ctx, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         EntityType<?> type = getType(stack);
         if (type != null) {
             Component name = type.getDescription();
-            tooltip.add(ApothicEnchanting.lang("info", "leashed_entity", name).withStyle(ChatFormatting.GRAY));
+            tooltip.accept(ApothicEnchanting.lang("info", "leashed_entity", name).withStyle(ChatFormatting.GRAY));
         }
         else {
-            tooltip.add(ApothicEnchanting.lang("info", "leash_no_entity").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(ApothicEnchanting.lang("info", "leash_no_entity").withStyle(ChatFormatting.GRAY));
         }
-        tooltip.add(Component.translatable(this.getDescriptionId() + ".desc").withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable(this.getDescriptionId() + ".desc").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -177,11 +196,6 @@ public class EnderLeadItem extends Item {
     @Override
     public boolean isFoil(ItemStack stack) {
         return containsEntity(stack);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
     }
 
     private static void playSound(Player player) {

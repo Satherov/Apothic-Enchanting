@@ -1,10 +1,8 @@
 package dev.shadowsoffire.apothic_enchanting;
 
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
 import dev.shadowsoffire.apothic_enchanting.advancements.EnchantedTrigger;
@@ -22,7 +20,9 @@ import dev.shadowsoffire.apothic_enchanting.objects.ExtractionTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock.FilteringShelfTile;
 import dev.shadowsoffire.apothic_enchanting.objects.GeodeShelfBlock;
+import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlockItem;
 import dev.shadowsoffire.apothic_enchanting.objects.GlowyBlockItem;
+import dev.shadowsoffire.apothic_enchanting.objects.LibraryBlockItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ImprovedScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
@@ -50,7 +50,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -64,7 +64,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -98,9 +97,9 @@ public class Ench {
 
     public static final class Sounds {
 
-        public static final Holder<SoundEvent> MUSIC_DISC_ETERNA = R.sound("music_disc.eterna");
-        public static final Holder<SoundEvent> MUSIC_DISC_QUANTA = R.sound("music_disc.quanta");
-        public static final Holder<SoundEvent> MUSIC_DISC_ARCANA = R.sound("music_disc.arcana");
+        public static final SoundEvent MUSIC_DISC_ETERNA = R.sound("music_disc.eterna");
+        public static final SoundEvent MUSIC_DISC_QUANTA = R.sound("music_disc.quanta");
+        public static final SoundEvent MUSIC_DISC_ARCANA = R.sound("music_disc.arcana");
 
         private static void bootstrap() {}
     }
@@ -133,7 +132,9 @@ public class Ench {
 
         public static final Holder<Block> ECHOING_SCULKSHELF = sculkShelf("echoing_sculkshelf");
 
-        public static final Holder<Block> ENDER_LIBRARY = R.block("ender_library", () -> new EnchLibraryBlock(EnderLibraryTile::new, 31));
+        public static final Holder<Block> ENDER_LIBRARY = R.block("ender_library",
+            props -> new EnchLibraryBlock(props, EnderLibraryTile::new, 31),
+            p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F));
 
         public static final Holder<Block> ENDSHELF = stoneShelf("endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
 
@@ -153,7 +154,9 @@ public class Ench {
 
         public static final Holder<Block> INFUSED_SEASHELF = stoneShelf("infused_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
 
-        public static final Holder<Block> LIBRARY = R.block("library", () -> new EnchLibraryBlock(BasicLibraryTile::new, 16));
+        public static final Holder<Block> LIBRARY = R.block("library",
+            props -> new EnchLibraryBlock(props, BasicLibraryTile::new, 16),
+            p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F));
 
         public static final Holder<Block> MELONSHELF = woodShelf("melonshelf", MapColor.COLOR_GREEN, 0.75F, ParticleTypes.ENCHANT);
 
@@ -177,15 +180,21 @@ public class Ench {
         private static void bootstrap() {}
 
         private static Holder<Block> sculkShelf(String id) {
-            return R.block(id, () -> new SculkShelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).randomTicks().requiresCorrectToolForDrops().strength(3.5F), Particles.ENCHANT_SCULK));
+            return R.block(id,
+                props -> new SculkShelfBlock(props, Particles.ENCHANT_SCULK),
+                p -> p.mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).randomTicks().requiresCorrectToolForDrops().strength(3.5F));
         }
 
         private static Holder<Block> stoneShelf(String id, MapColor color, float strength, ParticleOptions particle) {
-            return R.block(id, () -> new TypedShelfBlock(Block.Properties.of().requiresCorrectToolForDrops().sound(SoundType.STONE).mapColor(color).strength(strength), particle));
+            return R.block(id,
+                props -> new TypedShelfBlock(props, particle),
+                p -> p.requiresCorrectToolForDrops().sound(SoundType.STONE).mapColor(color).strength(strength));
         }
 
         private static Holder<Block> woodShelf(String id, MapColor color, float strength, ParticleOptions particle) {
-            return R.block(id, () -> new TypedShelfBlock(Block.Properties.of().sound(SoundType.WOOD).mapColor(color).strength(strength), particle));
+            return R.block(id,
+                props -> new TypedShelfBlock(props, particle),
+                p -> p.sound(SoundType.WOOD).mapColor(color).strength(strength));
         }
 
     }
@@ -225,7 +234,7 @@ public class Ench {
          * Used by the {@link EnderLeadItem} to record the name of the leashed entity.
          */
         public static final DataComponentType<Component> LEASHED_ENTITY_NAME = R.component("leashed_entity_name",
-            b -> b.persistent(ComponentSerialization.FLAT_CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC).cacheEncoding());
+            b -> b.persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC).cacheEncoding());
 
         private static void bootstrap() {}
     }
@@ -260,14 +269,14 @@ public class Ench {
          * The crescendo effect causes the crossbow to have an additional number of shots per consumed ammunition, without having to reload between them.
          */
         public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> CRESCENDO = R.enchantmentEffect("crescendo",
-            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf()));
 
         /**
          * The drops to xp effect, if present on a weapon, causes all items dropped by slain mobs to be converted to experience.
          * The amount of experience, per item, is equal to the value of the component.
          */
         public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> DROPS_TO_XP = R.enchantmentEffect("drops_to_xp",
-            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf()));
 
         /**
          * The boon component allows a chance at dropping a random item from a tag when any block from a target tag is broken.
@@ -283,7 +292,7 @@ public class Ench {
          * The extra loot roll effect, if present on a weapon, gives a chance to roll and drop an additional copy of the slain mob's loot.
          */
         public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> EXTRA_LOOT_ROLL = R.enchantmentEffect("extra_loot_roll",
-            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf()));
+            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf()));
 
         /**
          * The growth serum effect has a chance (equal to the value) to make a sheared sheep immediately regrow its wool.
@@ -311,7 +320,7 @@ public class Ench {
          * consumed to restore integer durability values (i.e. at 4 / hp, 0.25 hp can repair 1 durability).
          */
         public static final DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>> REPAIR_WITH_HP = R.enchantmentEffect("repair_with_hp",
-            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+            b -> b.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf()));
 
         /**
          * The stable footing effect causes the break speed penalty for flying to be ignored.
@@ -356,15 +365,15 @@ public class Ench {
 
     public static class Items extends net.minecraft.world.item.Items {
 
-        public static final Holder<Item> BEESHELF = R.item("beeshelf", () -> new BlockItem(Ench.Blocks.BEESHELF.value(), new Item.Properties()));
+        public static final Holder<Item> BEESHELF = R.blockItem("beeshelf", Ench.Blocks.BEESHELF);
 
-        public static final Holder<Item> BLAZING_HELLSHELF = R.item("blazing_hellshelf", () -> new BlockItem(Ench.Blocks.BLAZING_HELLSHELF.value(), new Item.Properties()));
+        public static final Holder<Item> BLAZING_HELLSHELF = R.blockItem("blazing_hellshelf", Ench.Blocks.BLAZING_HELLSHELF);
 
-        public static final Holder<Item> BOOTS_TOME = R.item("boots_tome", () -> new TomeItem(DIAMOND_BOOTS));
+        public static final Holder<Item> BOOTS_TOME = R.item("boots_tome", p -> new TomeItem(p, DIAMOND_BOOTS), UnaryOperator.identity());
 
-        public static final Holder<Item> BOW_TOME = R.item("bow_tome", () -> new TomeItem(BOW));
+        public static final Holder<Item> BOW_TOME = R.item("bow_tome", p -> new TomeItem(p, BOW), UnaryOperator.identity());
 
-        public static final Holder<Item> CHESTPLATE_TOME = R.item("chestplate_tome", () -> new TomeItem(Items.DIAMOND_CHESTPLATE));
+        public static final Holder<Item> CHESTPLATE_TOME = R.item("chestplate_tome", p -> new TomeItem(p, Items.DIAMOND_CHESTPLATE), UnaryOperator.identity());
 
         public static final Holder<Item> CRYSTAL_SEASHELF = R.blockItem("crystal_seashelf", Ench.Blocks.CRYSTAL_SEASHELF);
 
@@ -378,15 +387,15 @@ public class Ench {
 
         public static final Holder<Item> ECHOING_SCULKSHELF = R.blockItem("echoing_sculkshelf", Ench.Blocks.ECHOING_SCULKSHELF);
 
-        public static final Holder<Item> ENDER_LIBRARY = R.blockItem("ender_library", Ench.Blocks.ENDER_LIBRARY);
+        public static final Holder<Item> ENDER_LIBRARY = R.blockItem("ender_library", Ench.Blocks.ENDER_LIBRARY, (b, p) -> new LibraryBlockItem(b, p, 31), UnaryOperator.identity());
 
         public static final Holder<Item> ENDSHELF = R.blockItem("endshelf", Ench.Blocks.ENDSHELF);
 
         public static final Holder<Item> EXTRACTION_TOME = R.item("extraction_tome", ExtractionTomeItem::new, p -> p.rarity(Rarity.EPIC));
 
-        public static final Holder<Item> FILTERING_SHELF = R.blockItem("filtering_shelf", Ench.Blocks.FILTERING_SHELF, p -> p.rarity(Rarity.UNCOMMON));
+        public static final Holder<Item> FILTERING_SHELF = R.blockItem("filtering_shelf", Ench.Blocks.FILTERING_SHELF, FilteringShelfBlockItem::new, p -> p.rarity(Rarity.UNCOMMON));
 
-        public static final Holder<Item> FISHING_TOME = R.item("fishing_tome", () -> new TomeItem(Items.FISHING_ROD));
+        public static final Holder<Item> FISHING_TOME = R.item("fishing_tome", p -> new TomeItem(p, Items.FISHING_ROD), UnaryOperator.identity());
 
         public static final Holder<Item> GEODE_SHELF = R.blockItem("geode_shelf", Ench.Blocks.GEODE_SHELF, p -> p.rarity(Rarity.UNCOMMON));
 
@@ -396,33 +405,33 @@ public class Ench {
 
         public static final Holder<Item> HELLSHELF = R.blockItem("hellshelf", Ench.Blocks.HELLSHELF);
 
-        public static final Holder<Item> HELMET_TOME = R.item("helmet_tome", () -> new TomeItem(Items.DIAMOND_HELMET));
+        public static final Holder<Item> HELMET_TOME = R.item("helmet_tome", p -> new TomeItem(p, Items.DIAMOND_HELMET), UnaryOperator.identity());
 
         public static final Holder<Item> IMPROVED_SCRAP_TOME = R.item("improved_scrap_tome", ImprovedScrappingTomeItem::new, p -> p.rarity(Rarity.RARE));
 
-        public static final Holder<Item> INERT_TRIDENT = R.item("inert_trident", () -> new Item(new Item.Properties().stacksTo(1)));
+        public static final Holder<Item> INERT_TRIDENT = R.item("inert_trident", Item::new, p -> p.stacksTo(1));
 
-        public static final Holder<Item> INFUSED_BREATH = R.item("infused_breath", () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
+        public static final Holder<Item> INFUSED_BREATH = R.item("infused_breath", Item::new, p -> p.rarity(Rarity.EPIC));
 
         public static final Holder<Item> INFUSED_HELLSHELF = R.blockItem("infused_hellshelf", Ench.Blocks.INFUSED_HELLSHELF, GlowyBlockItem::new, UnaryOperator.identity());
 
         public static final Holder<Item> INFUSED_SEASHELF = R.blockItem("infused_seashelf", Ench.Blocks.INFUSED_SEASHELF, GlowyBlockItem::new, UnaryOperator.identity());
 
-        public static final Holder<Item> LEGGINGS_TOME = R.item("leggings_tome", () -> new TomeItem(net.minecraft.world.item.Items.DIAMOND_LEGGINGS));
+        public static final Holder<Item> LEGGINGS_TOME = R.item("leggings_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_LEGGINGS), UnaryOperator.identity());
 
-        public static final Holder<Item> LIBRARY = R.blockItem("library", Ench.Blocks.LIBRARY);
+        public static final Holder<Item> LIBRARY = R.blockItem("library", Ench.Blocks.LIBRARY, (b, p) -> new LibraryBlockItem(b, p, 16), UnaryOperator.identity());
 
         public static final Holder<Item> MELONSHELF = R.blockItem("melonshelf", Ench.Blocks.MELONSHELF);
 
-        public static final Holder<Item> OTHER_TOME = R.item("other_tome", () -> new TomeItem(net.minecraft.world.item.Items.AIR));
+        public static final Holder<Item> OTHER_TOME = R.item("other_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.AIR), UnaryOperator.identity());
 
         public static final Holder<Item> PEARL_ENDSHELF = R.blockItem("pearl_endshelf", Ench.Blocks.PEARL_ENDSHELF);
 
-        public static final Holder<Item> PICKAXE_TOME = R.item("pickaxe_tome", () -> new TomeItem(net.minecraft.world.item.Items.DIAMOND_PICKAXE));
+        public static final Holder<Item> PICKAXE_TOME = R.item("pickaxe_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_PICKAXE), UnaryOperator.identity());
 
-        public static final Holder<Item> PRISMATIC_WEB = R.item("prismatic_web", () -> new Item(new Item.Properties()));
+        public static final Holder<Item> PRISMATIC_WEB = R.item("prismatic_web", Item::new, UnaryOperator.identity());
 
-        public static final Holder<Item> SCRAP_TOME = R.item("scrap_tome", () -> new ScrappingTomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+        public static final Holder<Item> SCRAP_TOME = R.item("scrap_tome", ScrappingTomeItem::new, p -> p.rarity(Rarity.UNCOMMON));
 
         public static final Holder<Item> SEASHELF = R.blockItem("seashelf", Ench.Blocks.SEASHELF);
 
@@ -438,9 +447,9 @@ public class Ench {
 
         public static final Holder<Item> TREASURE_SHELF = R.blockItem("treasure_shelf", Ench.Blocks.TREASURE_SHELF, p -> p.rarity(Rarity.UNCOMMON));
 
-        public static final Holder<Item> WARDEN_TENDRIL = R.item("warden_tendril", () -> new Item(new Item.Properties()));
+        public static final Holder<Item> WARDEN_TENDRIL = R.item("warden_tendril", Item::new, UnaryOperator.identity());
 
-        public static final Holder<Item> WEAPON_TOME = R.item("weapon_tome", () -> new TomeItem(net.minecraft.world.item.Items.DIAMOND_SWORD));
+        public static final Holder<Item> WEAPON_TOME = R.item("weapon_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_SWORD), UnaryOperator.identity());
 
         // Animals only, low durability
         public static final Holder<Item> FLIMSY_ENDER_LEAD = R.item("flimsy_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.FLIMSY), p -> p.stacksTo(1).durability(8));
@@ -450,7 +459,7 @@ public class Ench {
 
         // All entities, high durability. Can convert mob spawners to the leashed entity.
         public static final Holder<Item> OCCULT_ENDER_LEAD = R.item("occult_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.REINFORCED),
-            p -> p.stacksTo(1).durability(1024).component(DataComponents.UNBREAKABLE, new Unbreakable(true)));
+            p -> p.stacksTo(1).durability(1024).component(DataComponents.UNBREAKABLE, Unit.INSTANCE));
 
         public static final Holder<Item> MUSIC_DISC_ETERNA = R.item("music_disc_eterna", Item::new, p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(Songs.ETERNA));
 
@@ -509,16 +518,16 @@ public class Ench {
          */
         public static final TagKey<Item> CANNOT_BE_CONVERTED_TO_XP = ItemTags.create(ApothicEnchanting.loc("cannot_be_converted_to_xp"));
 
-        public static final TagKey<EntityType<?>> BLACKLISTED_FROM_SPAWNERS = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("apothic_spawners", "blacklisted_from_spawners"));
+        public static final TagKey<EntityType<?>> BLACKLISTED_FROM_SPAWNERS = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("apothic_spawners", "blacklisted_from_spawners"));
     }
 
     public static class Tiles {
 
-        public static final Supplier<BlockEntityType<EnderLibraryTile>> ENDER_LIBRARY = R.blockEntity("ender_library", EnderLibraryTile::new, () -> ImmutableSet.of(Blocks.ENDER_LIBRARY.value()));
+        public static final BlockEntityType<EnderLibraryTile> ENDER_LIBRARY = R.blockEntity("ender_library", EnderLibraryTile::new, Blocks.ENDER_LIBRARY);
 
-        public static final Supplier<BlockEntityType<FilteringShelfTile>> FILTERING_SHELF = R.blockEntity("filtering_shelf", FilteringShelfTile::new, () -> ImmutableSet.of(Blocks.FILTERING_SHELF.value()));
+        public static final BlockEntityType<FilteringShelfTile> FILTERING_SHELF = R.blockEntity("filtering_shelf", FilteringShelfTile::new, Blocks.FILTERING_SHELF);
 
-        public static final Supplier<BlockEntityType<BasicLibraryTile>> LIBRARY = R.blockEntity("library", BasicLibraryTile::new, () -> ImmutableSet.of(Blocks.LIBRARY.value()));
+        public static final BlockEntityType<BasicLibraryTile> LIBRARY = R.blockEntity("library", BasicLibraryTile::new, Blocks.LIBRARY);
 
         private static void bootstrap() {}
     }

@@ -3,27 +3,13 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "ingredients": [
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:book"
-        },
-        {
-            "item": "minecraft:blaze_rod"
-        }
+        "minecraft:book",
+        "minecraft:book",
+        "minecraft:book",
+        "minecraft:book",
+        "minecraft:book",
+        "minecraft:book",
+        "minecraft:blaze_rod"
     ],
     "result": {
         "count": 6,

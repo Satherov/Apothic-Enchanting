@@ -19,13 +19,14 @@ import dev.shadowsoffire.placebo.codec.CodecProvider;
 import dev.shadowsoffire.placebo.reload.DynamicRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -63,10 +64,10 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
      * This can be provided by a stat file, or {@link BlockState#getEnchantPowerBonus}
      * 1 Eterna = +1 level in the enchanting table.
      */
-    public static float getEterna(BlockState state, LevelReader level, BlockPos pos) {
+    public static float getEterna(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         if (INSTANCE.statsPerBlock.containsKey(block)) return INSTANCE.statsPerBlock.get(block).eterna;
-        return state.getEnchantPowerBonus(level, pos) * 2;
+        return state.getBlock().getEnchantPowerBonus(state, level, pos) * 2;
     }
 
     /**
@@ -74,7 +75,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
      * This can be provided by a stat file, or {@link EnchantmentStatBlock#getMaxEnchantingPower}
      * 1F of Eterna = 2 Levels in the enchanting table.
      */
-    public static float getMaxEterna(BlockState state, LevelReader level, BlockPos pos) {
+    public static float getMaxEterna(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         if (INSTANCE.statsPerBlock.containsKey(block)) return INSTANCE.statsPerBlock.get(block).maxEterna;
         return ((EnchantmentStatBlock) block).getMaxEnchantingPower(state, level, pos);
@@ -86,7 +87,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
      * This can be provided by a stat file, or {@link EnchantmentStatBlock#getQuantaBonus}
      * 1F of Quanta = 1% of Quanta in the enchanting table.
      */
-    public static float getQuanta(BlockState state, LevelReader level, BlockPos pos) {
+    public static float getQuanta(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         if (INSTANCE.statsPerBlock.containsKey(block)) return INSTANCE.statsPerBlock.get(block).quanta;
         return ((EnchantmentStatBlock) block).getQuantaBonus(state, level, pos);
@@ -97,7 +98,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
      * This can be provided by a stat file, or {@link EnchantmentStatBlock#getArcanaBonus}
      * 1F of Arcana = 1% of Arcana in the enchanting table.
      */
-    public static float getArcana(BlockState state, LevelReader level, BlockPos pos) {
+    public static float getArcana(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         if (INSTANCE.statsPerBlock.containsKey(block)) return INSTANCE.statsPerBlock.get(block).arcana;
         return ((EnchantmentStatBlock) block).getArcanaBonus(state, level, pos);
@@ -107,7 +108,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
      * Retrieves the number of bonus clues this block provides.
      * See {@link EnchantmentStatBlock#getBonusClues}
      */
-    public static int getBonusClues(BlockState state, LevelReader level, BlockPos pos) {
+    public static int getBonusClues(BlockState state, BlockGetter level, BlockPos pos) {
         Block block = state.getBlock();
         if (INSTANCE.statsPerBlock.containsKey(block)) return INSTANCE.statsPerBlock.get(block).clues;
         return ((EnchantmentStatBlock) block).getBonusClues(state, level, pos);
@@ -161,7 +162,8 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
                 this.blocks.addAll(blocks);
             }
             if (tag.isPresent()) {
-                this.blocks.addAll(EnchantingStatRegistry.INSTANCE.getContext().getTag(tag.get()).stream().map(Holder::value).toList());
+                HolderSet.Named<Block> set = EnchantingStatRegistry.INSTANCE.getRegistryLookup().lookupOrThrow(Registries.BLOCK).get(tag.get()).orElseThrow();
+                this.blocks.addAll(set.stream().map(Holder::value).toList());
             }
             if (block.isPresent()) {
                 this.blocks.add(block.get());

@@ -42,27 +42,29 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
-import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 
 @Mod(ApothicEnchanting.MODID)
 public class ApothicEnchanting {
@@ -141,15 +143,39 @@ public class ApothicEnchanting {
     }
 
     @SubscribeEvent
-    public void caps(RegisterCapabilitiesEvent e) {
-        e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.LIBRARY.get(), EnchLibraryTile::getItemHandler);
-        e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.ENDER_LIBRARY.get(), EnchLibraryTile::getItemHandler);
-        e.registerBlockEntity(ItemHandler.BLOCK, BlockEntityType.ENCHANTING_TABLE, ApothEnchantingTableBlock::getItemHandler);
-        e.registerBlockEntity(ItemHandler.BLOCK, Ench.Tiles.FILTERING_SHELF.get(), (container, side) -> new InvWrapper(container));
+    public void modifyComponents(ModifyDefaultComponentsEvent e) {
+        // Shears previously had an Efficiency/Fortune/Unbreaking-enabled mixin and a custom
+        // getEnchantmentValue() override; both methods were removed in 26.1. Drive the same
+        // enchantability via the DataComponents.ENCHANTABLE data component (the supported-enchant
+        // set is extended via the #minecraft:enchantable/{mining,durability} datapack tags).
+        e.modify(Items.SHEARS, builder -> builder.set(DataComponents.ENCHANTABLE, new Enchantable(15)));
+    }
+
+    /**
+     * Fallback handler that stamps a minimal {@link Enchantable}{@code (1)} component onto every
+     * item that doesn't already have one. Runs at {@link EventPriority#LOWEST} so every other
+     * mod's explicit {@code modify(...)} call from {@link #modifyComponents(ModifyDefaultComponentsEvent)}
+     * (and every other mod's own handlers) has already landed before we inspect the default component
+     * map. This preserves the old {@code ItemMixin#getEnchantmentValue} overwrite's intent: any item
+     * is at least minimally enchantable unless explicitly overridden.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void defaultEnchantability(ModifyDefaultComponentsEvent e) {
+        e.modifyMatching((item, components) -> !components.has(DataComponents.ENCHANTABLE),
+            builder -> builder.set(DataComponents.ENCHANTABLE, new Enchantable(1)));
     }
 
     @SubscribeEvent
-    public void data(GatherDataEvent event) {
+    public void caps(RegisterCapabilitiesEvent e) {
+        e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.LIBRARY, EnchLibraryTile::getItemHandler);
+        e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.ENDER_LIBRARY, EnchLibraryTile::getItemHandler);
+        e.registerBlockEntity(Capabilities.Item.BLOCK, net.minecraft.world.level.block.entity.BlockEntityType.ENCHANTING_TABLE, ApothEnchantingTableBlock::getItemHandler);
+        e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.FILTERING_SHELF,
+            (tile, side) -> net.neoforged.neoforge.transfer.item.VanillaContainerWrapper.of(tile));
+    }
+
+    @SubscribeEvent
+    public void data(GatherDataEvent.Client event) {
         DataProvider.INDENT_WIDTH.set(4);
         DataGenBuilder.create(MODID, "minecraft")
             .registry(Registries.ENCHANTMENT, ApothEnchantmentProvider::bootstrap)
@@ -171,7 +197,7 @@ public class ApothicEnchanting {
      */
     public static EnchantmentInfo getEnchInfo(Holder<Enchantment> ench) {
         if (ENCHANTMENT_INFO.isEmpty()) {
-            if (FMLEnvironment.dist == Dist.CLIENT && ApothEnchClient.isOnVanillaServer()) {
+            if (FMLEnvironment.getDist() == Dist.CLIENT && ApothEnchClient.isOnVanillaServer()) {
                 // Do nothing, the vanilla server will never send this packet to us.
             }
             else {
@@ -218,15 +244,21 @@ public class ApothicEnchanting {
             }
 
             int maxLevel = EnchHooks.getMaxLevel(ench.value());
-            event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ench, maxLevel)), TabVisibility.PARENT_TAB_ONLY);
+            event.accept(createEnchantedBook(new EnchantmentInstance(ench, maxLevel)), TabVisibility.PARENT_TAB_ONLY);
             for (int level = 1; level <= maxLevel; level++) {
-                event.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(ench, level)), TabVisibility.SEARCH_TAB_ONLY);
+                event.accept(createEnchantedBook(new EnchantmentInstance(ench, level)), TabVisibility.SEARCH_TAB_ONLY);
             }
         };
     }
 
-    public static ResourceLocation loc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    private static ItemStack createEnchantedBook(EnchantmentInstance inst) {
+        ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+        stack.enchant(inst.enchantment(), inst.level());
+        return stack;
+    }
+
+    public static Identifier loc(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
     /**

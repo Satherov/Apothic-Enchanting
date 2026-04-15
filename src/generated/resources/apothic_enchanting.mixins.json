@@ -1,7 +1,8 @@
 {
     "required": true,
     "package": "dev.shadowsoffire.apothic_enchanting.mixin",
-    "compatibilityLevel": "JAVA_21",
+    "compatibilityLevel": "JAVA_25",
+    "maxShiftBy": 0,
     "mixins": [
         "AnvilMenuMixin",
         "BlockMixin",
@@ -11,10 +12,7 @@
         "EnchantmentMixin",
         "GoldToolsHaveFortuneModuleMixin",
         "IShearableMixin",
-        "ItemMixin",
         "ItemStackMixin",
-        "ShearsItemMixin",
-        "SheepMixin",
         "SpellCrossbowMixin",
         "TemptGoalMixin",
         "ThrownTridentMixin",

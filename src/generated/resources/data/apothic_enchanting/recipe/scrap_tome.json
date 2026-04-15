@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "A": {
-            "item": "minecraft:anvil"
-        },
-        "B": {
-            "item": "minecraft:book"
-        }
+        "A": "minecraft:anvil",
+        "B": "minecraft:book"
     },
     "pattern": [
         "BBB",

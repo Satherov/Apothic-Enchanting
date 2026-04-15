@@ -34,7 +34,7 @@ public class EnchLibraryContainer extends BlockEntityMenu<EnchLibraryTile> imple
     @Override
     public void removed(Player player) {
         super.removed(player);
-        if (!this.level.isClientSide) this.tile.removeListener(this);
+        if (!this.level.isClientSide()) this.tile.removeListener(this);
         this.clearContainer(player, this.ioInv);
     }
 
@@ -53,10 +53,10 @@ public class EnchLibraryContainer extends BlockEntityMenu<EnchLibraryTile> imple
             @Override
             public void setChanged() {
                 super.setChanged();
-                if (!EnchLibraryContainer.this.level.isClientSide && !this.getItem().isEmpty()) {
+                if (!EnchLibraryContainer.this.level.isClientSide() && !this.getItem().isEmpty()) {
                     EnchLibraryContainer.this.tile.depositBook(this.getItem());
                 }
-                if (!this.getItem().isEmpty() && EnchLibraryContainer.this.level.isClientSide)
+                if (!this.getItem().isEmpty() && EnchLibraryContainer.this.level.isClientSide())
                     inv.player.level().playSound(inv.player, EnchLibraryContainer.this.pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.NEUTRAL, 0.5F, 0.7F);
                 EnchLibraryContainer.this.ioInv.setItem(0, ItemStack.EMPTY);
             }
@@ -130,7 +130,8 @@ public class EnchLibraryContainer extends BlockEntityMenu<EnchLibraryTile> imple
     public void onButtonClick(int id) {
         boolean shift = (id & 0x80000000) == 0x80000000;
         if (shift) id = id & 0x7FFFFFFF; // Look, if this ever breaks, it's not my fault someone has 2 billion enchantments.
-        Holder<Enchantment> ench = this.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(id).orElse(null);
+        var reg = this.level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        Holder<Enchantment> ench = reg.listElements().skip(id).findFirst().orElse(null);
         if (ench == null) return;
         ItemStack outSlot = this.ioInv.getItem(1);
         int curLvl = EnchantmentHelper.getEnchantmentsForCrafting(outSlot).getLevel(ench);

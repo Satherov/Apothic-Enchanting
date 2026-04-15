@@ -3,15 +3,9 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "B": {
-            "item": "minecraft:blaze_rod"
-        },
-        "O": {
-            "item": "minecraft:book"
-        },
-        "S": {
-            "item": "minecraft:stick"
-        }
+        "B": "minecraft:blaze_rod",
+        "O": "minecraft:book",
+        "S": "minecraft:stick"
     },
     "pattern": [
         "  B",

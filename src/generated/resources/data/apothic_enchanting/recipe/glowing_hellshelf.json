@@ -3,12 +3,8 @@
     "category": "misc",
     "group": "apothic_enchanting",
     "key": {
-        "G": {
-            "item": "minecraft:glowstone"
-        },
-        "I": {
-            "item": "apothic_enchanting:infused_hellshelf"
-        }
+        "G": "minecraft:glowstone",
+        "I": "apothic_enchanting:infused_hellshelf"
     },
     "pattern": [
         " G ",
@@ -16,7 +12,6 @@
         "G G"
     ],
     "result": {
-        "count": 1,
         "id": "apothic_enchanting:glowing_hellshelf"
     }
 }

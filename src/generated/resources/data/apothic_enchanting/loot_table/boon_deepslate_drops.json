@@ -29,8 +29,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 3.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -41,17 +50,21 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_iron"
-                    },
+                    "name": "minecraft:raw_iron",
                     "weight": 80
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -62,18 +75,22 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 1,
+                    "name": "minecraft:raw_gold",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_gold"
-                    },
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 10.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -84,18 +101,22 @@
                             }
                         }
                     ],
-                    "max": 10,
-                    "min": 2,
+                    "name": "minecraft:redstone",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:redstone"
-                    },
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 15.0,
+                                "min": 5.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -106,24 +127,25 @@
                             }
                         }
                     ],
-                    "max": 15,
-                    "min": 5,
+                    "name": "minecraft:lapis_lazuli",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:lapis_lazuli"
-                    },
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:diamond",
                     "quality": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:diamond"
-                    },
                     "weight": 60
                 }
             ],
@@ -165,57 +187,87 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_iron_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_iron_ore",
                     "weight": 80
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_gold_ore",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_gold_ore"
-                    },
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 5,
-                    "min": 2,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_redstone_ore",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_redstone_ore"
-                    },
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 8,
-                    "min": 3,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 8.0,
+                                "min": 3.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_lapis_ore",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_lapis_ore"
-                    },
                     "weight": 60
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 2,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 2.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_diamond_ore",
                     "quality": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_diamond_ore"
-                    },
                     "weight": 60
                 }
             ],
@@ -260,8 +312,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 10.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -272,17 +333,21 @@
                             }
                         }
                     ],
-                    "max": 10,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:redstone"
-                    },
+                    "name": "minecraft:redstone",
                     "weight": 15
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -293,12 +358,7 @@
                             }
                         }
                     ],
-                    "max": 3,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:diamond"
-                    },
+                    "name": "minecraft:diamond",
                     "weight": 15
                 },
                 {
@@ -344,23 +404,35 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 4,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_redstone_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 4.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_redstone_ore",
                     "weight": 15
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 2,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:deepslate_diamond_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 2.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:deepslate_diamond_ore",
                     "weight": 15
                 },
                 {

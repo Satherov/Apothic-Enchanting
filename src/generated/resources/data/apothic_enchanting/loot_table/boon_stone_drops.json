@@ -29,8 +29,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 3.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -41,17 +50,21 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_copper"
-                    },
+                    "name": "minecraft:raw_copper",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 3.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -62,18 +75,22 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 3,
+                    "name": "minecraft:raw_iron",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_iron"
-                    },
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 10.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -84,17 +101,21 @@
                             }
                         }
                     ],
-                    "max": 10,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:coal"
-                    },
+                    "name": "minecraft:coal",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -105,18 +126,22 @@
                             }
                         }
                     ],
-                    "max": 5,
-                    "min": 2,
+                    "name": "minecraft:raw_gold",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:raw_gold"
-                    },
                     "weight": 20
                 },
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 7.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -127,24 +152,25 @@
                             }
                         }
                     ],
-                    "max": 7,
-                    "min": 2,
+                    "name": "minecraft:lapis_lazuli",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:lapis_lazuli"
-                    },
                     "weight": 20
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 2,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 2.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:diamond",
                     "quality": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:diamond"
-                    },
                     "weight": 5
                 }
             ],
@@ -186,67 +212,103 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:copper_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:copper_ore",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:iron_ore",
                     "quality": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:iron_ore"
-                    },
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 5,
-                    "min": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:coal_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:coal_ore",
                     "weight": 100
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 3,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 3.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:gold_ore",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:gold_ore"
-                    },
                     "weight": 20
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 5,
-                    "min": 2,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 5.0,
+                                "min": 2.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:lapis_ore",
                     "quality": 2,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:lapis_ore"
-                    },
                     "weight": 20
                 },
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 1,
-                    "min": 1,
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 1.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:diamond_ore",
                     "quality": 3,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:diamond_ore"
-                    },
                     "weight": 5
                 }
             ],
@@ -292,8 +354,17 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
+                    "type": "minecraft:item",
                     "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 2.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        },
                         {
                             "enchantment": "minecraft:fortune",
                             "formula": "minecraft:binomial_with_bonus_count",
@@ -304,12 +375,7 @@
                             }
                         }
                     ],
-                    "max": 2,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:emerald"
-                    },
+                    "name": "minecraft:emerald",
                     "weight": 15
                 },
                 {
@@ -356,13 +422,19 @@
             ],
             "entries": [
                 {
-                    "type": "placebo:stack_entry",
-                    "max": 1,
-                    "min": 1,
-                    "stack": {
-                        "count": 1,
-                        "id": "minecraft:emerald_ore"
-                    },
+                    "type": "minecraft:item",
+                    "functions": [
+                        {
+                            "add": false,
+                            "count": {
+                                "type": "minecraft:uniform",
+                                "max": 1.0,
+                                "min": 1.0
+                            },
+                            "function": "minecraft:set_count"
+                        }
+                    ],
+                    "name": "minecraft:emerald_ore",
                     "weight": 15
                 },
                 {

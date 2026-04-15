@@ -3,7 +3,7 @@ package dev.shadowsoffire.apothic_enchanting.objects;
 import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class TreasureShelfBlock extends TypedShelfBlock implements EnchantmentStatBlock {
@@ -13,27 +13,26 @@ public class TreasureShelfBlock extends TypedShelfBlock implements EnchantmentSt
     }
 
     @Override
-    public boolean allowsTreasure(BlockState state, LevelReader world, BlockPos pos) {
+    public boolean allowsTreasure(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 
-    @Override
-    public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+    public float getEnchantPowerBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return 5;
     }
 
     @Override
-    public float getMaxEnchantingPower(BlockState state, LevelReader world, BlockPos pos) {
+    public float getMaxEnchantingPower(BlockState state, BlockGetter level, BlockPos pos) {
         return 70;
     }
 
     @Override
-    public float getQuantaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    public float getQuantaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return -15F;
     }
 
     @Override
-    public float getArcanaBonus(BlockState state, LevelReader world, BlockPos pos) {
+    public float getArcanaBonus(BlockState state, BlockGetter level, BlockPos pos) {
         return -15F;
     }
 

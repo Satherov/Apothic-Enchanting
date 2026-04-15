@@ -22,6 +22,7 @@ import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -29,7 +30,7 @@ import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 
 public class TooltipUtil {
 
-    public static void appendBlockStats(LevelReader level, BlockState state, BlockPos pos, Consumer<Component> tooltip) {
+    public static void appendBlockStats(BlockGetter level, BlockState state, BlockPos pos, Consumer<Component> tooltip) {
         EnchantmentStatBlock enchBlock = ((EnchantmentStatBlock) state.getBlock());
 
         float maxEterna = EnchantingStatRegistry.getMaxEterna(state, level, pos);
@@ -127,8 +128,8 @@ public class TooltipUtil {
             appendModifiedEnchTooltip(tooltip, ench, realLevel, nbtLevel);
         }
 
-        if ((realLevel > 0 || nbtLevel != realLevel) && FMLEnvironment.dist.isClient() && ApothEnchConfig.enableInlineEnchDescs) {
-            String key = ench.getKey().location().toLanguageKey("enchantment") + ".desc";
+        if ((realLevel > 0 || nbtLevel != realLevel) && FMLEnvironment.getDist().isClient() && ApothEnchConfig.enableInlineEnchDescs) {
+            String key = ench.getKey().identifier().toLanguageKey("enchantment") + ".desc";
             if (I18n.exists(key)) {
                 tooltip.accept(Component.translatable(key).withStyle(ChatFormatting.DARK_GRAY));
             }
