@@ -1,0 +1,46 @@
+plugins {
+    id 'java-library'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(rootProject.properties.javaVersion)
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'NeoForged'
+        url 'https://maven.neoforged.net/releases'
+    }
+}
+
+// The coremod module only needs the ClassProcessor SPI (from fancymodloader) and asm-tree at compile time.
+// It lives in the Plugin layer and must NOT reference the mod's main source set — the main mod lives in
+// the Game layer, which is loaded AFTER transformers run. Cross-layer calls go through bytecode-injected
+// INVOKESTATIC references to dev.shadowsoffire.apothic_enchanting.asm.EnchHooks, which is compiled into
+// the main mod jar and only needs to exist at runtime.
+dependencies {
+    // Only the pure SPI types (ClassProcessor, SimpleClassProcessor, ProcessorName, …) are needed at
+    // compile time. Disabling transitives keeps us off of com.mojang:logging, which only resolves
+    // from the Minecraft libraries maven (which the subproject doesn't configure).
+    compileOnly("net.neoforged.fancymodloader:loader:${rootProject.properties.fmlVersion}") {
+        transitive = false
+    }
+    compileOnly "org.ow2.asm:asm:${rootProject.properties.asmVersion}"
+    compileOnly "org.ow2.asm:asm-tree:${rootProject.properties.asmVersion}"
+    compileOnly "org.jetbrains:annotations:${rootProject.properties.jetbrainsAnnotationsVersion}"
+}
+
+jar {
+    manifest {
+        attributes(
+            'Manifest-Version': '1.0',
+            'Automatic-Module-Name': 'apothic_enchanting.coremods',
+            'FMLModType': 'LIBRARY'
+        )
+    }
+    archiveBaseName = "${rootProject.fileName}-coremods-${rootProject.mcVersion}"
+    archiveVersion = rootProject.version
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
