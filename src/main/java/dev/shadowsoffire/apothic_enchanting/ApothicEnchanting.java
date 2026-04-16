@@ -16,6 +16,7 @@ import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMinPowerFunctio
 import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.LootProvider;
 import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
@@ -183,6 +184,7 @@ public class ApothicEnchanting {
             .provider(LootProvider::create)
             .provider(EnchTagsProvider::new)
             .provider(EnchRecipeProvider::new)
+            .provider(EnchStatsProvider::new)
             .build(event);
     }
 
