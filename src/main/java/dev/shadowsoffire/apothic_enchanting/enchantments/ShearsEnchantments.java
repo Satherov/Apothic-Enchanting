@@ -8,8 +8,9 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
 import dev.shadowsoffire.apothic_enchanting.Ench;
-import net.minecraft.util.Util;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -85,7 +86,7 @@ public class ShearsEnchantments {
             items = new ArrayList<>(items);
             if (items.size() > 0) {
                 items.addAll(items.stream().map(ItemStack::copy).toList());
-                sheep.hurt(sheep.level().damageSources().generic(), 2);
+                sheep.hurtServer((ServerLevel) sheep.level(), sheep.level().damageSources().generic(), 2);
             }
         }
         return items;

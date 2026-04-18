@@ -65,6 +65,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
         this.statsCacheDirty = false;
     }
 
+    @SuppressWarnings("deprecation")
     private static Stats lookupStats(BlockState state) {
         if (INSTANCE.statsCacheDirty) {
             INSTANCE.buildStatsCache();

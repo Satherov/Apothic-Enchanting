@@ -267,7 +267,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
                 list.clear();
                 list.add(TooltipUtil.lang("info", "quanta_buff").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.RED));
                 list.add(TooltipUtil.lang("info", "quanta_growth", f(quanta)).withStyle(ChatFormatting.BLUE));
-                this.drawOnLeft(gfx, list, this.getGuiTop() + 29);
+                this.drawOnLeft(gfx, list, this.getTopPos() + 29);
             }
         }
         else if (this.isHovering(60, 14 + 19 * 3 + 25, 110, 5, mouseX, mouseY)) {
@@ -291,7 +291,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
                 int minEnchants = this.menu.stats.arcana() > 75F ? 3 : this.menu.stats.arcana() > 25F ? 2 : 0;
                 if (minEnchants > 0) list.add(TooltipUtil.lang("info", "min_enchants", minEnchants).withStyle(ChatFormatting.BLUE));
 
-                this.drawOnLeft(gfx, list, this.getGuiTop() + 29);
+                this.drawOnLeft(gfx, list, this.getTopPos() + 29);
                 int offset = 20 + list.size() * this.minecraft.font.lineHeight;
                 list.clear();
                 list.add(TooltipUtil.lang("info", "rel_weights").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.YELLOW));
@@ -299,7 +299,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
                 list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.uncommon"), a.getRarities()[1]).withStyle(ChatFormatting.GREEN));
                 list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.rare"), a.getRarities()[2]).withStyle(ChatFormatting.BLUE));
                 list.add(TooltipUtil.lang("info", "weight", I18n.get("rarity.enchantment.very_rare"), a.getRarities()[3]).withStyle(ChatFormatting.GOLD));
-                this.drawOnLeft(gfx, list, this.getGuiTop() + 29 + offset);
+                this.drawOnLeft(gfx, list, this.getTopPos() + 29 + offset);
             }
         }
         else if (this.menu.getSlot(0).hasItem() && this.isHovering(145, -15, 27, 15, mouseX, mouseY) && Arrays.stream(this.menu.enchantClue).boxed().map(enchIdMap::byId).allMatch(Predicates.notNull())) {
@@ -325,7 +325,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
                     list.add(TooltipUtil.lang("info", "power_range", Component.literal("" + minPow).withStyle(ChatFormatting.DARK_RED), Component.literal("" + maxPow).withStyle(ChatFormatting.BLUE)));
                     list.add(TooltipUtil.lang("info", "item_ench", Component.literal("" + enchanting.getOrDefault(DataComponents.ENCHANTABLE, new Enchantable(1)).value()).withStyle(ChatFormatting.GREEN)));
                     list.add(TooltipUtil.lang("info", "num_clues", Component.literal("" + (1 + this.menu.stats.clues())).withStyle(ChatFormatting.DARK_AQUA)));
-                    this.drawOnLeft(gfx, list, this.getGuiTop() + 29);
+                    this.drawOnLeft(gfx, list, this.getTopPos() + 29);
                     break;
                 }
             }

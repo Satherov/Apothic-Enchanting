@@ -208,9 +208,9 @@ public class ApothEnchEvents {
             float chance = reflect.getFirst().procChance().calculate(reflect.getSecond());
             if (user.level().getRandom().nextFloat() <= chance) {
                 DamageSource src = user.level().damageSources().indirectMagic(user, user);
-                if (attacker instanceof LivingEntity livingAttacker) {
+                if (attacker instanceof LivingEntity livingAttacker && !attacker.level().isClientSide()) {
                     float ratio = reflect.getFirst().reflectRatio().calculate(reflect.getSecond());
-                    livingAttacker.hurtOrSimulate(src, ratio * e.getBlockedDamage());
+                    livingAttacker.hurtServer((ServerLevel) livingAttacker.level(), src, ratio * e.getBlockedDamage());
                     shield.hurtAndBreak(10, user, user.getUsedItemHand());
                 }
             }

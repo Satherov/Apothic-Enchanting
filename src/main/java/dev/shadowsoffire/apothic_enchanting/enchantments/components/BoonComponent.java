@@ -86,6 +86,7 @@ public record BoonComponent(List<BoonData> entries) {
             ConditionalEffect.codec(EnchantmentValueEffect.CODEC).listOf().fieldOf("drop_chance").forGetter(BoonData::dropChance))
             .apply(inst, BoonData::new));
 
+        @SuppressWarnings("deprecation")
         public boolean matches(BlockState state) {
             return targets.contains(state.getBlock().builtInRegistryHolder());
         }

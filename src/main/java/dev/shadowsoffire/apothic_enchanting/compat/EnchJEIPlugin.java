@@ -82,7 +82,7 @@ public class EnchJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration reg) {
-        reg.addRecipeCatalyst(new ItemStack(Blocks.ENCHANTING_TABLE), InfusionRecipeCategory.TYPE);
+        reg.addCraftingStation(InfusionRecipeCategory.TYPE, Blocks.ENCHANTING_TABLE);
     }
 
     @Override

@@ -185,30 +185,30 @@ public class ApothEnchantmentHelper {
 
         EnchantmentHelper.runIterationOnEquipment(entity, (ench, level, slot) -> {
             T data = ench.value().effects().get(effectComp);
-            if (data != null && (result.getValue() == null || result.getValue().getSecond() < level)) {
+            if (data != null && (result.get() == null || result.get().getSecond() < level)) {
                 result.setValue(Pair.of(data, level));
             }
         });
 
-        return result.getValue();
+        return result.get();
     }
 
     public static float processValue(List<ConditionalEffect<EnchantmentValueEffect>> effects, LootContext ctx, int level, float initial) {
         MutableFloat f = new MutableFloat(initial);
         for (ConditionalEffect<EnchantmentValueEffect> conditional : effects) {
             if (conditional.matches(ctx)) {
-                f.setValue(conditional.effect().process(level, ctx.getRandom(), f.getValue()));
+                f.setValue(conditional.effect().process(level, ctx.getRandom(), f.floatValue()));
             }
         }
-        return f.getValue();
+        return f.floatValue();
     }
 
     public static float processValue(List<EnchantmentValueEffect> effects, RandomSource rand, int level, float initial) {
         MutableFloat f = new MutableFloat(initial);
         effects.forEach(valueEffect -> {
-            f.setValue(valueEffect.process(level, rand, f.getValue()));
+            f.setValue(valueEffect.process(level, rand, f.floatValue()));
         });
-        return f.getValue();
+        return f.floatValue();
     }
 
     public static class ArcanaEnchantmentData {

@@ -92,6 +92,7 @@ public class EnderLeadItem extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack stack = ctx.getItemInHand();
         if (!containsEntity(stack)) {

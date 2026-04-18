@@ -20,7 +20,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
@@ -42,6 +41,7 @@ public class EnchRecipeProvider extends LegacyRecipeProvider {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void genRecipes(RecipeOutput recipeOutput, HolderLookup.Provider registries) {
         addShaped(Ench.Blocks.HELLSHELF, 3, 3,
             Blocks.NETHER_BRICKS, Blocks.NETHER_BRICKS, Blocks.NETHER_BRICKS,

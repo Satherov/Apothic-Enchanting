@@ -19,8 +19,8 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -29,12 +29,10 @@ import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Blocks;
@@ -43,7 +41,7 @@ import net.minecraft.world.level.block.Blocks;
 public class InfusionRecipeCategory implements IRecipeCategory<InfusionRecipe> {
 
     public static final Identifier UID = ApothicEnchanting.loc("enchanting");
-    public static final RecipeType<InfusionRecipe> TYPE = RecipeType.create(ApothicEnchanting.MODID, "enchanting", InfusionRecipe.class);
+    public static final IRecipeType<InfusionRecipe> TYPE = IRecipeType.create(ApothicEnchanting.MODID, "enchanting", InfusionRecipe.class);
     public static final Identifier TEXTURES = ApothicEnchanting.loc("textures/gui/enchanting_jei.png");
     private static final Map<Class<?>, Extension<?>> EXTENSIONS = new HashMap<>();
 
@@ -82,7 +80,7 @@ public class InfusionRecipeCategory implements IRecipeCategory<InfusionRecipe> {
     }
 
     @Override
-    public RecipeType<InfusionRecipe> getRecipeType() {
+    public IRecipeType<InfusionRecipe> getRecipeType() {
         return TYPE;
     }
 
@@ -96,10 +94,8 @@ public class InfusionRecipeCategory implements IRecipeCategory<InfusionRecipe> {
             ext.setRecipe(builder, input, output, recipe, focuses);
         }
         else {
-            List<ItemStack> inputStacks = new ArrayList<>();
-            recipe.getInput().items().forEach(holder -> inputStacks.add(new ItemStack((Holder<Item>) holder)));
-            input.addIngredients(VanillaTypes.ITEM_STACK, inputStacks);
-            output.addIngredient(VanillaTypes.ITEM_STACK, recipe.getOutput().create());
+            output.add(VanillaTypes.ITEM_STACK, recipe.getOutput().create());
+            input.add(recipe.getInput());
         }
     }
 

@@ -17,6 +17,7 @@ public class EnchTagsProvider extends EnchantmentTagsProvider {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void addTags(Provider provider) {
         this.tag(EnchantmentTags.CURSE).add(
             Ench.Enchantments.BERSERKERS_FURY,

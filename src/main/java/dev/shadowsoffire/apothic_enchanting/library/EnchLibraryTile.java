@@ -155,6 +155,7 @@ public abstract class EnchLibraryTile extends BlockEntity {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         RegistryLookup<Enchantment> lookup = input.lookup().lookupOrThrow(Registries.ENCHANTMENT);

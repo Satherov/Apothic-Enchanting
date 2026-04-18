@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -35,7 +34,7 @@ public class WardenLootModifier extends LootModifier {
         if (WARDEN_TABLE_ID.equals(ctx.getQueriedLootTableId())) {
             int amount = 1;
             ItemInstance tool = ctx.getOptionalParameter(LootContextParams.TOOL);
-            int looting = tool != null ? EnchantmentHelper.getItemEnchantmentLevel(ctx.getLevel().holderOrThrow(Enchantments.LOOTING), tool) : 0;
+            int looting = tool != null ? tool.getEnchantmentLevel(ctx.getLevel().holderOrThrow(Enchantments.LOOTING)) : 0;
             if (ctx.getRandom().nextFloat() <= 0.10F + looting * 0.10F) {
                 amount++;
             }
