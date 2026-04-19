@@ -143,9 +143,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
 
                 if (!player.getAbilities().instabuild) {
                     lapis.shrink(cost);
-                    if (lapis.isEmpty()) {
-                        this.enchantSlots.setItem(1, ItemStack.EMPTY);
-                    }
+                    this.getSlot(1).set(lapis);
                 }
 
                 player.awardStat(Stats.ENCHANT_ITEM);
