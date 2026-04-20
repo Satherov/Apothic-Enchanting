@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 public class ChainsawTask implements PlaceboTaskQueue.Task {
 
@@ -70,7 +70,7 @@ public class ChainsawTask implements PlaceboTaskQueue.Task {
         return this.hits.isEmpty() ? Status.COMPLETED : Status.RUNNING;
     }
 
-    public static void attemptChainsaw(BreakEvent e) {
+    public static void attemptChainsaw(BreakBlockEvent e) {
         Player player = e.getPlayer();
         Level level = player.level();
         ItemStack stack = player.getMainHandItem();

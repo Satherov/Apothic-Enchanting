@@ -20,8 +20,8 @@ public class WardenLootModifier extends LootModifier {
     public static final MapCodec<WardenLootModifier> CODEC = RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, WardenLootModifier::new));
     public static final Identifier WARDEN_TABLE_ID = Identifier.withDefaultNamespace("entities/warden");
 
-    public WardenLootModifier(LootItemCondition[] conditionsIn) {
-        super(conditionsIn);
+    public WardenLootModifier(LootItemCondition[] conditions, int priority) {
+        super(conditions, priority);
     }
 
     @Override

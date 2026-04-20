@@ -12,7 +12,6 @@ import dev.shadowsoffire.apothic_enchanting.enchantments.components.ReflectiveCo
 import dev.shadowsoffire.apothic_enchanting.enchantments.entity_effects.ReboundingEffect;
 import dev.shadowsoffire.apothic_enchanting.enchantments.values.ExponentialLevelBasedValue;
 import net.minecraft.ChatFormatting;
-import net.minecraft.util.Util;
 import net.minecraft.advancements.criterion.DamageSourcePredicate;
 import net.minecraft.advancements.criterion.TagPredicate;
 import net.minecraft.core.Holder;
@@ -22,12 +21,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Util;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -80,7 +80,7 @@ public class ApothEnchantmentProvider {
         register(context, Ench.Enchantments.CHAINSAW,
             enchantment(
                 Enchantment.definition(
-                    items.getOrThrow(ItemTags.AXES),
+                    items.getOrThrow(ItemTags.AXES), // TODO: Create a custom axes enchantable tag which includes the default axes tag.
                     1, // weight
                     1, // max level
                     Enchantment.constantCost(55),
@@ -93,7 +93,7 @@ public class ApothEnchantmentProvider {
         register(context, Ench.Enchantments.CHROMATIC,
             Enchantment.enchantment(
                 Enchantment.definition(
-                    items.getOrThrow(Tags.Items.TOOLS_SHEAR),
+                    items.getOrThrow(Tags.Items.TOOLS_SHEAR), // TODO: Create shears enchantable tag.
                     5, // weight
                     1, // max level
                     Enchantment.constantCost(25),
@@ -172,7 +172,7 @@ public class ApothEnchantmentProvider {
         register(context, Ench.Enchantments.BOON_OF_THE_EARTH,
             enchantment(
                 Enchantment.definition(
-                    items.getOrThrow(ItemTags.PICKAXES),
+                    items.getOrThrow(ItemTags.MINING_LOOT_ENCHANTABLE),
                     1, // weight
                     5, // max level
                     Enchantment.dynamicCost(55, 25),
@@ -342,7 +342,7 @@ public class ApothEnchantmentProvider {
         register(context, Ench.Enchantments.NATURES_BLESSING,
             Enchantment.enchantment(
                 Enchantment.definition(
-                    items.getOrThrow(ItemTags.HOES),
+                    items.getOrThrow(ItemTags.HOES), // TODO: Create hoes enchantable tag.
                     2, // weight
                     3, // max level
                     Enchantment.dynamicCost(15, 10),

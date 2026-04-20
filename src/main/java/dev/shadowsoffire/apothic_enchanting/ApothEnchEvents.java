@@ -65,7 +65,7 @@ import net.neoforged.neoforge.event.entity.player.AnvilCraftEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -268,7 +268,7 @@ public class ApothEnchEvents {
      * Event handler for the Boon of the Earth enchant.
      */
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void breakSpeed(BlockEvent.BreakEvent e) {
+    public void breakSpeed(BreakBlockEvent e) {
         ChainsawTask.attemptChainsaw(e);
     }
 
