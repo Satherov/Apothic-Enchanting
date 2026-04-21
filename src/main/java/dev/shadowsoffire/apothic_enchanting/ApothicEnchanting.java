@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mojang.datafixers.util.Pair;
 
@@ -37,16 +37,16 @@ import dev.shadowsoffire.placebo.util.PlaceboUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantable;
@@ -71,7 +71,7 @@ import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 public class ApothicEnchanting {
 
     public static final String MODID = "apothic_enchanting";
-    public static final Logger LOGGER = LogManager.getLogger("Apotheosis : Enchantment");
+    public static final Logger LOGGER = LoggerFactory.getLogger("Apotheosis : Enchantment");
 
     public static final Map<Holder<Enchantment>, EnchantmentInfo> ENCHANTMENT_INFO = new HashMap<>();
     public static final Object2IntMap<ResourceKey<Enchantment>> ENCH_HARD_CAPS = new Object2IntOpenHashMap<>();

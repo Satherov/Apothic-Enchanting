@@ -139,7 +139,7 @@ public class ApothEnchEvents {
                 }
             }
             catch (Throwable t) {
-                ApothicEnchanting.LOGGER.catching(t);
+                ApothicEnchanting.LOGGER.error("Exception thrown while processing entity drops: ", t);
             }
         }
     }
