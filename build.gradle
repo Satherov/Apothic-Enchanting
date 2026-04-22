@@ -127,7 +127,7 @@ dependencies {
     // ModDevGradle's dev runs to discover the coremod via InDevFolderLocator. Without the outer
     // `implementation`, `./gradlew runClient` and IDE debug runs silently skip the transformers
     // because the subproject's compiled classes never land in the `fml.modFolders` system property.
-    implementation(jarJar(project(':coremods')))
+    localImplementation(jarJar(project(':coremods')))
 }
 
 tasks.named("generateModMetadata") {
