@@ -75,7 +75,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
     @Override
     public void containerTick() {
         super.containerTick();
-        float current = this.menu.stats.eterna();
+        float current = this.menu.stats.eterna(Minecraft.getInstance().player);
         if (current != this.eterna) {
             if (current > this.eterna) this.eterna += Math.min(current - this.eterna, Math.max(0.16F, (current - this.eterna) * 0.1F));
             else this.eterna = Math.max(this.eterna - this.lastEterna * 0.075F, current);
@@ -166,6 +166,13 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
         if (this.arcana > 0) {
             gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, xCenter + 59, yCenter + 95, 0, 207, getBarLength(this.arcana), 5, 256, 256);
         }
+        float playerMaxEterna = (float) Minecraft.getInstance().player.getAttributeValue(Ench.Attributes.MAX_ETERNA);
+        if (playerMaxEterna < 100) {
+            int length = 110 - getBarLength(playerMaxEterna);
+            int start = xCenter + 59 + 110 - length;
+            gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, start, yCenter + 75, 110 - length, 212, length, 5, 256, 256);
+            gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURES, start, yCenter + 75, 0, 212, 1, 5, 256, 256);
+        }
 
         if (this.menu.getSlot(0).hasItem() && Arrays.stream(this.menu.enchantClue).boxed().map(enchIdMap::byId).allMatch(Predicates.notNull())) {
             int u = this.isHovering(145, -15, 27, 15, mouseX, mouseY) ? 15 : 0;
@@ -246,9 +253,13 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
             List<Component> list = Lists.newArrayList();
             list.add(eterna().append(TooltipUtil.lang("gui", "enchant.eterna.desc")));
             list.add(TooltipUtil.lang("gui", "enchant.eterna.desc2").withStyle(ChatFormatting.GRAY));
-            if (this.menu.stats.eterna() > 0) {
+            if (this.menu.stats.tableEterna() > 0) {
                 list.add(Component.literal(""));
-                list.add(TooltipUtil.lang("gui", "enchant.eterna.desc3", f(this.menu.stats.eterna()), 100).withStyle(ChatFormatting.GRAY));
+                list.add(TooltipUtil.lang("gui", "enchant.eterna.desc3", f(this.menu.stats.tableEterna()), 100).withStyle(ChatFormatting.GRAY));
+                float playerMax = (float) Minecraft.getInstance().player.getAttributeValue(Ench.Attributes.MAX_ETERNA);
+                if (playerMax < 100) {
+                    list.add(TooltipUtil.lang("gui", "enchant.eterna.desc4", f(playerMax)).withStyle(ChatFormatting.RED));
+                }
             }
             gfx.setComponentTooltipForNextFrame(this.font, list, mouseX, mouseY);
         }
@@ -363,6 +374,7 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
     }
 
     private static String f(float f) {
+        if (f - (int) f < 0.01) return String.valueOf((int) f);
         return String.format("%.2f", f);
     }
 

@@ -274,7 +274,7 @@ public class EnchantingInfoScreen extends Screen {
 
         // To actually show that blacklisted enchantments are "working", we have to ignore the blacklist during collection and then post-process them in the menu.
         EnchantmentTableStats realStats = this.parent.getMenu().stats;
-        EnchantmentTableStats withoutBlacklist = new EnchantmentTableStats(realStats.eterna(), realStats.quanta(), realStats.arcana(), realStats.clues(), Set.of(), realStats.treasure(), realStats.stable());
+        EnchantmentTableStats withoutBlacklist = new EnchantmentTableStats(realStats.eterna(this.parent.getMenu().player), realStats.quanta(), realStats.arcana(), realStats.clues(), Set.of(), realStats.treasure(), realStats.stable());
 
         Stream<Holder<Enchantment>> possible = ApothEnchantmentHelper.getPossibleEnchantments(this.minecraft.level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT), toEnchant, withoutBlacklist);
         this.enchantments = ApothEnchantmentHelper.getAvailableEnchantmentResults(this.currentPower, this.toEnchant, possible)

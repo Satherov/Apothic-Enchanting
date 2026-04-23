@@ -66,6 +66,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 
 @Mod(ApothicEnchanting.MODID)
 public class ApothicEnchanting {
@@ -186,6 +187,13 @@ public class ApothicEnchanting {
             .provider(EnchRecipeProvider::new)
             .provider(EnchStatsProvider::new)
             .build(event);
+    }
+
+    @SubscribeEvent
+    public void applyAttribs(EntityAttributeModificationEvent e) {
+        e.getTypes().forEach(type -> {
+            e.add(type, Ench.Attributes.MAX_ETERNA);
+        });
     }
 
     public void reload(ResourceReloadEvent e) {
