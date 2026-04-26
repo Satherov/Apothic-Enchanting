@@ -53,6 +53,7 @@ import net.minecraft.world.item.enchantment.Enchantable;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -67,6 +68,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 @Mod(ApothicEnchanting.MODID)
 public class ApothicEnchanting {
@@ -171,9 +173,9 @@ public class ApothicEnchanting {
     public void caps(RegisterCapabilitiesEvent e) {
         e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.LIBRARY, EnchLibraryTile::getItemHandler);
         e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.ENDER_LIBRARY, EnchLibraryTile::getItemHandler);
-        e.registerBlockEntity(Capabilities.Item.BLOCK, net.minecraft.world.level.block.entity.BlockEntityType.ENCHANTING_TABLE, ApothEnchantingTableBlock::getItemHandler);
+        e.registerBlockEntity(Capabilities.Item.BLOCK, BlockEntityType.ENCHANTING_TABLE, ApothEnchantingTableBlock::getItemHandler);
         e.registerBlockEntity(Capabilities.Item.BLOCK, Ench.Tiles.FILTERING_SHELF,
-            (tile, side) -> net.neoforged.neoforge.transfer.item.VanillaContainerWrapper.of(tile));
+            (tile, side) -> VanillaContainerWrapper.of(tile));
     }
 
     @SubscribeEvent

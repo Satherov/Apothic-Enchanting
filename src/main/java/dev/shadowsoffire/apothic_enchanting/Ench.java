@@ -426,17 +426,17 @@ public class Ench {
 
         public static final Holder<Item> INFUSED_SEASHELF = R.blockItem("infused_seashelf", Ench.Blocks.INFUSED_SEASHELF, GlowyBlockItem::new, UnaryOperator.identity());
 
-        public static final Holder<Item> LEGGINGS_TOME = R.item("leggings_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_LEGGINGS), UnaryOperator.identity());
+        public static final Holder<Item> LEGGINGS_TOME = R.item("leggings_tome", p -> new TomeItem(p, Items.DIAMOND_LEGGINGS), UnaryOperator.identity());
 
         public static final Holder<Item> LIBRARY = R.blockItem("library", Ench.Blocks.LIBRARY, (b, p) -> new LibraryBlockItem(b, p, 16), UnaryOperator.identity());
 
         public static final Holder<Item> MELONSHELF = R.blockItem("melonshelf", Ench.Blocks.MELONSHELF);
 
-        public static final Holder<Item> OTHER_TOME = R.item("other_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.AIR), UnaryOperator.identity());
+        public static final Holder<Item> OTHER_TOME = R.item("other_tome", p -> new TomeItem(p, Items.AIR), UnaryOperator.identity());
 
         public static final Holder<Item> PEARL_ENDSHELF = R.blockItem("pearl_endshelf", Ench.Blocks.PEARL_ENDSHELF);
 
-        public static final Holder<Item> PICKAXE_TOME = R.item("pickaxe_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_PICKAXE), UnaryOperator.identity());
+        public static final Holder<Item> PICKAXE_TOME = R.item("pickaxe_tome", p -> new TomeItem(p, Items.DIAMOND_PICKAXE), UnaryOperator.identity());
 
         public static final Holder<Item> PRISMATIC_WEB = R.item("prismatic_web", Item::new, UnaryOperator.identity());
 
@@ -458,7 +458,7 @@ public class Ench {
 
         public static final Holder<Item> WARDEN_TENDRIL = R.item("warden_tendril", Item::new, UnaryOperator.identity());
 
-        public static final Holder<Item> WEAPON_TOME = R.item("weapon_tome", p -> new TomeItem(p, net.minecraft.world.item.Items.DIAMOND_SWORD), UnaryOperator.identity());
+        public static final Holder<Item> WEAPON_TOME = R.item("weapon_tome", p -> new TomeItem(p, Items.DIAMOND_SWORD), UnaryOperator.identity());
 
         // Animals only, low durability
         public static final Holder<Item> FLIMSY_ENDER_LEAD = R.item("flimsy_ender_lead", p -> new EnderLeadItem(p, EnderLeadItem.Type.FLIMSY), p -> p.stacksTo(1).durability(8));

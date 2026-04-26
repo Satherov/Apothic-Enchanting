@@ -6,8 +6,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 
 /**
  * Mixin to tridents to enable Piercing to work.
@@ -19,14 +23,14 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
  * seed the pierce level at spawn time from the attached piercing enchant.
  */
 @Mixin(value = ThrownTrident.class, remap = false)
-public abstract class ThrownTridentMixin extends net.minecraft.world.entity.projectile.arrow.AbstractArrow {
+public abstract class ThrownTridentMixin extends AbstractArrow {
 
     protected ThrownTridentMixin(
-        net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.projectile.arrow.AbstractArrow> entityType,
+        EntityType<? extends AbstractArrow> entityType,
         double x, double y, double z,
-        net.minecraft.world.level.Level level,
-        net.minecraft.world.item.ItemStack pickupItemStack,
-        net.minecraft.world.item.ItemStack firedFromWeapon) {
+        Level level,
+        ItemStack pickupItemStack,
+        ItemStack firedFromWeapon) {
         super(entityType, x, y, z, level, pickupItemStack, firedFromWeapon);
     }
 

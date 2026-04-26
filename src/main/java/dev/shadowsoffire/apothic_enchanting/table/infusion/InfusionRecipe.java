@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -139,7 +140,7 @@ public class InfusionRecipe implements Recipe<RecipeInput> {
 
     @Override
     public RecipeBookCategory recipeBookCategory() {
-        return net.minecraft.world.item.crafting.RecipeBookCategories.CRAFTING_MISC;
+        return RecipeBookCategories.CRAFTING_MISC;
     }
 
     @Override

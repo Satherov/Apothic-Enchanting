@@ -13,6 +13,7 @@ import dev.shadowsoffire.placebo.network.VanillaPacketDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -158,8 +159,8 @@ public class FilteringShelfBlock extends ChiseledBookShelfBlock implements Encha
         }
 
         @Override
-        public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
-            return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+        public ClientboundBlockEntityDataPacket getUpdatePacket() {
+            return ClientboundBlockEntityDataPacket.create(this);
         }
 
         @Override
