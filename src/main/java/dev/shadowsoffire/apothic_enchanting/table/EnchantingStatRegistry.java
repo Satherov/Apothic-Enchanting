@@ -12,7 +12,8 @@ import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantingStatRegistry.BlockStats;
 import dev.shadowsoffire.placebo.codec.CodecProvider;
-import dev.shadowsoffire.placebo.reload.DynamicRegistry;
+import dev.shadowsoffire.placebo.dynreg.DynamicRegistry;
+import dev.shadowsoffire.placebo.dynreg.RegistrySerializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -34,12 +35,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
     private boolean statsCacheDirty = true;
 
     protected EnchantingStatRegistry() {
-        super(ApothicEnchanting.LOGGER, "enchanting_stats", true, false);
-    }
-
-    @Override
-    protected void registerBuiltinCodecs() {
-        this.registerDefaultCodec(ApothicEnchanting.loc("enchanting_stats"), BlockStats.CODEC);
+        super(ApothicEnchanting.LOGGER, ApothicEnchanting.loc("enchanting_stats"), RegistrySerializer.synced(BlockStats.CODEC));
     }
 
     @Override

@@ -8,7 +8,7 @@ license="MIT License"
 
 modId="apothic_enchanting"
 
-version="4.0.0-beta7"
+version="4.0.0-beta8"
 
 displayName="Apothic Enchanting"
 
@@ -36,13 +36,13 @@ config="apothic_enchanting.mixins.json"
 [[dependencies.apothic_enchanting]]
     modId="placebo"
     type="required"
-    versionRange="[10.0.0-beta5,)"
+    versionRange="[10.0.0-beta8,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.apothic_enchanting]]
     modId="apothic_attributes"
     type="required"
-    versionRange="[3.0.0-beta0,)"
+    versionRange="[3.0.0-beta3,)"
     ordering="AFTER"
     side="BOTH"

@@ -1,5 +1,4 @@
 {
-    "type": "apothic_enchanting:enchanting_stats",
     "blocks": "apothic_enchanting:hellshelf",
     "stats": {
         "eterna": 3.0,

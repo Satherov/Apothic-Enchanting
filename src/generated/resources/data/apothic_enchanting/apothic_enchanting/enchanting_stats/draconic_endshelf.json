@@ -1,5 +1,4 @@
 {
-    "type": "apothic_enchanting:enchanting_stats",
     "blocks": "apothic_enchanting:draconic_endshelf",
     "stats": {
         "eterna": 20.0,

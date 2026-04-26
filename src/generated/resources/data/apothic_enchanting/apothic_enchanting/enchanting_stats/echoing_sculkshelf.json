@@ -1,5 +1,4 @@
 {
-    "type": "apothic_enchanting:enchanting_stats",
     "blocks": "apothic_enchanting:echoing_sculkshelf",
     "stats": {
         "arcana": 15.0,

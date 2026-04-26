@@ -1,5 +1,4 @@
 {
-    "type": "apothic_enchanting:enchanting_stats",
     "blocks": "apothic_enchanting:glowing_hellshelf",
     "stats": {
         "arcana": 3.3333,

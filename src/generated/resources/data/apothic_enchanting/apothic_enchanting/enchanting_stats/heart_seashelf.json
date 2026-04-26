@@ -1,5 +1,4 @@
 {
-    "type": "apothic_enchanting:enchanting_stats",
     "blocks": "apothic_enchanting:heart_seashelf",
     "stats": {
         "arcana": 20.0,
