@@ -11,7 +11,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantingStatRegistry.BlockStats;
-import dev.shadowsoffire.placebo.codec.CodecProvider;
 import dev.shadowsoffire.placebo.dynreg.DynamicRegistry;
 import dev.shadowsoffire.placebo.dynreg.RegistrySerializer;
 import net.minecraft.core.BlockPos;
@@ -152,7 +151,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
             Stats::new);
     }
 
-    public static class BlockStats implements CodecProvider<BlockStats> {
+    public static class BlockStats {
 
         public static Codec<BlockStats> CODEC = RecordCodecBuilder.create(inst -> inst
             .group(
@@ -166,11 +165,6 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
         public BlockStats(HolderSet<Block> blocks, Stats stats) {
             this.blocks = blocks;
             this.stats = stats;
-        }
-
-        @Override
-        public Codec<? extends BlockStats> getCodec() {
-            return CODEC;
         }
 
     }
