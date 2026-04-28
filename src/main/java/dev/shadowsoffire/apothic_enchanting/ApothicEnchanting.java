@@ -17,6 +17,7 @@ import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchDamageTypeTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.LootProvider;
 import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
@@ -186,6 +187,7 @@ public class ApothicEnchanting {
             .registry(Registries.JUKEBOX_SONG, SongProvider::bootstrap)
             .provider(LootProvider::create)
             .provider(EnchTagsProvider::new)
+            .provider(EnchDamageTypeTagsProvider::new)
             .provider(EnchRecipeProvider::new)
             .provider(EnchStatsProvider::new)
             .build(event);
