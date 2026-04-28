@@ -7,9 +7,9 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import dev.shadowsoffire.apothic_attributes.api.AbilityCooldowns;
 import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentHelper;
-import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -37,25 +37,27 @@ public record BerserkingComponent(List<ConditionalEffect<EnchantmentValueEffect>
      */
     public static void attemptToGoBerserk(LivingDamageEvent.Post e) {
         LivingEntity target = e.getEntity();
-        Identifier key = BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE.getKey(Ench.EnchantEffects.BERSERKING);
-        if (e.getSource().getEntity() != null && !MiscUtil.isOnCooldown(key, target)) {
+        Identifier cdKey = BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE.getKey(Ench.EnchantEffects.BERSERKING);
+        if (e.getSource().getEntity() != null) {
             Pair<BerserkingComponent, Integer> data = ApothEnchantmentHelper.getHighestEquippedLevel(Ench.EnchantEffects.BERSERKING, target);
             if (data != null) {
                 BerserkingComponent comp = data.getFirst();
                 int level = data.getSecond();
                 LootContext ctx = Enchantment.damageContext((ServerLevel) target.level(), level, target, e.getSource());
+                int cooldown = (int) ApothEnchantmentHelper.processValue(comp.cooldown(), ctx, level, 0);
+                if (!AbilityCooldowns.isOnCooldown(target, cdKey, cooldown)) {
+                    float hpCost = ApothEnchantmentHelper.processValue(comp.hpCost, ctx, level, 0);
+                    target.invulnerableTime = 0;
+                    target.hurtServer(ctx.getLevel(), target.damageSources().source(Ench.DamageTypes.CORRUPTED), hpCost);
 
-                float hpCost = ApothEnchantmentHelper.processValue(comp.hpCost, ctx, level, 0);
-                target.invulnerableTime = 0;
-                target.hurtServer(ctx.getLevel(), target.damageSources().source(Ench.DamageTypes.CORRUPTED), hpCost);
-
-                for (ConditionalEffect<VariableMobEffect> conditional : comp.mobEffects) {
-                    if (conditional.matches(ctx)) {
-                        target.addEffect(conditional.effect().createEffectInstance(level, ctx.getRandom()));
+                    for (ConditionalEffect<VariableMobEffect> conditional : comp.mobEffects) {
+                        if (conditional.matches(ctx)) {
+                            target.addEffect(conditional.effect().createEffectInstance(level, ctx.getRandom()));
+                        }
                     }
-                }
 
-                MiscUtil.startCooldown(key, target, (int) ApothEnchantmentHelper.processValue(comp.cooldown(), ctx, level, 0));
+                    AbilityCooldowns.startCooldown(target, cdKey);
+                }
             }
         }
     }

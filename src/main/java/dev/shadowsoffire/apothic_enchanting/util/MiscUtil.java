@@ -13,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Holder.Kind;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -80,21 +78,6 @@ public class MiscUtil {
             out[data.length * 2 - 1 - i] = data[i];
         }
         return out;
-    }
-
-    /**
-     * Checks if the affix is still on cooldown, if a cooldown was set via {@link #startCooldown(Identifier, int, LivingEntity)}
-     */
-    public static boolean isOnCooldown(Identifier id, LivingEntity entity) {
-        long cooldownEndTime = entity.getPersistentData().getLongOr("apothic_enchanting.cooldown." + id.toString(), 0L);
-        return cooldownEndTime > entity.level().getGameTime();
-    }
-
-    /**
-     * Records the current time as a cooldown tracker. Used in conjunction with {@link #isOnCooldown(Identifier, int, LivingEntity)}
-     */
-    public static void startCooldown(Identifier id, LivingEntity entity, int cooldown) {
-        entity.getPersistentData().putLong("apothic_enchanting.cooldown." + id.toString(), entity.level().getGameTime() + cooldown);
     }
 
     /**
