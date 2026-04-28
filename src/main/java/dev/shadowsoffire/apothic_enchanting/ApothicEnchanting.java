@@ -17,6 +17,7 @@ import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchDamageTypeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchDamageTypeTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.LootProvider;
@@ -184,6 +185,7 @@ public class ApothicEnchanting {
         DataProvider.INDENT_WIDTH.set(4);
         DataGenBuilder.create(MODID, "minecraft")
             .registry(Registries.ENCHANTMENT, ApothEnchantmentProvider::bootstrap)
+            .registry(Registries.DAMAGE_TYPE, EnchDamageTypeProvider::bootstrap)
             .registry(Registries.JUKEBOX_SONG, SongProvider::bootstrap)
             .provider(LootProvider::create)
             .provider(EnchTagsProvider::new)
