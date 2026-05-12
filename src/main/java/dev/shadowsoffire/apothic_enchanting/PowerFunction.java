@@ -1,72 +1,70 @@
 package dev.shadowsoffire.apothic_enchanting;
 
 import java.math.BigDecimal;
+import java.util.function.IntFunction;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import dev.shadowsoffire.apothic_attributes.repack.evalex.Expression;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
  * Simple int to int function, used for converting a level into a required enchanting power.
+ * <p>
+ * After the datamap migration, {@code PowerFunction} instances are pure (no enchantment holder is captured at
+ * construction). The enchantment context is passed to {@link #getPower(int, Holder)} at evaluation time.
  */
 public sealed interface PowerFunction {
 
-    public static StreamCodec<RegistryFriendlyByteBuf, PowerFunction> STREAM_CODEC = new StreamCodec<>(){
+    MapCodec<PowerFunction> CODEC = Type.CODEC.dispatchMap("type", PowerFunction::getType, t -> switch (t) {
+        case DEFAULT_MIN -> DefaultMinPowerFunction.CODEC;
+        case DEFAULT_MAX -> DefaultMaxPowerFunction.CODEC;
+        case EXPRESSION -> ExpressionPowerFunction.CODEC;
+    });
 
-        @Override
-        public PowerFunction decode(RegistryFriendlyByteBuf buf) {
-            Type type = Type.values()[buf.readByte()];
-            return switch (type) {
-                case DEFAULT_MIN -> DefaultMinPowerFunction.STREAM_CODEC.decode(buf);
-                case DEFAULT_MAX -> DefaultMaxPowerFunction.INSTANCE;
-                case EXPRESSION -> ExpressionPowerFunction.STREAM_CODEC.decode(buf);
-            };
-        }
-
-        @Override
-        public void encode(RegistryFriendlyByteBuf buf, PowerFunction value) {
-            Type type = value.getType();
-            buf.writeByte(type.ordinal());
-            switch (type) {
-                case DEFAULT_MIN:
-                    DefaultMinPowerFunction.STREAM_CODEC.encode(buf, (DefaultMinPowerFunction) value);
-                    break;
-                case EXPRESSION:
-                    ExpressionPowerFunction.STREAM_CODEC.encode(buf, (ExpressionPowerFunction) value);
-                    break;
-                default:
-            }
-        }
-
-    };
-
-    int getPower(int level);
+    int getPower(int level, Holder<Enchantment> ench);
 
     Type getType();
 
-    public static enum Type {
-        DEFAULT_MIN,
-        DEFAULT_MAX,
-        EXPRESSION;
+    enum Type implements StringRepresentable {
+        DEFAULT_MIN("default_min"),
+        DEFAULT_MAX("default_max"),
+        EXPRESSION("expression");
+
+        public static final IntFunction<Type> BY_ID = ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+        public static final Codec<Type> CODEC = StringRepresentable.fromValues(Type::values);
+
+        private final String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return this.name;
+        }
     }
 
     /**
-     * This is the default minimum power function.
-     * If the level is equal to or below the default max level, we return the original value {@link Enchantment#getMinCost(int)}
-     * If the level is above than the default max level, then we compute the following:
-     * Let diff be the slope of {@link Enchantment#getMinCost(int)}, or 15, if the slope would be zero.
-     * minPower = baseMinPower + diff * (level - baseMaxLevel) ^ 1.6
+     * Default minimum power function. For levels at or below the enchantment's vanilla max, returns
+     * {@link Enchantment#getMinCost(int)} directly. For higher levels, extrapolates by the per-level slope of
+     * {@code getMinCost}, scaled by {@code (level - vanillaMax) ^ 1.6}, so the cost grows exponentially above vanilla.
      */
-    public static record DefaultMinPowerFunction(Holder<Enchantment> enchHolder) implements PowerFunction {
+    final class DefaultMinPowerFunction implements PowerFunction {
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, DefaultMinPowerFunction> STREAM_CODEC = Enchantment.STREAM_CODEC.map(DefaultMinPowerFunction::new, DefaultMinPowerFunction::enchHolder);
+        public static final DefaultMinPowerFunction INSTANCE = new DefaultMinPowerFunction();
+        public static final MapCodec<DefaultMinPowerFunction> CODEC = MapCodec.unit(INSTANCE);
+
+        private DefaultMinPowerFunction() {}
 
         @Override
-        public int getPower(int level) {
+        public int getPower(int level, Holder<Enchantment> enchHolder) {
             Enchantment ench = enchHolder.value();
             if (level > ench.definition().maxLevel() && level > 1) {
                 int diff = ench.getMinCost(ench.getMaxLevel()) - ench.getMinCost(ench.getMaxLevel() - 1);
@@ -81,18 +79,20 @@ public sealed interface PowerFunction {
             return Type.DEFAULT_MIN;
         }
 
-        public Holder<Enchantment> enchHolder() {
-            return this.enchHolder;
-        }
-
     }
 
-    public static final class DefaultMaxPowerFunction implements PowerFunction {
+    /**
+     * Default maximum power function — always returns 200 (the maximum eterna value).
+     */
+    final class DefaultMaxPowerFunction implements PowerFunction {
 
         public static final DefaultMaxPowerFunction INSTANCE = new DefaultMaxPowerFunction();
+        public static final MapCodec<DefaultMaxPowerFunction> CODEC = MapCodec.unit(INSTANCE);
+
+        private DefaultMaxPowerFunction() {}
 
         @Override
-        public int getPower(int level) {
+        public int getPower(int level, Holder<Enchantment> ench) {
             return 200;
         }
 
@@ -103,9 +103,15 @@ public sealed interface PowerFunction {
 
     }
 
-    public static final class ExpressionPowerFunction implements PowerFunction {
+    /**
+     * Power function parameterized by an EvalEx expression string. The expression has a single variable
+     * {@code x} bound to the enchantment level.
+     */
+    final class ExpressionPowerFunction implements PowerFunction {
 
-        public static final StreamCodec<ByteBuf, ExpressionPowerFunction> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(ExpressionPowerFunction::new, ExpressionPowerFunction::exprString);
+        public static final MapCodec<ExpressionPowerFunction> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+            Codec.STRING.fieldOf("expression").forGetter(ExpressionPowerFunction::exprString))
+            .apply(inst, ExpressionPowerFunction::new));
 
         private final String exprString;
         private transient final Expression ex;
@@ -116,7 +122,7 @@ public sealed interface PowerFunction {
         }
 
         @Override
-        public int getPower(int level) {
+        public int getPower(int level, Holder<Enchantment> ench) {
             return this.ex.setVariable("x", new BigDecimal(level)).eval().intValue();
         }
 

@@ -68,6 +68,7 @@ import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.block.Block;
@@ -547,6 +548,23 @@ public class Ench {
         public static final ResourceKey<LootTable> BOON_NETHER_DROPS = ResourceKey.create(Registries.LOOT_TABLE, ApothicEnchanting.loc("boon_netherrack_drops"));
     }
 
+    public static final class DataMaps {
+
+        /**
+         * Per-enchantment overrides for the values previously kept in {@code config/apotheosis/enchantments.cfg}.
+         * The datamap is shipped empty; absent entries fall back to {@link EnchantmentInfo#fallback(net.minecraft.core.Holder)},
+         * which preserves the legacy default values. Run {@code /apoth dump-enchantment-info} to capture the effective
+         * state of every registered enchantment as a datapack-ready JSON file.
+         */
+        public static final DataMapType<Enchantment, EnchantmentInfo> ENCHANTMENT_INFO = R.dataMap(
+            "enchantment_info",
+            Registries.ENCHANTMENT,
+            EnchantmentInfo.CODEC.codec(),
+            c -> c.synced(EnchantmentInfo.CODEC.codec(), true));
+
+        private static void bootstrap() {}
+    }
+
     public static void bootstrap(IEventBus bus) {
         Sounds.bootstrap();
         Attributes.bootstrap();
@@ -560,6 +578,7 @@ public class Ench {
         RecipeTypes.bootstrap();
         Components.bootstrap();
         Triggers.bootstrap();
+        DataMaps.bootstrap();
         bus.register(R);
     }
 

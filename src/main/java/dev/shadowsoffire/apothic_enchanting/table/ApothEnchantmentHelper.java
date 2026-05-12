@@ -145,8 +145,8 @@ public class ApothEnchantmentHelper {
         possibleEnchantments.filter(stack::isPrimaryItemFor).forEach(ench -> {
             EnchantmentInfo info = ApothicEnchanting.getEnchInfo(ench);
 
-            for (int i = info.getMaxLevel(); i >= ench.value().getMinLevel(); i--) {
-                if (level >= info.getMinPower(i) && level <= info.getMaxPower(i)) {
+            for (int i = info.getMaxLevel(ench); i >= ench.value().getMinLevel(); i--) {
+                if (level >= info.getMinPower(i, ench) && level <= info.getMaxPower(i, ench)) {
                     selected.add(new EnchantmentInstance(ench, i));
                     break;
                 }

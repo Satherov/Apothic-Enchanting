@@ -495,5 +495,8 @@
     "enchantment.level.124": "CXXIV",
     "enchantment.level.125": "CXXV",
     "enchantment.level.126": "CXXVI",
-    "enchantment.level.127": "CXXVII"
+    "enchantment.level.127": "CXXVII",
+
+    "commands.apothic_enchanting.dump.success": "Dumped %s enchantment_info entries to %s",
+    "commands.apothic_enchanting.dump.failure": "Failed to dump enchantment_info: %s"
 }

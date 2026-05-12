@@ -2,9 +2,10 @@ package dev.shadowsoffire.apothic_enchanting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+
+import com.google.common.collect.MapMaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import com.mojang.datafixers.util.Pair;
 import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
 import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMinPowerFunction;
 import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
+import dev.shadowsoffire.apothic_enchanting.data.ApothEnchDataMapProvider;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
@@ -25,7 +27,6 @@ import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
-import dev.shadowsoffire.apothic_enchanting.payloads.EnchantmentInfoPayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantingStatRegistry;
@@ -56,14 +57,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -78,7 +77,6 @@ public class ApothicEnchanting {
     public static final String MODID = "apothic_enchanting";
     public static final Logger LOGGER = LoggerFactory.getLogger("Apotheosis : Enchantment");
 
-    public static final Map<Holder<Enchantment>, EnchantmentInfo> ENCHANTMENT_INFO = new HashMap<>();
     public static final Object2IntMap<ResourceKey<Enchantment>> ENCH_HARD_CAPS = new Object2IntOpenHashMap<>();
     public static final String ENCH_HARD_CAP_IMC = "set_ench_hard_cap";
     public static final List<TomeItem> TYPED_BOOKS = new ArrayList<>();
@@ -120,7 +118,6 @@ public class ApothicEnchanting {
 
         PayloadHelper.registerPayload(new CluePayload.Provider());
         PayloadHelper.registerPayload(new StatsPayload.Provider());
-        PayloadHelper.registerPayload(new EnchantmentInfoPayload.Provider());
     }
 
     /**
@@ -192,6 +189,7 @@ public class ApothicEnchanting {
             .provider(EnchDamageTypeTagsProvider::new)
             .provider(EnchRecipeProvider::new)
             .provider(EnchStatsProvider::new)
+            .provider(ApothEnchDataMapProvider::new)
             .build(event);
     }
 
@@ -207,39 +205,46 @@ public class ApothicEnchanting {
     }
 
     /**
-     * Retrieves the {@link EnchantmentInfo} for a given enchantment.
-     * 
-     * @throws UnsupportedOperationException if the enchantment config has not been loaded.
+     * Retrieves the {@link EnchantmentInfo} for a given enchantment. Reads from the
+     * {@code apothic_enchanting:enchantment_info} datamap; if the enchantment has no datamap entry (or the
+     * supplied holder is not a {@link Holder.Reference}), returns {@link EnchantmentInfo#fallback(Holder)}.
      */
     public static EnchantmentInfo getEnchInfo(Holder<Enchantment> ench) {
-        if (ENCHANTMENT_INFO.isEmpty()) {
-            if (FMLEnvironment.getDist() == Dist.CLIENT && ApothEnchClient.isOnVanillaServer()) {
-                // Do nothing, the vanilla server will never send this packet to us.
-            }
-            else {
-                throw new UnsupportedOperationException("Cannot access enchantment information before it has been loaded!");
-            }
+        if (ench instanceof Holder.Reference<Enchantment> ref) {
+            EnchantmentInfo info = ref.getData(Ench.DataMaps.ENCHANTMENT_INFO);
+            if (info != null) return info;
         }
-
-        EnchantmentInfo info = ENCHANTMENT_INFO.get(ench);
-        return info != null ? info : EnchantmentInfo.fallback(ench);
+        return EnchantmentInfo.fallback(ench);
     }
+
+    /**
+     * Weakly-keyed cache for {@link #getDefaultMaxLevel} results. The computation loops the min-power function until
+     * it crosses 200, which is fairly expensive but called from hot tooltip and lookup paths. Holders dropped from the
+     * enchantment registry on datapack reload become unreferenced and are GC'd along with their cached entry.
+     */
+    private static final ConcurrentMap<Holder<Enchantment>, Integer> DEFAULT_MAX_LEVEL_CACHE = new MapMaker().weakKeys().makeMap();
 
     /**
      * Tries to find a max level for this enchantment. This is used to scale up default levels to the Apoth cap.
      * Single-Level enchantments are not scaled.
-     * Barring that, enchantments are scaled using the {@link EnchantmentInfo#defaultMin(Enchantment)} until outside the default level space.
+     * Barring that, enchantments are scaled using the {@link DefaultMinPowerFunction} until outside the default level space.
+     * <p>
+     * Results are memoized per-holder via {@link #DEFAULT_MAX_LEVEL_CACHE}.
      */
     public static int getDefaultMaxLevel(Holder<Enchantment> ench) {
+        return DEFAULT_MAX_LEVEL_CACHE.computeIfAbsent(ench, ApothicEnchanting::computeDefaultMaxLevel);
+    }
+
+    private static int computeDefaultMaxLevel(Holder<Enchantment> ench) {
         int level = ench.value().getMaxLevel();
         if (level == 1) return 1;
-        PowerFunction minFunc = new DefaultMinPowerFunction(ench);
+        DefaultMinPowerFunction minFunc = DefaultMinPowerFunction.INSTANCE;
         int max = 200;
-        int minPower = minFunc.getPower(level);
+        int minPower = minFunc.getPower(level, ench);
         if (minPower >= max) return level;
         int lastPower = minPower;
         while (minPower < max) {
-            minPower = minFunc.getPower(++level);
+            minPower = minFunc.getPower(++level, ench);
             if (lastPower == minPower) return level;
             if (minPower > max) return level - 1;
             lastPower = minPower;

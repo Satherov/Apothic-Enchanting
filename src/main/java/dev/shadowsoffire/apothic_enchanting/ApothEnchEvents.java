@@ -11,7 +11,8 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 
 import com.mojang.datafixers.util.Pair;
 
-import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
+import dev.shadowsoffire.apothic_attributes.event.ApotheosisCommandEvent;
+import dev.shadowsoffire.apothic_enchanting.command.DumpEnchantmentInfoCommand;
 import dev.shadowsoffire.apothic_enchanting.enchantments.ChainsawTask;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BerserkingComponent;
 import dev.shadowsoffire.apothic_enchanting.enchantments.components.BoonComponent;
@@ -20,13 +21,9 @@ import dev.shadowsoffire.apothic_enchanting.objects.EnderLeadItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ExtractionTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ImprovedScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ScrappingTomeItem;
-import dev.shadowsoffire.apothic_enchanting.payloads.EnchantmentInfoPayload;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipeCache;
-import dev.shadowsoffire.placebo.config.Configuration;
-import dev.shadowsoffire.placebo.util.RunnableReloader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
@@ -51,9 +48,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
@@ -68,7 +63,6 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ApothEnchEvents {
 
@@ -308,33 +302,12 @@ public class ApothEnchEvents {
     }
 
     @SubscribeEvent
-    public void reload(AddServerReloadListenersEvent e) {
-        e.addListener(ApothicEnchanting.loc("reload"), RunnableReloader.of(() -> {
-            Configuration enchInfoConfig = new Configuration(ApothicAttributes.getConfigFile("enchantments"));
-            enchInfoConfig.setTitle("Apotheosis Enchantment Information");
-            enchInfoConfig.setComment("This file contains configurable data for each enchantment.\nThe names of each category correspond to the registry names of every loaded enchantment.");
-            ApothicEnchanting.ENCHANTMENT_INFO.clear();
-
-            e.getServerResources().getRegistryLookup().lookupOrThrow(Registries.ENCHANTMENT).listElements().forEach(ench -> {
-                EnchantmentInfo info = EnchantmentInfo.load(ench, enchInfoConfig);
-                ApothicEnchanting.ENCHANTMENT_INFO.put(ench, info);
-                for (int i = 1; i <= info.getMaxLevel(); i++) {
-                    if (info.getMinPower(i) > info.getMaxPower(i)) {
-                        ApothicEnchanting.LOGGER.warn("Enchantment {} has min/max power {}/{} at level {}, making this level unobtainable except by combination.",
-                            ench.key().identifier(),
-                            info.getMinPower(i),
-                            info.getMaxPower(i), i);
-                    }
-                }
-            });
-
-            if (enchInfoConfig.hasChanged()) enchInfoConfig.save();
-        }));
+    public void cmds(ApotheosisCommandEvent e) {
+        DumpEnchantmentInfoCommand.register(e.getRoot());
     }
 
     @SubscribeEvent
     public void stopped(ServerStoppedEvent e) {
-        ApothicEnchanting.ENCHANTMENT_INFO.clear();
         InfusionRecipeCache.clear();
     }
 
@@ -344,17 +317,9 @@ public class ApothEnchEvents {
     }
 
     @SubscribeEvent
-    public void logout(ClientPlayerNetworkEvent.LoggingOut e) {
-        // ApothicEnchanting.ENCHANTMENT_INFO.clear();
-    }
-
-    @SubscribeEvent
     public void sync(OnDatapackSyncEvent e) {
         InfusionRecipeCache.rebuildFromServer(e.getPlayerList().getServer());
         e.sendRecipes(Ench.RecipeTypes.INFUSION);
-        e.getRelevantPlayers().forEach(p -> {
-            PacketDistributor.sendToPlayer(p, new EnchantmentInfoPayload(ApothicEnchanting.ENCHANTMENT_INFO));
-        });
     }
 
     @SubscribeEvent

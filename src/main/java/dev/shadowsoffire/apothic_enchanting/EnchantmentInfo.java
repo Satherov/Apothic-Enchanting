@@ -1,88 +1,77 @@
 package dev.shadowsoffire.apothic_enchanting;
 
+import java.util.Optional;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMaxPowerFunction;
 import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMinPowerFunction;
-import dev.shadowsoffire.apothic_enchanting.PowerFunction.ExpressionPowerFunction;
-import dev.shadowsoffire.placebo.config.Configuration;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
- * EnchantmentInfo retains all configurable data about an {@link Enchantment}.
+ * EnchantmentInfo retains all configurable per-enchantment data — max level, max loot level, optional hard cap, and
+ * the min/max enchanting power functions. Instances are loaded from the {@code apothic_enchanting:enchantment_info}
+ * datamap; absent fields fall back to runtime defaults at lookup time.
+ * <p>
+ * The {@code maxLevel} / {@code maxLootLevel} fields are {@code Optional}: an empty value means "use the scaled
+ * default" (via {@link ApothicEnchanting#getDefaultMaxLevel}) and "use the vanilla max" respectively. This lets
+ * datapacks override one field without the other.
  */
-public record EnchantmentInfo(Holder<Enchantment> ench, int maxLevel, int maxLootLevel, int levelCap, PowerFunction maxPower, PowerFunction minPower) {
+public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxLootLevel, int levelCap, PowerFunction maxPower, PowerFunction minPower) {
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentInfo> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), EnchantmentInfo::ench,
-        ByteBufCodecs.VAR_INT, EnchantmentInfo::maxLevel,
-        ByteBufCodecs.VAR_INT, EnchantmentInfo::maxLootLevel,
-        ByteBufCodecs.VAR_INT, EnchantmentInfo::levelCap,
-        PowerFunction.STREAM_CODEC, EnchantmentInfo::maxPower,
-        PowerFunction.STREAM_CODEC, EnchantmentInfo::minPower,
-        EnchantmentInfo::new);
+    public static final EnchantmentInfo EMPTY = new EnchantmentInfo(Optional.empty(), Optional.empty(), -1, DefaultMaxPowerFunction.INSTANCE, DefaultMinPowerFunction.INSTANCE);
+
+    public static final MapCodec<EnchantmentInfo> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+        Codec.intRange(1, 127).optionalFieldOf("max_level").forGetter(EnchantmentInfo::maxLevel),
+        Codec.intRange(1, 127).optionalFieldOf("max_loot_level").forGetter(EnchantmentInfo::maxLootLevel),
+        Codec.intRange(-1, 127).optionalFieldOf("level_cap", -1).forGetter(EnchantmentInfo::levelCap),
+        PowerFunction.CODEC.codec().optionalFieldOf("max_power", DefaultMaxPowerFunction.INSTANCE).forGetter(EnchantmentInfo::maxPower),
+        PowerFunction.CODEC.codec().optionalFieldOf("min_power", DefaultMinPowerFunction.INSTANCE).forGetter(EnchantmentInfo::minPower))
+        .apply(inst, EnchantmentInfo::new));
 
     /**
-     * Returns the max level of the enchantment, as set by the config or enforced by IMC.
+     * Returns the max level of the enchantment, clamped by any active {@link ApothicEnchanting#ENCH_HARD_CAPS IMC hard cap}.
+     * Falls back to {@link ApothicEnchanting#getDefaultMaxLevel} (cached) if no override is set.
      */
-    public int getMaxLevel() {
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench.getKey(), 127), this.maxLevel);
+    public int getMaxLevel(Holder<Enchantment> ench) {
+        int v = this.maxLevel.orElseGet(() -> ApothicEnchanting.getDefaultMaxLevel(ench));
+        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(ench.getKey(), 127), v);
     }
 
     /**
-     * Returns the max loot level of the enchantment, as set by the config or enforced by IMC.
-     * <p>
-     * The loot level is used in loot table generation as well as villager trades.
-     * 
-     * @see #defaultMax(Enchantment)
+     * Returns the max loot level of the enchantment, clamped by any active hard cap. Loot level is used by loot
+     * table generation and villager trades. Falls back to the enchantment's vanilla max level if no override is set.
      */
-    public int getMaxLootLevel() {
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(this.ench.getKey(), 127), this.maxLootLevel);
+    public int getMaxLootLevel(Holder<Enchantment> ench) {
+        int v = this.maxLootLevel.orElseGet(() -> ench.value().getMaxLevel());
+        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(ench.getKey(), 127), v);
     }
 
     /**
-     * Returns the minimum enchanting power required to receive the given level of this enchantment in an enchanting table.
-     * 
-     * @see #defaultMin(Enchantment)
+     * Minimum enchanting power required to receive {@code level} of this enchantment in an enchanting table.
      */
-    public int getMinPower(int level) {
-        return this.minPower.getPower(level);
+    public int getMinPower(int level, Holder<Enchantment> ench) {
+        return this.minPower.getPower(level, ench);
     }
 
     /**
-     * Returns the maximum enchanting power required to receive the given level of this enchantment in an enchanting table.
-     * <p>
-     * By default, this is overridden to return 200 for all enchantments.
+     * Maximum enchanting power required to receive {@code level} of this enchantment in an enchanting table.
+     * By default returns 200 for all levels.
      */
-    public int getMaxPower(int level) {
-        return this.maxPower.getPower(level);
+    public int getMaxPower(int level, Holder<Enchantment> ench) {
+        return this.maxPower.getPower(level, ench);
     }
 
+    /**
+     * Fallback used when no datamap entry exists for an enchantment. Returns the shared {@link #EMPTY} instance —
+     * actual default values are computed lazily by the getters above, allowing the expensive
+     * {@link ApothicEnchanting#getDefaultMaxLevel} call to be memoized in one place.
+     */
     public static EnchantmentInfo fallback(Holder<Enchantment> ench) {
-        return new EnchantmentInfo(ench, ench.value().getMaxLevel(), ench.value().getMaxLevel(), -1, DefaultMaxPowerFunction.INSTANCE, new DefaultMinPowerFunction(ench));
-    }
-
-    public static EnchantmentInfo load(Holder<Enchantment> ench, Configuration cfg) {
-        String category = ench.getKey().identifier().toString();
-        int vanillaMax = ench.value().definition().maxLevel();
-        int max = cfg.getInt("Max Level", category, ApothicEnchanting.getDefaultMaxLevel(ench), 1, 127, "The max level of this enchantment - originally " + vanillaMax + ".");
-        int maxLoot = cfg.getInt("Max Loot Level", category, vanillaMax, 1, 127, "The max level of this enchantment available from loot sources.");
-        int levelCap = cfg.getInt("Forced Level Cap", category, -1, -1, 127,
-            "The enforced effective max level of this enchantment. Regardless of NBT and other buffs, this enchantment will never exceed this level. -1 to disable.");
-
-        if (levelCap != -1 && levelCap < max) {
-            ApothicEnchanting.LOGGER.error("Invalid level cap of {} for enchantment \"{}\" will be ignored. The level cap must be greater than or equal to the configured max level ({}).", levelCap, category, max);
-            levelCap = -1;
-        }
-
-        String maxF = cfg.getString("Max Power Function", category, "", "A function to determine the max enchanting power.  The variable \"x\" is level.  See: https://github.com/uklimaschewski/EvalEx#usage-examples");
-        String minF = cfg.getString("Min Power Function", category, "", "A function to determine the min enchanting power.");
-        PowerFunction maxPower = maxF.isEmpty() ? DefaultMaxPowerFunction.INSTANCE : new ExpressionPowerFunction(maxF);
-        PowerFunction minPower = minF.isEmpty() ? new DefaultMinPowerFunction(ench) : new ExpressionPowerFunction(minF);
-        return new EnchantmentInfo(ench, max, maxLoot, levelCap, maxPower, minPower);
+        return EMPTY;
     }
 
 }

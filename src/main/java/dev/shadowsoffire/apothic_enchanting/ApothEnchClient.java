@@ -174,7 +174,7 @@ public class ApothEnchClient {
                         args[3] = boolComp("info.apothic_enchanting.treasure", ench.is(EnchantmentTags.TREASURE));
                         if (e.getFlags().isAdvanced()) {
                             tooltip.add(Component.translatable("%s \u2507 %s \u2507 %s \u2507 %s", args[0], args[1], args[2], args[3]).withStyle(ChatFormatting.DARK_GRAY));
-                            tooltip.add(Component.translatable("info.apothic_enchanting.book_range", info.getMinPower(level), info.getMaxPower(level)).withStyle(ChatFormatting.GREEN));
+                            tooltip.add(Component.translatable("info.apothic_enchanting.book_range", info.getMinPower(level, ench), info.getMaxPower(level, ench)).withStyle(ChatFormatting.GREEN));
                         }
                         else {
                             tooltip.add(Component.translatable("%s \u2507 %s", args[2], args[3]).withStyle(ChatFormatting.DARK_GRAY));
