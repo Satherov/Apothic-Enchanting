@@ -42,6 +42,7 @@ public class ApothEnchDataMapProvider extends DataMapProvider {
         EnchantmentInfo info = new EnchantmentInfo(
             Optional.empty(),
             Optional.of(lootCap),
+            Optional.empty(),
             -1,
             DefaultMaxPowerFunction.INSTANCE,
             DefaultMinPowerFunction.INSTANCE);

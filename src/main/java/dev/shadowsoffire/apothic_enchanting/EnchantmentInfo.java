@@ -12,21 +12,25 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
- * EnchantmentInfo retains all configurable per-enchantment data — max level, max loot level, optional level cap, and
- * the min/max enchanting power functions. Instances are loaded from the {@code apothic_enchanting:enchantment_info}
- * datamap; absent fields fall back to runtime defaults at lookup time.
- * <p>
- * The {@code maxLevel} / {@code maxLootLevel} fields are {@code Optional}: an empty value means "use the scaled
- * default" (via {@link ApothicEnchanting#getDefaultMaxLevel}) and "use the vanilla max" respectively. This lets
- * datapacks override one field without the other.
+ * EnchantmentInfo retains all configurable per-enchantment data.
+ * 
+ * @param maxLevel             The max level. Falls back to {@link ApothicEnchanting#getDefaultMaxLevel(Holder)}, which computes the max level from the power
+ *                             function.
+ * @param maxLootLevel         The max level at which the enchantment may spawn at in loot. Falls back to the vanilla (unscaled) max level.
+ * @param maxAnvilCombineLevel The max level the enchantment may be combined (N + N -> N+1) in an anvil. Falls back to the max level.
+ * @param levelCap             A strict level cap that forces the enchantment to never go above the specified cap, bypassing things like custom NBT or runtime
+ *                             bonuses.
+ * @param maxPower             The maximum power function.
+ * @param minPower             The minimum power function.
  */
-public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxLootLevel, int levelCap, PowerFunction maxPower, PowerFunction minPower) {
+public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxLootLevel, Optional<Integer> maxAnvilCombineLevel, int levelCap, PowerFunction maxPower, PowerFunction minPower) {
 
-    public static final EnchantmentInfo EMPTY = new EnchantmentInfo(Optional.empty(), Optional.empty(), -1, DefaultMaxPowerFunction.INSTANCE, DefaultMinPowerFunction.INSTANCE);
+    public static final EnchantmentInfo EMPTY = new EnchantmentInfo(Optional.empty(), Optional.empty(), Optional.empty(), -1, DefaultMaxPowerFunction.INSTANCE, DefaultMinPowerFunction.INSTANCE);
 
     public static final MapCodec<EnchantmentInfo> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
         Codec.intRange(1, 127).optionalFieldOf("max_level").forGetter(EnchantmentInfo::maxLevel),
         Codec.intRange(1, 127).optionalFieldOf("max_loot_level").forGetter(EnchantmentInfo::maxLootLevel),
+        Codec.intRange(1, 127).optionalFieldOf("max_anvil_combine_level").forGetter(EnchantmentInfo::maxAnvilCombineLevel),
         Codec.intRange(-1, 127).optionalFieldOf("level_cap", -1).forGetter(EnchantmentInfo::levelCap),
         PowerFunction.CODEC.codec().optionalFieldOf("max_power", DefaultMaxPowerFunction.INSTANCE).forGetter(EnchantmentInfo::maxPower),
         PowerFunction.CODEC.codec().optionalFieldOf("min_power", DefaultMinPowerFunction.INSTANCE).forGetter(EnchantmentInfo::minPower))
@@ -46,6 +50,15 @@ public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxL
      */
     public int getMaxLootLevel(Holder<Enchantment> ench) {
         return this.maxLootLevel.orElseGet(() -> ench.value().getMaxLevel());
+    }
+
+    /**
+     * Returns the highest level this enchantment may be combined up to in an anvil. This caps <i>only</i> the case
+     * where the enchantment is already present on both anvil inputs.
+     * Defaults to {@link #getMaxLevel(Holder)}.
+     */
+    public int getMaxAnvilCombineLevel(Holder<Enchantment> ench) {
+        return this.maxAnvilCombineLevel.orElseGet(() -> this.getMaxLevel(ench));
     }
 
     /**

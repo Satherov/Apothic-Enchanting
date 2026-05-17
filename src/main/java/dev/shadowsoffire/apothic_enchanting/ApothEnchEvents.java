@@ -115,6 +115,47 @@ public class ApothEnchEvents {
     }
 
     /**
+     * Caps anvil <i>combination</i> — the case where an enchantment is present on both the left and right inputs and
+     * vanilla would merge them into a higher level. For each such enchantment, the output level is bounded by its
+     * configured {@code maxAnvilCombineLevel}.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void clampAnvilCombine(AnvilUpdateEvent e) {
+        ItemStack output = e.getOutput();
+        if (output.isEmpty()) return;
+
+        ItemEnchantments outputEnchants = EnchantmentHelper.getEnchantmentsForCrafting(output);
+        if (outputEnchants.isEmpty()) return;
+
+        ItemEnchantments leftEnchants = EnchantmentHelper.getEnchantmentsForCrafting(e.getLeft());
+        ItemEnchantments rightEnchants = EnchantmentHelper.getEnchantmentsForCrafting(e.getRight());
+
+        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(outputEnchants);
+        boolean modified = false;
+        for (Holder<Enchantment> ench : outputEnchants.keySet()) {
+            int leftLevel = leftEnchants.getLevel(ench);
+            int rightLevel = rightEnchants.getLevel(ench);
+            // It's only a combination if both left and right items have the ench.
+            if (leftLevel <= 0 || rightLevel <= 0) continue;
+
+            int cap = ApothicEnchanting.getEnchInfo(ench).getMaxAnvilCombineLevel(ench);
+            int outputLevel = outputEnchants.getLevel(ench);
+            // Cap the combination, but never below the left input's existing level (no downgrades).
+            int capped = Math.max(leftLevel, Math.min(outputLevel, cap));
+            if (capped < outputLevel) {
+                mutable.set(ench, capped);
+                modified = true;
+            }
+        }
+
+        if (modified) {
+            ItemStack clamped = output.copy();
+            EnchantmentHelper.setEnchantments(clamped, mutable.toImmutable());
+            e.setOutput(clamped);
+        }
+    }
+
+    /**
      * Event handler for the Scavenger and Spearfishing enchantments.
      */
     @SubscribeEvent(priority = EventPriority.LOW)

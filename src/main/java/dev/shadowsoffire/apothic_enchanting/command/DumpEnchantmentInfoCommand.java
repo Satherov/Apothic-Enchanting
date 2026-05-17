@@ -60,6 +60,7 @@ public class DumpEnchantmentInfoCommand {
                 EnchantmentInfo concrete = new EnchantmentInfo(
                     Optional.of(resolvedMax),
                     Optional.of(resolvedMaxLoot),
+                    Optional.empty(),
                     info.levelCap(),
                     info.maxPower(),
                     info.minPower());
