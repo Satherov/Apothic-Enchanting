@@ -1,5 +1,8 @@
 package dev.shadowsoffire.apothic_enchanting;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,9 +82,30 @@ public class ApothicEnchanting {
         bus.register(this);
     }
 
+    /**
+     * Tombstone written to the old {@code config/apotheosis/enchantments.cfg} location after the per-enchantment
+     * config was migrated to the {@code apothic_enchanting:enchantment_info} data map.
+     */
+    private static final String MIGRATED_CONFIG_NOTICE = """
+        # Apotheosis Enchantment Information
+        #
+        # Per-enchantment configuration (max level, max loot level, level cap, and the min/max power functions)
+        # no longer lives in this file. It has migrated to a NeoForge data map:
+        #
+        #     data/apothic_enchanting/data_maps/enchantment/enchantment_info.json
+        #
+        # To capture the current effective values for every enchantment as a ready-to-edit data map file,
+        # run the following command in-game (requires permission level 4):
+        #
+        #     /apoth dump_enchantment_info
+        #
+        # This file is intentionally left empty and is no longer read by the mod.
+        """;
+
     @SubscribeEvent
     public void init(FMLCommonSetupEvent e) {
         this.reload(null);
+        writeMigratedConfigNotice();
 
         NeoForge.EVENT_BUS.register(new ApothEnchEvents());
         NeoForge.EVENT_BUS.addListener(this::reload);
@@ -170,6 +194,26 @@ public class ApothicEnchanting {
 
     public void reload(ResourceReloadEvent e) {
         ApothEnchConfig.load(new Configuration(ApothicAttributes.getConfigFile(MODID)));
+    }
+
+    /**
+     * Replaces the legacy {@code config/apotheosis/enchantments.cfg} with an empty tombstone that points users at
+     * the {@code apothic_enchanting:enchantment_info} data map and the {@code /apoth dump_enchantment_info} command.
+     * The legacy file is no longer read; leaving the old populated config in place would mislead users into thinking
+     * it still applies. Skips the write when the tombstone is already present so launches don't churn the file.
+     */
+    private static void writeMigratedConfigNotice() {
+        Path file = ApothicAttributes.getConfigFile("enchantments").toPath();
+        try {
+            if (Files.exists(file) && MIGRATED_CONFIG_NOTICE.equals(Files.readString(file))) {
+                return;
+            }
+            Files.createDirectories(file.getParent());
+            Files.writeString(file, MIGRATED_CONFIG_NOTICE);
+        }
+        catch (IOException ex) {
+            LOGGER.error("Failed to write the migrated enchantments.cfg notice", ex);
+        }
     }
 
     /**
