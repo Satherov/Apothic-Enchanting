@@ -12,7 +12,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
- * EnchantmentInfo retains all configurable per-enchantment data — max level, max loot level, optional hard cap, and
+ * EnchantmentInfo retains all configurable per-enchantment data — max level, max loot level, optional level cap, and
  * the min/max enchanting power functions. Instances are loaded from the {@code apothic_enchanting:enchantment_info}
  * datamap; absent fields fall back to runtime defaults at lookup time.
  * <p>
@@ -33,21 +33,19 @@ public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxL
         .apply(inst, EnchantmentInfo::new));
 
     /**
-     * Returns the max level of the enchantment, clamped by any active {@link ApothicEnchanting#ENCH_HARD_CAPS IMC hard cap}.
-     * Falls back to {@link ApothicEnchanting#getDefaultMaxLevel} (cached) if no override is set.
+     * Returns the max level of the enchantment. Falls back to {@link ApothicEnchanting#getDefaultMaxLevel} (cached)
+     * if no override is set.
      */
     public int getMaxLevel(Holder<Enchantment> ench) {
-        int v = this.maxLevel.orElseGet(() -> ApothicEnchanting.getDefaultMaxLevel(ench));
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(ench.getKey(), 127), v);
+        return this.maxLevel.orElseGet(() -> ApothicEnchanting.getDefaultMaxLevel(ench));
     }
 
     /**
-     * Returns the max loot level of the enchantment, clamped by any active hard cap. Loot level is used by loot
-     * table generation and villager trades. Falls back to the enchantment's vanilla max level if no override is set.
+     * Returns the max loot level of the enchantment. Loot level is used by loot table generation and villager trades.
+     * Falls back to the enchantment's vanilla max level if no override is set.
      */
     public int getMaxLootLevel(Holder<Enchantment> ench) {
-        int v = this.maxLootLevel.orElseGet(() -> ench.value().getMaxLevel());
-        return Math.min(ApothicEnchanting.ENCH_HARD_CAPS.getOrDefault(ench.getKey(), 127), v);
+        return this.maxLootLevel.orElseGet(() -> ench.value().getMaxLevel());
     }
 
     /**

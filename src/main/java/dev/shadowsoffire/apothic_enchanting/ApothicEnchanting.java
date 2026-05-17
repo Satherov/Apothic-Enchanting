@@ -10,8 +10,6 @@ import com.google.common.collect.MapMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mojang.datafixers.util.Pair;
-
 import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
 import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMinPowerFunction;
 import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
@@ -37,8 +35,6 @@ import dev.shadowsoffire.placebo.network.PayloadHelper;
 import dev.shadowsoffire.placebo.tabs.ITabFiller;
 import dev.shadowsoffire.placebo.tabs.TabFillingRegistry;
 import dev.shadowsoffire.placebo.util.PlaceboUtil;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
@@ -62,7 +58,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -77,8 +72,6 @@ public class ApothicEnchanting {
     public static final String MODID = "apothic_enchanting";
     public static final Logger LOGGER = LoggerFactory.getLogger("Apotheosis : Enchantment");
 
-    public static final Object2IntMap<ResourceKey<Enchantment>> ENCH_HARD_CAPS = new Object2IntOpenHashMap<>();
-    public static final String ENCH_HARD_CAP_IMC = "set_ench_hard_cap";
     public static final List<TomeItem> TYPED_BOOKS = new ArrayList<>();
 
     public ApothicEnchanting(IEventBus bus) {
@@ -118,31 +111,6 @@ public class ApothicEnchanting {
 
         PayloadHelper.registerPayload(new CluePayload.Provider());
         PayloadHelper.registerPayload(new StatsPayload.Provider());
-    }
-
-    /**
-     * This handles IMC events for the enchantment module.
-     * Currently only one type is supported.
-     * A mod may pass a single {@link Pair} holding a {@link ResourceKey} naming the enchantment and an {@link Integer} indicating the hard capped max level for an
-     * enchantment.
-     * That pair must use the method {@link ENCH_HARD_CAP_IMC}.
-     */
-    @SubscribeEvent
-    @SuppressWarnings("unchecked")
-    public void handleIMC(InterModProcessEvent e) {
-        e.getIMCStream(ENCH_HARD_CAP_IMC::equals).forEach(msg -> {
-            try {
-                Pair<ResourceKey<Enchantment>, Integer> data = (Pair<ResourceKey<Enchantment>, Integer>) msg.messageSupplier().get();
-                if (data.getFirst() != null && data.getSecond() > 0) {
-                    ENCH_HARD_CAPS.put(data.getFirst(), data.getSecond().intValue());
-                }
-                else LOGGER.error("Failed to process IMC message with method {} from {} (invalid values passed).", msg.method(), msg.senderModId());
-            }
-            catch (Exception ex) {
-                LOGGER.error("Exception thrown during IMC message with method {} from {}.", msg.method(), msg.senderModId());
-                ex.printStackTrace();
-            }
-        });
     }
 
     @SubscribeEvent
