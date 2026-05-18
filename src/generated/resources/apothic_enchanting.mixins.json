@@ -9,6 +9,7 @@
         "BlocksMixin",
         "CandleBlockMixin",
         "CrossbowItemMixin",
+        "EnchantingTableBlockEntityMixin",
         "EnchantmentMixin",
         "GoldToolsHaveFortuneModuleMixin",
         "IShearableMixin",
