@@ -1,3 +1,8 @@
+## 1.5.3
+* PrincessStellar: Updated Brazilian translation.
+* PODOB: Updated Korean translation.
+* Implemented Clearable on `EnchantingTableBlockEntity`.
+
 ## 1.5.2
 * Fixed an issue that prevented connecting to Vanilla servers.
 * Updated the Enchantment Library's GUI texture.
