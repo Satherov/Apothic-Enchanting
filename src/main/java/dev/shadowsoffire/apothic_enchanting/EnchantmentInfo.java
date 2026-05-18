@@ -27,6 +27,7 @@ public record EnchantmentInfo(Optional<Integer> maxLevel, Optional<Integer> maxL
 
     public static final EnchantmentInfo EMPTY = new EnchantmentInfo(Optional.empty(), Optional.empty(), Optional.empty(), -1, DefaultMaxPowerFunction.INSTANCE, DefaultMinPowerFunction.INSTANCE);
 
+    // These clamp to 127 because we only supply language translations for up to 127. Technically vanilla supports up to 255 but meh.
     public static final MapCodec<EnchantmentInfo> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
         Codec.intRange(1, 127).optionalFieldOf("max_level").forGetter(EnchantmentInfo::maxLevel),
         Codec.intRange(1, 127).optionalFieldOf("max_loot_level").forGetter(EnchantmentInfo::maxLootLevel),

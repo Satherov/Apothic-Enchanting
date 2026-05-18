@@ -5,11 +5,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Clearable;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 /**
  * Applies the {@link Clearable} interface to the EnchantingTableBlockEntity to wipe the attached inventory when called.
@@ -24,8 +24,8 @@ public abstract class EnchantingTableBlockEntityMixin extends BlockEntity implem
     @Override
     public void clearContent() {
         EnchantmentTableItemHandler handler = this.getData(EnchantmentTableItemHandler.TYPE);
-        for (int i = 0; i < handler.getSlots(); i++) {
-            handler.setStackInSlot(i, ItemStack.EMPTY);
+        for (int i = 0; i < handler.size(); i++) {
+            handler.set(i, ItemResource.EMPTY, 0);
         }
         this.setData(EnchantmentTableItemHandler.TYPE, handler);
     }
