@@ -126,6 +126,8 @@ public class Ench {
 
     public static final class Blocks {
 
+        public static final Holder<Block> BASIC_BOOKSHELF = woodShelf("basic_bookshelf", MapColor.WOOD, 1.5F, ParticleTypes.ENCHANT);
+
         public static final Holder<Block> BEESHELF = woodShelf("beeshelf", MapColor.COLOR_YELLOW, 0.75F, ParticleTypes.ENCHANT);
 
         public static final Holder<Block> BLAZING_HELLSHELF = woodShelf("blazing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
@@ -368,6 +370,8 @@ public class Ench {
     }
 
     public static class Items extends net.minecraft.world.item.Items {
+
+        public static final Holder<Item> BASIC_BOOKSHELF = R.blockItem("basic_bookshelf", Ench.Blocks.BASIC_BOOKSHELF);
 
         public static final Holder<Item> BEESHELF = R.blockItem("beeshelf", Ench.Blocks.BEESHELF);
 

@@ -99,6 +99,11 @@ public class EnchRecipeProvider extends LegacyRecipeProvider {
             Items.GLISTERING_MELON_SLICE, Tags.Items.BOOKSHELVES, Items.GLISTERING_MELON_SLICE,
             Items.MELON, Items.MELON, Items.MELON);
 
+        addShaped(Ench.Blocks.BASIC_BOOKSHELF, 3, 3,
+            ItemTags.PLANKS, ItemTags.PLANKS, ItemTags.PLANKS,
+            EnchItemTagsProvider.TOMES, EnchItemTagsProvider.TOMES, EnchItemTagsProvider.TOMES,
+            ItemTags.PLANKS, ItemTags.PLANKS, ItemTags.PLANKS);
+
         addShaped(Ench.Blocks.GEODE_SHELF, 3, 3,
             Items.CALCITE, Items.CALCITE, Items.CALCITE,
             Items.CALCITE, Tags.Items.BOOKSHELVES, Items.CALCITE,

@@ -8,20 +8,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-import com.google.common.collect.MapMaker;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.MapMaker;
 
 import dev.shadowsoffire.apothic_attributes.ApothicAttributes;
 import dev.shadowsoffire.apothic_enchanting.PowerFunction.DefaultMinPowerFunction;
 import dev.shadowsoffire.apothic_enchanting.asm.EnchHooks;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchDataMapProvider;
 import dev.shadowsoffire.apothic_enchanting.data.ApothEnchantmentProvider;
-import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
-import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchDamageTypeProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchDamageTypeTagsProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchItemTagsProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchRecipeProvider;
+import dev.shadowsoffire.apothic_enchanting.data.EnchStatsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.EnchTagsProvider;
 import dev.shadowsoffire.apothic_enchanting.data.LootProvider;
 import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
@@ -112,10 +113,10 @@ public class ApothicEnchanting {
         e.enqueueWork(() -> {
             DispenserBlock.registerBehavior(Items.SHEARS, new ShearsDispenseItemBehavior());
 
-            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.HELLSHELF, Ench.Items.INFUSED_HELLSHELF, Ench.Items.BLAZING_HELLSHELF, Ench.Items.GLOWING_HELLSHELF, Ench.Items.SEASHELF, Ench.Items.INFUSED_SEASHELF,
-                Ench.Items.CRYSTAL_SEASHELF, Ench.Items.HEART_SEASHELF, Ench.Items.DORMANT_DEEPSHELF, Ench.Items.DEEPSHELF, Ench.Items.ECHOING_DEEPSHELF, Ench.Items.SOUL_TOUCHED_DEEPSHELF, Ench.Items.ECHOING_SCULKSHELF,
-                Ench.Items.SOUL_TOUCHED_SCULKSHELF, Ench.Items.ENDSHELF, Ench.Items.PEARL_ENDSHELF, Ench.Items.DRACONIC_ENDSHELF, Ench.Items.BEESHELF, Ench.Items.MELONSHELF, Ench.Items.STONESHELF, Ench.Items.SIGHTSHELF,
-                Ench.Items.SIGHTSHELF_T2, Ench.Items.FILTERING_SHELF, Ench.Items.TREASURE_SHELF, Ench.Items.GEODE_SHELF, Ench.Items.LIBRARY, Ench.Items.ENDER_LIBRARY);
+            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.BASIC_BOOKSHELF, Ench.Items.HELLSHELF, Ench.Items.INFUSED_HELLSHELF, Ench.Items.BLAZING_HELLSHELF, Ench.Items.GLOWING_HELLSHELF, Ench.Items.SEASHELF,
+                Ench.Items.INFUSED_SEASHELF, Ench.Items.CRYSTAL_SEASHELF, Ench.Items.HEART_SEASHELF, Ench.Items.DORMANT_DEEPSHELF, Ench.Items.DEEPSHELF, Ench.Items.ECHOING_DEEPSHELF, Ench.Items.SOUL_TOUCHED_DEEPSHELF,
+                Ench.Items.ECHOING_SCULKSHELF, Ench.Items.SOUL_TOUCHED_SCULKSHELF, Ench.Items.ENDSHELF, Ench.Items.PEARL_ENDSHELF, Ench.Items.DRACONIC_ENDSHELF, Ench.Items.BEESHELF, Ench.Items.MELONSHELF, Ench.Items.STONESHELF,
+                Ench.Items.SIGHTSHELF, Ench.Items.SIGHTSHELF_T2, Ench.Items.FILTERING_SHELF, Ench.Items.TREASURE_SHELF, Ench.Items.GEODE_SHELF, Ench.Items.LIBRARY, Ench.Items.ENDER_LIBRARY);
 
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.HELMET_TOME, Ench.Items.CHESTPLATE_TOME, Ench.Items.LEGGINGS_TOME, Ench.Items.BOOTS_TOME, Ench.Items.WEAPON_TOME, Ench.Items.BOW_TOME, Ench.Items.PICKAXE_TOME,
                 Ench.Items.FISHING_TOME, Ench.Items.OTHER_TOME, Ench.Items.SCRAP_TOME, Ench.Items.IMPROVED_SCRAP_TOME, Ench.Items.EXTRACTION_TOME);
@@ -178,6 +179,7 @@ public class ApothicEnchanting {
             .registry(Registries.JUKEBOX_SONG, SongProvider::bootstrap)
             .provider(LootProvider::create)
             .provider(EnchTagsProvider::new)
+            .provider(EnchItemTagsProvider::new)
             .provider(EnchDamageTypeTagsProvider::new)
             .provider(EnchRecipeProvider::new)
             .provider(EnchStatsProvider::new)
