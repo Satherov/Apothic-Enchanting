@@ -85,7 +85,10 @@ public class TooltipUtil {
     }
 
     public static void appendTableStats(LevelReader level, BlockPos pos, Consumer<Component> tooltip) {
-        EnchantmentTableStats stats = EnchantmentTableStats.gatherStats(level, pos, 0);
+        appendTableStats(EnchantmentTableStats.gatherStats(level, pos, 0), tooltip);
+    }
+
+    public static void appendTableStats(EnchantmentTableStats stats, Consumer<Component> tooltip) {
         tooltip.accept(TooltipUtil.lang("info", "eterna.t", String.format("%.2f", stats.tableEterna()), 100).withStyle(ChatFormatting.GREEN));
         tooltip.accept(TooltipUtil.lang("info", "quanta.t", String.format("%.2f", Math.min(100, stats.quanta()))).withStyle(ChatFormatting.RED));
         tooltip.accept(TooltipUtil.lang("info", "arcana.t", String.format("%.2f", Math.min(100, stats.arcana()))).withStyle(ChatFormatting.DARK_PURPLE));

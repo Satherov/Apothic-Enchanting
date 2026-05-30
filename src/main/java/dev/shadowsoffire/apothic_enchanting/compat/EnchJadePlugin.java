@@ -8,7 +8,11 @@ import org.jspecify.annotations.Nullable;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
+import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.FilteringShelfBlock.FilteringShelfTile;
+import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableStats;
+import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantingTableBlock;
+import dev.shadowsoffire.apothic_enchanting.table.RavenTableStats;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -26,10 +30,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
+import net.minecraft.world.level.block.EnchantingTableBlock;
+import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.IComponentProvider;
+import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
@@ -43,11 +50,18 @@ import snownee.jade.api.config.IPluginConfig;
 public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
 
     private static final Identifier UID = ApothicEnchanting.loc("ench");
+    private static final Identifier RAVEN_STATS_UID = ApothicEnchanting.loc("raven_stats");
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Identifier>> BLACKLIST_STREAM_CODEC = Identifier.STREAM_CODEC.<RegistryFriendlyByteBuf>cast().apply(ByteBufCodecs.list());
+    private static final StreamCodec<RegistryFriendlyByteBuf, RavenTableStats> RAVEN_STATS_STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.INT, RavenTableStats::eterna,
+        ByteBufCodecs.INT, RavenTableStats::quanta,
+        ByteBufCodecs.INT, RavenTableStats::arcana,
+        RavenTableStats::new);
 
     @Override
     public void register(IWailaCommonRegistration reg) {
         reg.registerBlockDataProvider(FilterDataProvider.INSTANCE, ChiseledBookShelfBlock.class);
+        reg.registerBlockDataProvider(RavenStatsDataProvider.INSTANCE, RavenEnchantingTableBlock.class);
     }
 
     @Override
@@ -92,8 +106,18 @@ public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
         }
 
         TooltipUtil.appendBlockStats(accessor.getLevel(), accessor.getBlockState(), accessor.getPosition(), tooltip::add);
-        if (accessor.getBlock() == Blocks.ENCHANTING_TABLE) {
-            TooltipUtil.appendTableStats(accessor.getLevel(), accessor.getPosition(), tooltip::add);
+        if (accessor.getBlock() instanceof EnchantingTableBlock) {
+            if (accessor.getBlock() == Ench.Blocks.RAVEN_ENCHANTING_TABLE.value()) {
+                RavenTableStats raven = RavenStatsDataProvider.INSTANCE.decodeFromData(accessor).orElseGet(RavenTableStats::new);
+                EnchantmentTableStats shelfStats = EnchantmentTableStats.gatherStats(accessor.getLevel(), accessor.getPosition(), 0);
+                EnchantmentTableStats merged = new EnchantmentTableStats(
+                    raven.eterna(), raven.quanta(), raven.arcana(),
+                    shelfStats.clues(), shelfStats.blacklist(), shelfStats.treasure(), shelfStats.stable());
+                TooltipUtil.appendTableStats(merged, tooltip::add);
+            }
+            else {
+                TooltipUtil.appendTableStats(accessor.getLevel(), accessor.getPosition(), tooltip::add);
+            }
             tooltip.remove(JadeIds.MC_TOTAL_ENCHANTMENT_POWER);
         }
     }
@@ -190,6 +214,34 @@ public class EnchJadePlugin implements IWailaPlugin, IBlockComponentProvider {
         @Override
         public Identifier getUid() {
             return UID;
+        }
+    }
+
+    public static final class RavenStatsDataProvider implements StreamServerDataProvider<BlockAccessor, RavenTableStats> {
+
+        public static final RavenStatsDataProvider INSTANCE = new RavenStatsDataProvider();
+
+        @Override
+        public @Nullable RavenTableStats streamData(BlockAccessor accessor) {
+            if (!(accessor.getBlockEntity() instanceof EnchantingTableBlockEntity tile)) {
+                return null;
+            }
+            return tile.getData(RavenTableStats.TYPE);
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, RavenTableStats> streamCodec() {
+            return RAVEN_STATS_STREAM_CODEC;
+        }
+
+        @Override
+        public boolean shouldRequestData(BlockAccessor accessor) {
+            return accessor.getBlock() == Ench.Blocks.RAVEN_ENCHANTING_TABLE.value();
+        }
+
+        @Override
+        public Identifier getUid() {
+            return RAVEN_STATS_UID;
         }
     }
 
