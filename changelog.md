@@ -1,3 +1,16 @@
+## 2.0.0
+* Ported to Minecraft 26.1.2.
+* Added the Max Eterna attribute, which allows limiting a player's eterna level.
+* Infusion Enchanting will now always use the declared level, instead of over-spending.
+* Enchanting Info (formerly enchantments.cfg) is now a DataMap.
+  * Added the `max_anvil_combine_level` field to limit enchantment up-combining in an anvil.
+* All textures have been updated.
+* Bookshelves now have 1-3 random variants, randomized per position.
+* Added the Apothic Enchanting Table (a cosmetic version of the Enchanting Table).
+  * The vanilla Enchanting Table is still fully-featured with Apothic Enchanting stats and whatnot.
+* Added the Enchanting Table of the Raven, an end-game table that allows manually selecting core stats.
+  * No recipe for this table is included in Apothic Enchanting.
+
 ## 1.5.2
 * Fixed an issue that prevented connecting to Vanilla servers.
 * Updated the Enchantment Library's GUI texture.
