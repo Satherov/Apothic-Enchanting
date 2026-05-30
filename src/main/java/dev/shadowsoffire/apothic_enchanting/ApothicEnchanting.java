@@ -115,7 +115,7 @@ public class ApothicEnchanting {
         e.enqueueWork(() -> {
             DispenserBlock.registerBehavior(Items.SHEARS, new ShearsDispenseItemBehavior());
 
-            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.APOTHIC_ENCHANTING_TABLE);
+            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.APOTHIC_ENCHANTING_TABLE, Ench.Items.RAVEN_ENCHANTING_TABLE);
 
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.BASIC_BOOKSHELF, Ench.Items.HELLSHELF, Ench.Items.INFUSED_HELLSHELF, Ench.Items.BLAZING_HELLSHELF, Ench.Items.GLOWING_HELLSHELF, Ench.Items.SEASHELF,
                 Ench.Items.INFUSED_SEASHELF, Ench.Items.CRYSTAL_SEASHELF, Ench.Items.HEART_SEASHELF, Ench.Items.DORMANT_DEEPSHELF, Ench.Items.DEEPSHELF, Ench.Items.ECHOING_DEEPSHELF, Ench.Items.SOUL_TOUCHED_DEEPSHELF,
