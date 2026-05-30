@@ -26,16 +26,17 @@ import dev.shadowsoffire.apothic_enchanting.objects.ImprovedScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.LibraryBlockItem;
 import dev.shadowsoffire.apothic_enchanting.objects.ScrappingTomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
+import dev.shadowsoffire.apothic_enchanting.objects.TooltipBlockItem;
 import dev.shadowsoffire.apothic_enchanting.objects.TreasureShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock.SculkShelfBlock;
+import dev.shadowsoffire.apothic_enchanting.objects.WardenLootModifier;
+import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentMenu;
 import dev.shadowsoffire.apothic_enchanting.table.ApothicEnchantingTableBlock;
+import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
 import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantmentMenu;
 import dev.shadowsoffire.apothic_enchanting.table.RavenTableStats;
-import dev.shadowsoffire.apothic_enchanting.objects.WardenLootModifier;
-import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentMenu;
-import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.KeepNBTInfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
@@ -384,9 +385,11 @@ public class Ench {
 
     public static class Items extends net.minecraft.world.item.Items {
 
-        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE);
+        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE,
+            TooltipBlockItem::new, UnaryOperator.identity());
 
-        public static final Holder<Item> RAVEN_ENCHANTING_TABLE = R.blockItem("raven_enchanting_table", Ench.Blocks.RAVEN_ENCHANTING_TABLE);
+        public static final Holder<Item> RAVEN_ENCHANTING_TABLE = R.blockItem("raven_enchanting_table", Ench.Blocks.RAVEN_ENCHANTING_TABLE,
+            TooltipBlockItem::new, UnaryOperator.identity());
 
         public static final Holder<Item> BASIC_BOOKSHELF = R.blockItem("basic_bookshelf", Ench.Blocks.BASIC_BOOKSHELF);
 

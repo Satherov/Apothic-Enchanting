@@ -43,7 +43,9 @@
     "block.apothic_enchanting.ender_library": "Library of Alexandria",
 
     "block.apothic_enchanting.apothic_enchanting_table": "Apothic Enchanting Table",
+    "block.apothic_enchanting.apothic_enchanting_table.desc": "A cosmetic variant of the Enchanting Table.",
     "block.apothic_enchanting.raven_enchanting_table": "Enchanting Table of the Raven",
+    "block.apothic_enchanting.raven_enchanting_table.desc": "Allows manually customizing the core enchanting stats.",
 
     "info.apothic_enchanting.ench_power": "Provides %s enchanting power.",
     "info.apothic_enchanting.masterwork": "Masterwork",
@@ -73,7 +75,7 @@
     "gui.apothic_enchanting.enchant.eterna.desc": " - Magical Energy",
     "gui.apothic_enchanting.enchant.eterna.desc2": "Sets the max enchanting level",
     "gui.apothic_enchanting.enchant.eterna.desc3": "Current Value: %s/%s",
-    "gui.apothic_enchanting.enchant.eterna.desc4": "Clamped To: %s",
+    "gui.apothic_enchanting.enchant.eterna.desc4": "Clamped to %s by your Max Eterna attribute",
     "gui.apothic_enchanting.enchant.quanta.desc": " - Pure Chaos",
     "gui.apothic_enchanting.enchant.quanta.desc2": "Increases underlying randomness",
     "gui.apothic_enchanting.enchant.quanta.desc3": " lessens the negative effects",
