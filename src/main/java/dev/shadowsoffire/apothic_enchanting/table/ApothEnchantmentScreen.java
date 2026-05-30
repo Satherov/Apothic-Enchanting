@@ -348,6 +348,21 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
         return this.menu;
     }
 
+    /**
+     * Mostly a copy of the super implementation, but switches out the hardcoded texture with a dynamic resolver.
+     */
+    @Override
+    public void extractBook(GuiGraphicsExtractor graphics, int left, int top) {
+        float a = this.minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        float open = Mth.lerp(a, this.oOpen, this.open);
+        float flip = Mth.lerp(a, this.oFlip, this.flip);
+        int x0 = left + 14;
+        int y0 = top + 14;
+        int x1 = x0 + 38;
+        int y1 = y0 + 31;
+        graphics.book(this.bookModel, this.menu.getBookGuiTexture(), 40.0F, open, flip, x0, y0, x1, y1);
+    }
+
     public void acceptClues(int slot, List<EnchantmentInstance> clues, boolean all) {
         this.clues.put(slot, clues);
         this.hasAllClues[slot] = all;

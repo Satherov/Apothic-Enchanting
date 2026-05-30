@@ -21,7 +21,9 @@
     ],
     "client": [
         "client.AnvilScreenMixin",
-        "client.EnchantmentScreenMixin"
+        "client.EnchantmentScreenMixin",
+        "client.EnchantTableRendererMixin",
+        "client.EnchantTableRenderStateMixin"
     ],
     "minVersion": "0.8"
 }

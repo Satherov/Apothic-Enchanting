@@ -29,6 +29,7 @@ import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
 import dev.shadowsoffire.apothic_enchanting.objects.TreasureShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock.SculkShelfBlock;
+import dev.shadowsoffire.apothic_enchanting.table.ApothicEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.WardenLootModifier;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentMenu;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
@@ -125,6 +126,10 @@ public class Ench {
     }
 
     public static final class Blocks {
+
+        public static final Holder<Block> APOTHIC_ENCHANTING_TABLE = R.block("apothic_enchanting_table",
+            ApothicEnchantingTableBlock::new,
+            p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F).requiresCorrectToolForDrops().lightLevel(s -> 7));
 
         public static final Holder<Block> BASIC_BOOKSHELF = woodShelf("basic_bookshelf", MapColor.WOOD, 1.5F, ParticleTypes.ENCHANT);
 
@@ -371,6 +376,8 @@ public class Ench {
 
     public static class Items extends net.minecraft.world.item.Items {
 
+        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE);
+
         public static final Holder<Item> BASIC_BOOKSHELF = R.blockItem("basic_bookshelf", Ench.Blocks.BASIC_BOOKSHELF);
 
         public static final Holder<Item> BEESHELF = R.blockItem("beeshelf", Ench.Blocks.BEESHELF);
@@ -481,7 +488,7 @@ public class Ench {
 
     public static class Menus {
 
-        public static final MenuType<ApothEnchantmentMenu> ENCHANTING_TABLE = R.menu("enchanting_table", ApothEnchantmentMenu::new);
+        public static final MenuType<ApothEnchantmentMenu> ENCHANTING_TABLE = R.menuWithPos("enchanting_table", ApothEnchantmentMenu::new);
 
         public static final MenuType<EnchLibraryContainer> LIBRARY = R.menuWithPos("library", EnchLibraryContainer::new);
 

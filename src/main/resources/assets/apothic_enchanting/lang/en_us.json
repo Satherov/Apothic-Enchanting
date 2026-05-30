@@ -42,6 +42,8 @@
     "block.apothic_enchanting.library": "Enchantment Library",
     "block.apothic_enchanting.ender_library": "Library of Alexandria",
 
+    "block.apothic_enchanting.apothic_enchanting_table": "Apothic Enchanting Table",
+
     "info.apothic_enchanting.ench_power": "Provides %s enchanting power.",
     "info.apothic_enchanting.masterwork": "Masterwork",
     "info.apothic_enchanting.twisted": "Twisted",

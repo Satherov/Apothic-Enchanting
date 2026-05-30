@@ -5,12 +5,15 @@ import javax.annotation.Nullable;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
-import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -30,14 +33,30 @@ public class ApothEnchantingTableBlock extends EnchantingTableBlock {
     @Override
     @Nullable
     public MenuProvider getMenuProvider(BlockState state, Level world, BlockPos pos) {
-        BlockEntity tileentity = world.getBlockEntity(pos);
-        if (tileentity instanceof EnchantingTableBlockEntity) {
-            Component itextcomponent = ((Nameable) tileentity).getDisplayName();
-            return new SimpleMenuProvider((id, inventory, player) -> new ApothEnchantmentMenu(id, inventory, ContainerLevelAccess.create(world, pos), tileentity.getData(EnchantmentTableItemHandler.TYPE)), itextcomponent);
-        }
-        else {
+        if (!(world.getBlockEntity(pos) instanceof EnchantingTableBlockEntity tile)) {
             return null;
         }
+        Component title = ((Nameable) tile).getDisplayName();
+        // Custom provider rather than SimpleMenuProvider so we can hook writeClientSideData and
+        // ship the table's BlockPos to the client. The client-side menu factory (R.menuWithPos)
+        // reads the pos back from the buf and the screen consults it to pick the GUI book texture.
+        return new MenuProvider() {
+
+            @Override
+            public Component getDisplayName() {
+                return title;
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+                return new ApothEnchantmentMenu(id, inv, ContainerLevelAccess.create(world, pos), tile.getData(EnchantmentTableItemHandler.TYPE), pos);
+            }
+
+            @Override
+            public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buf) {
+                buf.writeBlockPos(pos);
+            }
+        };
     }
 
     /**
