@@ -307,11 +307,11 @@ public class EnchRecipeProvider extends LegacyRecipeProvider {
     }
 
     private static Stats req(float eterna, float quanta, float arcana) {
-        return new Stats(15F, eterna, quanta, arcana, 0);
+        return new Stats(30F, eterna, quanta, arcana, 0);
     }
 
     private static Stats max(float maxEterna, float maxQuanta, float maxArcana) {
-        return new Stats(15F, maxEterna, maxQuanta, maxArcana, 0);
+        return new Stats(30F, maxEterna, maxQuanta, maxArcana, 0);
     }
 
     private void addInfusion(String path, ItemStackTemplate output, Object input, Stats requirements) {

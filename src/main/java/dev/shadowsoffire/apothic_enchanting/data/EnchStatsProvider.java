@@ -76,7 +76,7 @@ public class EnchStatsProvider extends DynamicRegistryProvider<BlockStats> {
         add("pearl_endshelf", single(Ench.Blocks.PEARL_ENDSHELF), stats(90, 10, 7.5F, 7.5F, 0));
         add("draconic_endshelf", single(Ench.Blocks.DRACONIC_ENDSHELF), stats(100, 20, 0, 0, 0));
 
-        add("basic_bookshelf", single(Ench.Blocks.BASIC_BOOKSHELF), stats(15F, 1, 0, 0, 0));
+        add("basic_bookshelf", single(Ench.Blocks.BASIC_BOOKSHELF), stats(30F, 2, 0, 0, 0));
         add("beeshelf", single(Ench.Blocks.BEESHELF), stats(0, -30, 100, 0, 0));
         add("melonshelf", single(Ench.Blocks.MELONSHELF), stats(0, -2, -10, 0, 0));
         add("stoneshelf", single(Ench.Blocks.STONESHELF), stats(0, -3, 0, -7.5F, 0));
@@ -112,6 +112,6 @@ public class EnchStatsProvider extends DynamicRegistryProvider<BlockStats> {
     }
 
     private static Stats cluesOnly(int clues) {
-        return new Stats(15F, 0, 0, 0, clues);
+        return new Stats(30F, 0, 0, 0, clues);
     }
 }
