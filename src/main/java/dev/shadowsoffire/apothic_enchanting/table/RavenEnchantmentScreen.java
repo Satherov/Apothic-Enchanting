@@ -54,7 +54,7 @@ public class RavenEnchantmentScreen extends ApothEnchantmentScreen {
         super(container, inv, title);
         this.ravenMenu = (RavenEnchantmentMenu) container;
         RavenTableStats ravenStats = this.ravenMenu.getRavenStats();
-        this.currentEterna = ravenStats.eterna();
+        this.currentEterna = Math.min(ravenStats.eterna(), this.eternaMax());
         this.currentQuanta = ravenStats.quanta();
         this.currentArcana = ravenStats.arcana();
     }
@@ -62,6 +62,7 @@ public class RavenEnchantmentScreen extends ApothEnchantmentScreen {
     @Override
     public void containerTick() {
         super.containerTick();
+        this.currentEterna = Math.min(this.currentEterna, this.eternaMax());
         // Suppress the parent's lerp/decay so the bar fills track the player-set values instantly.
         // The parent already wrote smoothed values into these fields; clobber them.
         this.eterna = this.currentEterna;
@@ -181,7 +182,7 @@ public class RavenEnchantmentScreen extends ApothEnchantmentScreen {
 
     private void updateDraggedValue(double mouseX, DraggedStat stat, int max) {
         double t = Mth.clamp((mouseX - (this.leftPos + BAR_X)) / (double) BAR_W, 0.0, 1.0);
-        int value = Mth.clamp((int) Math.round(t * max), 0, max);
+        int value = Mth.clamp((int) Math.round(t * 100), 0, max);
         switch (stat) {
             case ETERNA -> {
                 if (value != this.currentEterna) {
