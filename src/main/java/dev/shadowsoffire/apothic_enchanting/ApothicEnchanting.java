@@ -29,6 +29,7 @@ import dev.shadowsoffire.apothic_enchanting.data.SongProvider;
 import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
+import dev.shadowsoffire.apothic_enchanting.payloads.SetRavenStatsPayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantingStatRegistry;
@@ -139,6 +140,7 @@ public class ApothicEnchanting {
 
         PayloadHelper.registerPayload(new CluePayload.Provider());
         PayloadHelper.registerPayload(new StatsPayload.Provider());
+        PayloadHelper.registerPayload(new SetRavenStatsPayload.Provider());
     }
 
     @SubscribeEvent
@@ -175,7 +177,9 @@ public class ApothicEnchanting {
 
     @SubscribeEvent
     public void addBlockEntityValidBlocks(BlockEntityTypeAddBlocksEvent e) {
-        e.modify(BlockEntityType.ENCHANTING_TABLE, Ench.Blocks.APOTHIC_ENCHANTING_TABLE.value());
+        e.modify(BlockEntityType.ENCHANTING_TABLE,
+            Ench.Blocks.APOTHIC_ENCHANTING_TABLE.value(),
+            Ench.Blocks.RAVEN_ENCHANTING_TABLE.value());
     }
 
     @SubscribeEvent

@@ -93,6 +93,7 @@ public class LootProvider extends LootTableProvider {
             this.dropSelf(Ench.Blocks.PEARL_ENDSHELF);
             this.dropSelf(Ench.Blocks.DRACONIC_ENDSHELF);
             this.dropSelf(Ench.Blocks.APOTHIC_ENCHANTING_TABLE);
+            this.dropSelf(Ench.Blocks.RAVEN_ENCHANTING_TABLE);
             this.dropSelf(Ench.Blocks.BASIC_BOOKSHELF);
             this.dropSelf(Ench.Blocks.BEESHELF);
             this.dropSelf(Ench.Blocks.MELONSHELF);
