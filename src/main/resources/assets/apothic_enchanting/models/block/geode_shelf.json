@@ -2,7 +2,7 @@
   "parent": "minecraft:block/orientable",
   "textures": {
     "front": "apothic_enchanting:blocks/geode_shelf",
-    "side": "minecraft:block/calcite",
-    "top": "minecraft:block/calcite"
+    "side": "apothic_enchanting:blocks/filtering_shelf/side",
+    "top": "apothic_enchanting:blocks/base_shelf"
   }
 }

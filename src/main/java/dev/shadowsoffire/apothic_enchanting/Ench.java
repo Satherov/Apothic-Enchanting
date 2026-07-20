@@ -119,23 +119,23 @@ public class Ench {
 
         public static final Holder<Block> BEESHELF = woodShelf("beeshelf", MapColor.COLOR_YELLOW, 0.75F, ParticleTypes.ENCHANT);
 
-        public static final Holder<Block> BLAZING_HELLSHELF = stoneShelf("blazing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> BLAZING_HELLSHELF = woodShelf("blazing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> CRYSTAL_SEASHELF = stoneShelf("crystal_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
+        public static final Holder<Block> CRYSTAL_SEASHELF = woodShelf("crystal_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
 
-        public static final Holder<Block> DEEPSHELF = stoneShelf("deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
+        public static final Holder<Block> DEEPSHELF = woodShelf("deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
 
-        public static final Holder<Block> DORMANT_DEEPSHELF = stoneShelf("dormant_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
+        public static final Holder<Block> DORMANT_DEEPSHELF = woodShelf("dormant_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
 
-        public static final Holder<Block> DRACONIC_ENDSHELF = stoneShelf("draconic_endshelf", MapColor.SAND, 5F, Particles.ENCHANT_END);
+        public static final Holder<Block> DRACONIC_ENDSHELF = woodShelf("draconic_endshelf", MapColor.SAND, 5F, Particles.ENCHANT_END);
 
-        public static final Holder<Block> ECHOING_DEEPSHELF = stoneShelf("echoing_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
+        public static final Holder<Block> ECHOING_DEEPSHELF = woodShelf("echoing_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
 
         public static final Holder<Block> ECHOING_SCULKSHELF = sculkShelf("echoing_sculkshelf");
 
         public static final Holder<Block> ENDER_LIBRARY = R.block("ender_library", () -> new EnchLibraryBlock(EnderLibraryTile::new, 31));
 
-        public static final Holder<Block> ENDSHELF = stoneShelf("endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
+        public static final Holder<Block> ENDSHELF = woodShelf("endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
 
         public static final Holder<Block> FILTERING_SHELF = R.block("filtering_shelf", FilteringShelfBlock::new,
             p -> p.mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE).strength(1.75F).requiresCorrectToolForDrops());
@@ -143,33 +143,33 @@ public class Ench {
         public static final Holder<Block> GEODE_SHELF = R.block("geode_shelf", GeodeShelfBlock::new,
             p -> p.mapColor(MapColor.TERRACOTTA_WHITE).sound(SoundType.STONE).strength(1.75F).requiresCorrectToolForDrops());
 
-        public static final Holder<Block> GLOWING_HELLSHELF = stoneShelf("glowing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> GLOWING_HELLSHELF = woodShelf("glowing_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> HEART_SEASHELF = stoneShelf("heart_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
+        public static final Holder<Block> HEART_SEASHELF = woodShelf("heart_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
 
-        public static final Holder<Block> HELLSHELF = stoneShelf("hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> HELLSHELF = woodShelf("hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> INFUSED_HELLSHELF = stoneShelf("infused_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> INFUSED_HELLSHELF = woodShelf("infused_hellshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> INFUSED_SEASHELF = stoneShelf("infused_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
+        public static final Holder<Block> INFUSED_SEASHELF = woodShelf("infused_seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
 
         public static final Holder<Block> LIBRARY = R.block("library", () -> new EnchLibraryBlock(BasicLibraryTile::new, 16));
 
         public static final Holder<Block> MELONSHELF = woodShelf("melonshelf", MapColor.COLOR_GREEN, 0.75F, ParticleTypes.ENCHANT);
 
-        public static final Holder<Block> PEARL_ENDSHELF = stoneShelf("pearl_endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
+        public static final Holder<Block> PEARL_ENDSHELF = woodShelf("pearl_endshelf", MapColor.SAND, 4.5F, Particles.ENCHANT_END);
 
-        public static final Holder<Block> SEASHELF = stoneShelf("seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
+        public static final Holder<Block> SEASHELF = woodShelf("seashelf", MapColor.COLOR_CYAN, 1.5F, Particles.ENCHANT_WATER);
 
-        public static final Holder<Block> SIGHTSHELF = stoneShelf("sightshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> SIGHTSHELF = woodShelf("sightshelf", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> SIGHTSHELF_T2 = stoneShelf("sightshelf_t2", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
+        public static final Holder<Block> SIGHTSHELF_T2 = woodShelf("sightshelf_t2", MapColor.COLOR_BLACK, 1.5F, Particles.ENCHANT_FIRE);
 
-        public static final Holder<Block> SOUL_TOUCHED_DEEPSHELF = stoneShelf("soul_touched_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
+        public static final Holder<Block> SOUL_TOUCHED_DEEPSHELF = woodShelf("soul_touched_deepshelf", MapColor.COLOR_BLACK, 2.5F, Particles.ENCHANT_SCULK);
 
         public static final Holder<Block> SOUL_TOUCHED_SCULKSHELF = sculkShelf("soul_touched_sculkshelf");
 
-        public static final Holder<Block> STONESHELF = stoneShelf("stoneshelf", MapColor.STONE, 1.75F, ParticleTypes.ENCHANT);
+        public static final Holder<Block> STONESHELF = woodShelf("stoneshelf", MapColor.STONE, 1.75F, ParticleTypes.ENCHANT);
 
         public static final Holder<Block> TREASURE_SHELF = R.block("treasure_shelf", TreasureShelfBlock::new,
             p -> p.mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).strength(1.75F).requiresCorrectToolForDrops());
@@ -177,11 +177,7 @@ public class Ench {
         private static void bootstrap() {}
 
         private static Holder<Block> sculkShelf(String id) {
-            return R.block(id, () -> new SculkShelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.STONE).randomTicks().requiresCorrectToolForDrops().strength(3.5F), Particles.ENCHANT_SCULK));
-        }
-
-        private static Holder<Block> stoneShelf(String id, MapColor color, float strength, ParticleOptions particle) {
-            return R.block(id, () -> new TypedShelfBlock(Block.Properties.of().requiresCorrectToolForDrops().sound(SoundType.STONE).mapColor(color).strength(strength), particle));
+            return R.block(id, () -> new SculkShelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).sound(SoundType.WOOD).randomTicks().strength(3.5F), Particles.ENCHANT_SCULK));
         }
 
         private static Holder<Block> woodShelf(String id, MapColor color, float strength, ParticleOptions particle) {
