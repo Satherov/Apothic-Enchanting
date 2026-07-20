@@ -30,9 +30,13 @@ import dev.shadowsoffire.apothic_enchanting.objects.TreasureShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock.SculkShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.WardenLootModifier;
+import dev.shadowsoffire.apothic_enchanting.objects.TooltipBlockItem;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentMenu;
 import dev.shadowsoffire.apothic_enchanting.table.ApothicEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
+import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantingTableBlock;
+import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantmentMenu;
+import dev.shadowsoffire.apothic_enchanting.table.RavenTableStats;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.KeepNBTInfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
@@ -95,6 +99,7 @@ public class Ench {
         R.recipeSerializer("keep_nbt_infusion", () -> KeepNBTInfusionRecipe.SERIALIZER);
         R.custom("warden_tendril", NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, WardenLootModifier.CODEC);
         R.custom("enchantment_table_item_handler", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, EnchantmentTableItemHandler.TYPE);
+        R.custom("raven_table_stats", NeoForgeRegistries.Keys.ATTACHMENT_TYPES, RavenTableStats.TYPE);
         R.custom("rebounding", Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, ReboundingEffect.CODEC);
         R.custom("exponential", Registries.ENCHANTMENT_LEVEL_BASED_VALUE_TYPE, ExponentialLevelBasedValue.CODEC);
     }
@@ -132,6 +137,10 @@ public class Ench {
 
         public static final Holder<Block> APOTHIC_ENCHANTING_TABLE = R.block("apothic_enchanting_table",
             ApothicEnchantingTableBlock::new,
+            p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F).requiresCorrectToolForDrops().lightLevel(s -> 7));
+
+        public static final Holder<Block> RAVEN_ENCHANTING_TABLE = R.block("raven_enchanting_table",
+            RavenEnchantingTableBlock::new,
             p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F).requiresCorrectToolForDrops().lightLevel(s -> 7));
 
         public static final Holder<Block> BASIC_BOOKSHELF = woodShelf("basic_bookshelf", MapColor.WOOD, 1.5F, ParticleTypes.ENCHANT);
@@ -371,7 +380,11 @@ public class Ench {
 
     public static class Items extends net.minecraft.world.item.Items {
 
-        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE);
+        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE,
+            TooltipBlockItem::new, UnaryOperator.identity());
+
+        public static final Holder<Item> RAVEN_ENCHANTING_TABLE = R.blockItem("raven_enchanting_table", Ench.Blocks.RAVEN_ENCHANTING_TABLE,
+            TooltipBlockItem::new, UnaryOperator.identity());
 
         public static final Holder<Item> BASIC_BOOKSHELF = R.item("basic_bookshelf", () -> new BlockItem(Ench.Blocks.BASIC_BOOKSHELF.value(), new Item.Properties()));
 
@@ -484,6 +497,8 @@ public class Ench {
     public static class Menus {
 
         public static final MenuType<ApothEnchantmentMenu> ENCHANTING_TABLE = R.menuWithPos("enchanting_table", ApothEnchantmentMenu::new);
+
+        public static final MenuType<RavenEnchantmentMenu> RAVEN_ENCHANTING_TABLE = R.menuWithData("raven_enchanting_table", RavenEnchantmentMenu::fromBuf);
 
         public static final MenuType<EnchLibraryContainer> LIBRARY = R.menuWithPos("library", EnchLibraryContainer::new);
 

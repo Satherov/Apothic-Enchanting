@@ -11,6 +11,7 @@ import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryScreen;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentScreen;
+import dev.shadowsoffire.apothic_enchanting.table.RavenEnchantmentScreen;
 import dev.shadowsoffire.apothic_enchanting.util.FakeLevelReader;
 import dev.shadowsoffire.apothic_enchanting.util.TooltipUtil;
 import dev.shadowsoffire.placebo.util.DrawsOnLeft;
@@ -72,6 +73,7 @@ public class ApothEnchClient {
     @SubscribeEvent
     public static void screens(RegisterMenuScreensEvent e) {
         e.register(Ench.Menus.ENCHANTING_TABLE, ApothEnchantmentScreen::new);
+        e.register(Ench.Menus.RAVEN_ENCHANTING_TABLE, RavenEnchantmentScreen::new);
         e.register(Ench.Menus.LIBRARY, EnchLibraryScreen::new);
     }
 

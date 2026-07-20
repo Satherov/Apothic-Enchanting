@@ -24,6 +24,7 @@ import dev.shadowsoffire.apothic_enchanting.library.EnchLibraryTile;
 import dev.shadowsoffire.apothic_enchanting.objects.TomeItem;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.EnchantmentInfoPayload;
+import dev.shadowsoffire.apothic_enchanting.payloads.SetRavenStatsPayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantingStatRegistry;
@@ -92,7 +93,7 @@ public class ApothicEnchanting {
         e.enqueueWork(() -> {
             DispenserBlock.registerBehavior(Items.SHEARS, new ShearsDispenseItemBehavior());
 
-            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.APOTHIC_ENCHANTING_TABLE);
+            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.APOTHIC_ENCHANTING_TABLE, Ench.Items.RAVEN_ENCHANTING_TABLE);
 
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.BASIC_BOOKSHELF, Ench.Items.HELLSHELF, Ench.Items.INFUSED_HELLSHELF, Ench.Items.BLAZING_HELLSHELF, Ench.Items.GLOWING_HELLSHELF, Ench.Items.SEASHELF,
                 Ench.Items.INFUSED_SEASHELF, Ench.Items.CRYSTAL_SEASHELF, Ench.Items.HEART_SEASHELF, Ench.Items.DORMANT_DEEPSHELF, Ench.Items.DEEPSHELF, Ench.Items.ECHOING_DEEPSHELF, Ench.Items.SOUL_TOUCHED_DEEPSHELF,
@@ -118,6 +119,7 @@ public class ApothicEnchanting {
         PayloadHelper.registerPayload(new CluePayload.Provider());
         PayloadHelper.registerPayload(new StatsPayload.Provider());
         PayloadHelper.registerPayload(new EnchantmentInfoPayload.Provider());
+        PayloadHelper.registerPayload(new SetRavenStatsPayload.Provider());
     }
 
     /**
@@ -165,7 +167,9 @@ public class ApothicEnchanting {
      */
     @SubscribeEvent
     public void addBlockEntityValidBlocks(BlockEntityTypeAddBlocksEvent e) {
-        e.modify(BlockEntityType.ENCHANTING_TABLE, Ench.Blocks.APOTHIC_ENCHANTING_TABLE.value());
+        e.modify(BlockEntityType.ENCHANTING_TABLE,
+            Ench.Blocks.APOTHIC_ENCHANTING_TABLE.value(),
+            Ench.Blocks.RAVEN_ENCHANTING_TABLE.value());
     }
 
     @SubscribeEvent
