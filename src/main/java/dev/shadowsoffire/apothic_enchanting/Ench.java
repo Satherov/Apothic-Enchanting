@@ -57,6 +57,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -113,6 +115,16 @@ public class Ench {
         private static ResourceKey<JukeboxSong> key(String name) {
             return ResourceKey.create(Registries.JUKEBOX_SONG, ApothicEnchanting.loc(name));
         }
+    }
+
+    public static final class Attributes {
+        /**
+         * Effective max Eterna on a per-player basis.
+         * The default is 100 (the absolute max value), but other mods can utilize mechanics to reduce it to stall enchanting.
+         */
+        public static final Holder<Attribute> MAX_ETERNA = R.attribute("max_eterna", () -> new RangedAttribute("apothic_enchanting:max_eterna", 100.0D, 0.0D, 100.0D).setSyncable(true));
+
+        private static void bootstrap() {}
     }
 
     public static final class Blocks {
@@ -527,6 +539,7 @@ public class Ench {
 
     public static void bootstrap(IEventBus bus) {
         Sounds.bootstrap();
+        Attributes.bootstrap();
         Blocks.bootstrap();
         Items.bootstrap();
         EnchantEffects.bootstrap();

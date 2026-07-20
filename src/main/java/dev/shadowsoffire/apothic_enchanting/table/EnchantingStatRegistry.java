@@ -126,7 +126,7 @@ public class EnchantingStatRegistry extends DynamicRegistry<BlockStats> {
 
         public static Codec<Stats> CODEC = RecordCodecBuilder.create(inst -> inst
             .group(
-                Codec.FLOAT.optionalFieldOf("maxEterna", 15F).forGetter(Stats::maxEterna),
+                Codec.FLOAT.optionalFieldOf("maxEterna", 30F).forGetter(Stats::maxEterna),
                 Codec.FLOAT.optionalFieldOf("eterna", 0F).forGetter(Stats::eterna),
                 Codec.FLOAT.optionalFieldOf("quanta", 0F).forGetter(Stats::quanta),
                 Codec.FLOAT.optionalFieldOf("arcana", 0F).forGetter(Stats::arcana),

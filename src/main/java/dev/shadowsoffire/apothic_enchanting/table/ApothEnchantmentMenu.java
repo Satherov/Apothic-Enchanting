@@ -121,7 +121,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
         if (this.costs[slot] <= 0 || toEnchant.isEmpty() || (player.experienceLevel < cost || player.experienceLevel < this.costs[slot]) && !player.getAbilities().instabuild) return false;
 
         this.access.execute((world, pos) -> {
-            float eterna = this.stats.eterna();
+            float eterna = this.stats.eterna(player);
             float quanta = this.stats.quanta();
             float arcana = this.stats.arcana();
             boolean stable = this.stats.stable();
@@ -173,7 +173,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
                 this.gatherStats();
                 InfusionRecipe match = InfusionRecipe.findItemMatch(world, toEnchant);
                 if (toEnchant.getCount() == 1 && (match != null || toEnchant.getItem().isEnchantable(toEnchant) && isEnchantableEnough(toEnchant))) {
-                    float eterna = this.stats.eterna();
+                    float eterna = this.stats.eterna(this.player);
                     if (eterna < 1.5) eterna = 1.5F; // Allow for enchanting with no bookshelves as vanilla does
                     this.random.setSeed(this.enchantmentSeed.get());
 
@@ -243,7 +243,7 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
     private List<EnchantmentInstance> getEnchantmentList(ItemStack stack, int enchantSlot, int level) {
         this.random.setSeed(this.enchantmentSeed.get() + enchantSlot);
         List<EnchantmentInstance> list = ApothEnchantmentHelper.selectEnchantment(this.random, stack, level, this.stats, this.player.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT));
-        InfusionRecipe match = this.access.evaluate((world, pos) -> Optional.ofNullable(InfusionRecipe.findMatch(world, stack, this.stats.eterna(), this.stats.quanta(), this.stats.arcana()))).get().orElse(null);
+        InfusionRecipe match = this.access.evaluate((world, pos) -> Optional.ofNullable(InfusionRecipe.findMatch(world, stack, this.stats.eterna(this.player), this.stats.quanta(), this.stats.arcana()))).get().orElse(null);
         if (enchantSlot == 2 && match != null) {
             list.clear();
             list.add(new EnchantmentInstance(this.player.level().holderOrThrow(Ench.Enchantments.INFUSION), 1));

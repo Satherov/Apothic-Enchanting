@@ -1,6 +1,9 @@
 {
     "creative_tab.apothic_enchanting.all": "Apothic Enchanting",
 
+    "apothic_enchanting:max_eterna": "Max Eterna",
+    "apothic_enchanting:max_eterna.desc": "The maximum amount of Eterna you can use in an Enchanting Table.",
+
     "block.apothic_enchanting.hellshelf": "Hellshelf",
     "block.apothic_enchanting.infused_hellshelf": "Infused Hellshelf",
     "block.apothic_enchanting.blazing_hellshelf": "Blazing Hellshelf",
@@ -66,6 +69,7 @@
     "gui.apothic_enchanting.enchant.eterna.desc": " - Magical Energy",
     "gui.apothic_enchanting.enchant.eterna.desc2": "Sets the max enchanting level",
     "gui.apothic_enchanting.enchant.eterna.desc3": "Current Value: %s/%s",
+    "gui.apothic_enchanting.enchant.eterna.desc4": "Clamped to %s by your Max Eterna attribute",
     "gui.apothic_enchanting.enchant.quanta.desc": " - Pure Chaos",
     "gui.apothic_enchanting.enchant.quanta.desc2": "Increases underlying randomness",
     "gui.apothic_enchanting.enchant.quanta.desc3": " lessens the negative effects",

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.api.EnchantmentStatBlock;
 import it.unimi.dsi.fastutil.floats.Float2FloatMap;
 import it.unimi.dsi.fastutil.floats.Float2FloatOpenHashMap;
@@ -18,6 +19,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -51,6 +53,28 @@ public record EnchantmentTableStats(float eterna, float quanta, float arcana, in
         this.blacklist = Collections.unmodifiableSet(blacklist);
         this.treasure = treasure;
         this.stable = stable;
+    }
+
+    /**
+     * @deprecated Use {@link #eterna(Player)} or {@link #tableEterna()} depending on context.
+     */
+    @Deprecated
+    public float eterna() {
+        return this.eterna;
+    }
+
+    /**
+     * Returns the player's personal clamped eterna value, which is limited by {@link Ench.Attributes#MAX_ETERNA}.
+     */
+    public float eterna(Player player) {
+        return Math.min(this.eterna, (float) player.getAttributeValue(Ench.Attributes.MAX_ETERNA));
+    }
+
+    /**
+     * Returns the table's "real" eterna value as determined from the bookshelves. Should only be used in certain display scenarios.
+     */
+    public float tableEterna() {
+        return this.eterna;
     }
 
     /**
