@@ -8,11 +8,15 @@ import dev.shadowsoffire.apothic_enchanting.Ench;
 import dev.shadowsoffire.apothic_enchanting.payloads.CluePayload;
 import dev.shadowsoffire.apothic_enchanting.payloads.StatsPayload;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
+import javax.annotation.Nullable;
+
 import dev.shadowsoffire.apothic_enchanting.util.MiscUtil;
 import dev.shadowsoffire.placebo.util.EnchantmentUtils;
 import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -28,6 +32,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.block.EnchantingTableBlock;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -36,11 +41,17 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @SuppressWarnings("deprecation")
 public class ApothEnchantmentMenu extends EnchantmentMenu {
 
+    private static final ResourceLocation VANILLA_BOOK_GUI_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/enchanting_table_book.png");
+
     protected EnchantmentTableStats stats = EnchantmentTableStats.INVALID;
     protected final Player player;
 
-    public ApothEnchantmentMenu(int id, Inventory inv) {
+    @Nullable
+    protected final BlockPos pos;
+
+    public ApothEnchantmentMenu(int id, Inventory inv, BlockPos pos) {
         super(id, inv, ContainerLevelAccess.NULL);
+        this.pos = pos;
         this.player = inv.player;
         this.slots.clear();
         this.addSecretSlot(new Slot(this.enchantSlots, 0, 15, 47){
@@ -63,8 +74,9 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
         this.initCommon(inv);
     }
 
-    public ApothEnchantmentMenu(int id, Inventory inv, ContainerLevelAccess wPos, EnchantmentTableItemHandler teInv) {
+    public ApothEnchantmentMenu(int id, Inventory inv, ContainerLevelAccess wPos, EnchantmentTableItemHandler teInv, BlockPos pos) {
         super(id, inv, wPos);
+        this.pos = pos;
         this.player = inv.player;
         this.slots.clear();
         this.addSecretSlot(new Slot(this.enchantSlots, 0, 15, 47){
@@ -265,6 +277,28 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
     public static boolean isEnchantableEnough(ItemStack stack) {
         if (!stack.isEnchanted()) return true;
         else return EnchantmentHelper.getEnchantmentsForCrafting(stack).keySet().stream().allMatch(h -> h.is(EnchantmentTags.CURSE));
+    }
+
+    /**
+     * Returns the texture used to render the book model in the GUI, resolved from the {@link BookTexturedTable} at
+     * this menu's position (if any).
+     */
+    public ResourceLocation getBookGuiTexture() {
+        if (this.pos != null && this.player.level().getBlockState(this.pos).getBlock() instanceof BookTexturedTable b) {
+            return b.getBookGuiTexture();
+        }
+        return VANILLA_BOOK_GUI_TEXTURE;
+    }
+
+    /**
+     * Allows subclasses of {@link EnchantingTableBlock} to work instead of only {@link net.minecraft.world.level.block.Blocks#ENCHANTING_TABLE}.
+     */
+    @Override
+    public boolean stillValid(Player player) {
+        return this.access.evaluate(
+            (level, pos) -> level.getBlockState(pos).getBlock() instanceof EnchantingTableBlock
+                && player.canInteractWithBlock(pos, 4.0),
+            true);
     }
 
 }

@@ -1,0 +1,8 @@
+{
+    "sources": [
+        {
+            "type": "minecraft:single",
+            "resource": "apothic_enchanting:entity/apothic_book"
+        }
+    ]
+}

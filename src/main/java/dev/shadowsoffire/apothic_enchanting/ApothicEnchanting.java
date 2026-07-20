@@ -63,6 +63,7 @@ import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
@@ -90,6 +91,8 @@ public class ApothicEnchanting {
         NeoForge.EVENT_BUS.addListener(this::reload);
         e.enqueueWork(() -> {
             DispenserBlock.registerBehavior(Items.SHEARS, new ShearsDispenseItemBehavior());
+
+            TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.APOTHIC_ENCHANTING_TABLE);
 
             TabFillingRegistry.register(Ench.Tabs.ENCH.getKey(), Ench.Items.BASIC_BOOKSHELF, Ench.Items.HELLSHELF, Ench.Items.INFUSED_HELLSHELF, Ench.Items.BLAZING_HELLSHELF, Ench.Items.GLOWING_HELLSHELF, Ench.Items.SEASHELF,
                 Ench.Items.INFUSED_SEASHELF, Ench.Items.CRYSTAL_SEASHELF, Ench.Items.HEART_SEASHELF, Ench.Items.DORMANT_DEEPSHELF, Ench.Items.DEEPSHELF, Ench.Items.ECHOING_DEEPSHELF, Ench.Items.SOUL_TOUCHED_DEEPSHELF,
@@ -155,6 +158,14 @@ public class ApothicEnchanting {
         e.getTypes().forEach(type -> {
             e.add(type, Ench.Attributes.MAX_ETERNA);
         });
+    }
+
+    /**
+     * Marks the custom enchanting table blocks as valid holders of the vanilla {@link BlockEntityType#ENCHANTING_TABLE}.
+     */
+    @SubscribeEvent
+    public void addBlockEntityValidBlocks(BlockEntityTypeAddBlocksEvent e) {
+        e.modify(BlockEntityType.ENCHANTING_TABLE, Ench.Blocks.APOTHIC_ENCHANTING_TABLE.value());
     }
 
     @SubscribeEvent

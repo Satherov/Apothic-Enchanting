@@ -7,8 +7,11 @@ import java.util.List;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 
 import dev.shadowsoffire.apothic_enchanting.ApothicEnchanting;
 import dev.shadowsoffire.apothic_enchanting.Ench;
@@ -25,6 +28,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EnchantmentNames;
 import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
@@ -195,6 +199,32 @@ public class ApothEnchantmentScreen extends EnchantmentScreen implements DrawsOn
             int u = this.isHovering(145, -15, 27, 15, mouseX, mouseY) ? 15 : 0;
             gfx.blit(TEXTURES, xCenter + 145, yCenter - 15, this.imageWidth, u, 27, 15);
         }
+    }
+
+    /**
+     * Vanilla copy of {@link EnchantmentScreen#renderBook}, with the book texture swapped for the one supplied by
+     * the menu (which resolves {@link BookTexturedTable} at the table's position).
+     */
+    @Override
+    public void renderBook(GuiGraphics gfx, int x, int y, float partialTick) {
+        float open = Mth.lerp(partialTick, this.oOpen, this.open);
+        float flip = Mth.lerp(partialTick, this.oFlip, this.flip);
+        Lighting.setupForEntityInInventory();
+        gfx.pose().pushPose();
+        gfx.pose().translate(x + 33.0F, y + 31.0F, 100.0F);
+        gfx.pose().scale(-40.0F, 40.0F, 40.0F);
+        gfx.pose().mulPose(Axis.XP.rotationDegrees(25.0F));
+        gfx.pose().translate((1.0F - open) * 0.2F, (1.0F - open) * 0.1F, (1.0F - open) * 0.25F);
+        gfx.pose().mulPose(Axis.YP.rotationDegrees(-(1.0F - open) * 90.0F - 90.0F));
+        gfx.pose().mulPose(Axis.XP.rotationDegrees(180.0F));
+        float f4 = Mth.clamp(Mth.frac(flip + 0.25F) * 1.6F - 0.3F, 0.0F, 1.0F);
+        float f5 = Mth.clamp(Mth.frac(flip + 0.75F) * 1.6F - 0.3F, 0.0F, 1.0F);
+        this.bookModel.setupAnim(0.0F, f4, f5, open);
+        VertexConsumer vc = gfx.bufferSource().getBuffer(this.bookModel.renderType(((ApothEnchantmentMenu) this.menu).getBookGuiTexture()));
+        this.bookModel.renderToBuffer(gfx.pose(), vc, 15728880, OverlayTexture.NO_OVERLAY);
+        gfx.flush();
+        gfx.pose().popPose();
+        Lighting.setupFor3DItems();
     }
 
     @Override

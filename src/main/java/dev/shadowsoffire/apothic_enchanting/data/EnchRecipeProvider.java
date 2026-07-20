@@ -91,6 +91,11 @@ public class EnchRecipeProvider extends LegacyRecipeProvider {
             EnchItemTagsProvider.TOMES, EnchItemTagsProvider.TOMES, EnchItemTagsProvider.TOMES,
             ItemTags.PLANKS, ItemTags.PLANKS, ItemTags.PLANKS);
 
+        addShaped(Ench.Blocks.APOTHIC_ENCHANTING_TABLE, 3, 3,
+            null, EnchItemTagsProvider.TOMES, null,
+            Items.DIAMOND, Items.OBSIDIAN, Items.DIAMOND,
+            Items.OBSIDIAN, Items.OBSIDIAN, Items.OBSIDIAN);
+
         addShaped(Ench.Blocks.GEODE_SHELF, 3, 3,
             Items.CALCITE, Items.CALCITE, Items.CALCITE,
             Items.CALCITE, Tags.Items.BOOKSHELVES, Items.CALCITE,

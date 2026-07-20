@@ -31,6 +31,7 @@ import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.TypedShelfBlock.SculkShelfBlock;
 import dev.shadowsoffire.apothic_enchanting.objects.WardenLootModifier;
 import dev.shadowsoffire.apothic_enchanting.table.ApothEnchantmentMenu;
+import dev.shadowsoffire.apothic_enchanting.table.ApothicEnchantingTableBlock;
 import dev.shadowsoffire.apothic_enchanting.table.EnchantmentTableItemHandler;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.InfusionRecipe;
 import dev.shadowsoffire.apothic_enchanting.table.infusion.KeepNBTInfusionRecipe;
@@ -128,6 +129,10 @@ public class Ench {
     }
 
     public static final class Blocks {
+
+        public static final Holder<Block> APOTHIC_ENCHANTING_TABLE = R.block("apothic_enchanting_table",
+            ApothicEnchantingTableBlock::new,
+            p -> p.mapColor(MapColor.COLOR_RED).strength(5.0F, 1200.0F).requiresCorrectToolForDrops().lightLevel(s -> 7));
 
         public static final Holder<Block> BASIC_BOOKSHELF = woodShelf("basic_bookshelf", MapColor.WOOD, 1.5F, ParticleTypes.ENCHANT);
 
@@ -366,6 +371,8 @@ public class Ench {
 
     public static class Items extends net.minecraft.world.item.Items {
 
+        public static final Holder<Item> APOTHIC_ENCHANTING_TABLE = R.blockItem("apothic_enchanting_table", Ench.Blocks.APOTHIC_ENCHANTING_TABLE);
+
         public static final Holder<Item> BASIC_BOOKSHELF = R.item("basic_bookshelf", () -> new BlockItem(Ench.Blocks.BASIC_BOOKSHELF.value(), new Item.Properties()));
 
         public static final Holder<Item> BEESHELF = R.item("beeshelf", () -> new BlockItem(Ench.Blocks.BEESHELF.value(), new Item.Properties()));
@@ -476,7 +483,7 @@ public class Ench {
 
     public static class Menus {
 
-        public static final MenuType<ApothEnchantmentMenu> ENCHANTING_TABLE = R.menu("enchanting_table", ApothEnchantmentMenu::new);
+        public static final MenuType<ApothEnchantmentMenu> ENCHANTING_TABLE = R.menuWithPos("enchanting_table", ApothEnchantmentMenu::new);
 
         public static final MenuType<EnchLibraryContainer> LIBRARY = R.menuWithPos("library", EnchLibraryContainer::new);
 
