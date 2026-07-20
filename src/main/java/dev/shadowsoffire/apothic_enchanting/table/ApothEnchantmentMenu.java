@@ -188,6 +188,14 @@ public class ApothEnchantmentMenu extends EnchantmentMenu {
                         this.costs[slot] = EventHooks.onEnchantmentLevelSet(world, pos, slot, Math.round(eterna), toEnchant, this.costs[slot]);
                     }
 
+                    // Clamp slot 2's cost to the matched infusion recipe's eterna requirement. Without this, a high-eterna
+                    // table (e.g. 100) charges the full slot cost for an infusion that only required, say, 50.
+                    InfusionRecipe infusionMatch = InfusionRecipe.findMatch(world, toEnchant, this.stats.eterna(this.player), this.stats.quanta(), this.stats.arcana());
+                    if (infusionMatch != null) {
+                        int recipeLevel = Math.max((int) Math.ceil(infusionMatch.getRequirements().eterna()), 3);
+                        this.costs[2] = Math.min(this.costs[2], recipeLevel);
+                    }
+
                     for (int slot = 0; slot < 3; ++slot) {
                         if (this.costs[slot] > 0) {
                             List<EnchantmentInstance> list = this.getEnchantmentList(toEnchant, slot, this.costs[slot]);
