@@ -1,3 +1,13 @@
+## 1.6.0
+* Backported the following changes from 2.0.0 (Minecraft 26.1.2)
+  * Added the Apothic Enchanting Table, a cosmetic variant of the Enchanting Table.
+  * Added the Enchanting Table of the Raven, an end-game table that allows manually setting eterna, quanta, and arcana.
+    * The crafting recipe is provided by Apotheosis.
+  * Added the Max Eterna attribute (`apothic_enchanting:max_eterna`), which limits the eterna a player may use at any table.
+  * Added the Basic Bookshelf, and gave every shelf randomized model variants.
+  * All shelf textures have been updated, and shelves are now mined with an axe (no tool required to drop).
+  * Infusion enchanting now clamps the displayed level cost to the recipe's eterna requirement.
+
 ## 1.5.3
 * PrincessStellar: Updated Brazilian translation.
 * PODOB: Updated Korean translation.
