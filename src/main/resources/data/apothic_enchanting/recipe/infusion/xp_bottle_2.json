@@ -13,7 +13,6 @@
 		"quanta": -1,
 		"arcana": -1
 	},
-	"display_level": 3,
 	"result": {
 		"id": "minecraft:experience_bottle",
 		"count": 8
