@@ -62,6 +62,7 @@ public class RavenEnchantmentScreen extends ApothEnchantmentScreen {
     @Override
     public void containerTick() {
         super.containerTick();
+        this.updateStatsFromMenu();
         this.currentEterna = Math.min(this.currentEterna, this.eternaMax());
         // Suppress the parent's lerp/decay so the bar fills track the player-set values instantly.
         // The parent already wrote smoothed values into these fields; clobber them.
@@ -211,6 +212,19 @@ public class RavenEnchantmentScreen extends ApothEnchantmentScreen {
 
     private void sendStats() {
         ClientPacketDistributor.sendToServer(new SetRavenStatsPayload(this.currentEterna, this.currentQuanta, this.currentArcana));
+    }
+    
+    /**
+     * Sets the stats on the screen from the menu, if the menu itself marks them as dirty.
+     */
+    private void updateStatsFromMenu() {
+        if (this.ravenMenu.dirty) {
+            RavenTableStats stats = this.ravenMenu.getRavenStats();
+            this.currentEterna = stats.eterna();
+            this.currentQuanta = stats.quanta();
+            this.currentArcana = stats.arcana();
+            this.ravenMenu.dirty = false;
+        }
     }
 
     private static enum DraggedStat {

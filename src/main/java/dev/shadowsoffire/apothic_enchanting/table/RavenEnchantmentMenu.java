@@ -17,6 +17,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class RavenEnchantmentMenu extends ApothEnchantmentMenu {
 
     private final RavenTableStats ravenStats;
+    
+    // If we want to sync a diff between the menu and screen on the client.
+    protected boolean dirty;
 
     public static RavenEnchantmentMenu fromBuf(int id, Inventory inv, RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
@@ -70,12 +73,25 @@ public class RavenEnchantmentMenu extends ApothEnchantmentMenu {
      * the client.
      */
     public void setPlayerStats(int eterna, int quanta, int arcana) {
-        int maxEterna = (int) ((Player) this.player).getAttributeValue(Ench.Attributes.MAX_ETERNA);
-        this.ravenStats.set(
-            Mth.clamp(eterna, 0, maxEterna),
-            Mth.clamp(quanta, 0, 100),
-            Mth.clamp(arcana, 0, 100));
+        this.setRavenStats(eterna, quanta, arcana);
         this.slotsChanged(this.enchantSlots);
     }
-
+    
+    /**
+     * Sets the stats from the jei transfer handler and marks this menu as dirty,
+     * so we sync changes to the screen as soon as we can
+     */
+    public void setStatsFromTransfer(int eterna, int quanta, int arcana) {
+        this.setRavenStats(eterna, quanta, arcana);
+        this.dirty = true;
+    }
+    
+    private void setRavenStats(int eterna, int quanta, int arcana) {
+        int maxEterna = (int) ((Player) this.player).getAttributeValue(Ench.Attributes.MAX_ETERNA);
+        this.ravenStats.set(
+                Mth.clamp(eterna, 0, maxEterna),
+                Mth.clamp(quanta, 0, 100),
+                Mth.clamp(arcana, 0, 100)
+        );
+    }
 }
